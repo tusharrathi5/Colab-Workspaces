@@ -471,7 +471,19 @@ window.showPage = window.showPage || function(name){
       <div id="book-step1">
         <div class="form-section"><label>Select Date</label><input type="date" class="form-control" id="book-date" style="max-width:300px" onchange="renderSlots()"></div>
         <div class="form-section" id="slots-section" style="display:none">
+codex/fix-issues-on-website-code-y842o2
           <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours · billed by full hour)</span></label>
+
+codex/fix-issues-on-website-code-48wrv2
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours · billed by full hour)</span></label>
+
+ codex/fix-issues-on-website-code-7hvw5r
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours · billed by full hour)</span></label>
+
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours)</span></label>
+main
+main
+main
           <div class="hours-grid" id="hours-grid"></div>
           <div class="legend">
             <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
@@ -561,7 +573,8 @@ window.showPage = window.showPage || function(name){
       <div style="text-align:center;margin-bottom:20px"><img src="logo.png" style="height:56px;width:auto"></div>
       <h3>Admin Login</h3>
       <p>Access your meeting room bookings</p>
-      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key
+        'Enter')adminLogin()"></div>
       <div class="form-group"><label>Password</label><input type="password" class="form-control" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="btn-book" onclick="adminLogin()">Login →</button>
       <div class="login-err" id="login-err">❌ Incorrect credentials</div>
@@ -695,6 +708,10 @@ const RATE_PER_HOUR = 200;
 const SILVER_CROWN_CODE = 'SILVERCROWN';
 const SILVER_CROWN_DISCOUNT = 10;
 function formatHour(h) { const p=h<12?'AM':'PM'; const d=h===0?12:h>12?h-12:h; return `${d}${p}`; }
+codex/fix-issues-on-website-code-48wrv2
+
+ codex/fix-issues-on-website-code-7hvw5r
+main
 function formatClock(totalMinutes) {
   const minsDay = ((totalMinutes % (24*60)) + 24*60) % (24*60);
   const h24 = Math.floor(minsDay / 60);
