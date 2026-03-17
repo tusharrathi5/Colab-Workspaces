@@ -272,6 +272,16 @@
 </style>
 </head>
 <body>
+<script>
+window.showPage = window.showPage || function(name){
+  const target = document.getElementById('page-'+name);
+  if (!target) return false;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  target.classList.add('active');
+  window.scrollTo(0,0);
+  return false;
+};
+</script>
 
 <nav>
   <div class="nav-logo" onclick="showPage('home')">
@@ -551,7 +561,8 @@
       <div style="text-align:center;margin-bottom:20px"><img src="logo.png" style="height:56px;width:auto"></div>
       <h3>Admin Login</h3>
       <p>Access your meeting room bookings</p>
-      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key
+        'Enter')adminLogin()"></div>
       <div class="form-group"><label>Password</label><input type="password" class="form-control" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="btn-book" onclick="adminLogin()">Login →</button>
       <div class="login-err" id="login-err">❌ Incorrect credentials</div>
@@ -712,7 +723,7 @@ function fmtDate(str) { return new Date(str+'T00:00:00').toLocaleDateString('en-
 function fmtDT(iso) { return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
 
 // ── ROUTING ──────────────────────────────────────────────────
-function showPage(name) {
+window.showPage = function showPage(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   window.scrollTo(0,0);
