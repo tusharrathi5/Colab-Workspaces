@@ -461,7 +461,11 @@
       <div id="book-step1">
         <div class="form-section"><label>Select Date</label><input type="date" class="form-control" id="book-date" style="max-width:300px" onchange="renderSlots()"></div>
         <div class="form-section" id="slots-section" style="display:none">
+ codex/fix-issues-on-website-code-7hvw5r
           <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours · billed by full hour)</span></label>
+
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours)</span></label>
+ main
           <div class="hours-grid" id="hours-grid"></div>
           <div class="legend">
             <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
@@ -551,7 +555,8 @@
       <div style="text-align:center;margin-bottom:20px"><img src="logo.png" style="height:56px;width:auto"></div>
       <h3>Admin Login</h3>
       <p>Access your meeting room bookings</p>
-      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key
+        'Enter')adminLogin()"></div>
       <div class="form-group"><label>Password</label><input type="password" class="form-control" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="btn-book" onclick="adminLogin()">Login →</button>
       <div class="login-err" id="login-err">❌ Incorrect credentials</div>
@@ -685,6 +690,7 @@ const RATE_PER_HOUR = 200;
 const SILVER_CROWN_CODE = 'SILVERCROWN';
 const SILVER_CROWN_DISCOUNT = 10;
 function formatHour(h) { const p=h<12?'AM':'PM'; const d=h===0?12:h>12?h-12:h; return `${d}${p}`; }
+ codex/fix-issues-on-website-code-7hvw5r
 function formatClock(totalMinutes) {
   const minsDay = ((totalMinutes % (24*60)) + 24*60) % (24*60);
   const h24 = Math.floor(minsDay / 60);
@@ -706,6 +712,15 @@ function getBillingDetails(slotCount) {
   const codeInput = (document.getElementById('bk-discount')?.value || '').trim().toUpperCase();
   const discountAmount = codeInput === SILVER_CROWN_CODE ? Math.round((baseTotal * SILVER_CROWN_DISCOUNT) / 100) : 0;
   return { durationHours, billedHours, baseTotal, discountAmount, finalTotal: baseTotal - discountAmount, discountCode: codeInput };
+
+function formatSlot(slot) {
+  const totalMinutes = slot * 30;
+  const h24 = Math.floor(totalMinutes / 60) % 24;
+  const mins = totalMinutes % 60;
+  const period = h24 < 12 ? 'AM' : 'PM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(mins).padStart(2,'0')} ${period}`;
+ main
 }
 function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function fmtDate(str) { return new Date(str+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
@@ -769,6 +784,7 @@ function updatePreview() {
   const show = selectedSlots.length>0 && dv;
   document.getElementById('step1-summary').style.display = show?'block':'none';
   if (!show) return;
+ codex/fix-issues-on-website-code-7hvw5r
   const s=[...selectedSlots].sort((a,b)=>a-b);
   const bill = getBillingDetails(s.length);
   document.getElementById('prev-date').textContent = fmtDate(dv);
@@ -794,6 +810,13 @@ function handleDiscountInput() {
   updatePreview();
   fillSummary();
   fillConfirm();
+
+  const s=[...selectedSlots].sort((a,b)=>a-b), durSlots=s.length, durHours=durSlots/2, total=durHours*200;
+  document.getElementById('prev-date').textContent = fmtDate(dv);
+  document.getElementById('prev-time').textContent = `${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+  document.getElementById('prev-dur').textContent = `${durHours % 1 === 0 ? durHours : durHours.toFixed(1)} hour${durHours!==1?'s':''}`;
+  document.getElementById('prev-total').textContent = `₹${total.toLocaleString('en-IN')}`;
+main
 }
 
 function goStep(n) {
@@ -815,6 +838,7 @@ function goStep(n) {
 }
 
 function fillSummary() {
+codex/fix-issues-on-website-code-7hvw5r
   const dv=document.getElementById('book-date').value;
   if (!dv || selectedSlots.length===0) return;
   const s=[...selectedSlots].sort((a,b)=>a-b);
@@ -825,6 +849,13 @@ function fillSummary() {
   document.getElementById('sum-bill-dur').textContent=`${bill.billedHours} hour${bill.billedHours!==1?'s':''} × ₹${RATE_PER_HOUR}`;
   document.getElementById('sum-discount').textContent=bill.discountAmount>0?`-₹${bill.discountAmount.toLocaleString('en-IN')}`:'₹0';
   document.getElementById('sum-total').textContent=`₹${bill.finalTotal.toLocaleString('en-IN')}`;
+
+  const dv=document.getElementById('book-date').value, s=[...selectedSlots].sort((a,b)=>a-b), durSlots=s.length, durHours=durSlots/2, total=durHours*200;
+  document.getElementById('sum-date').textContent=fmtDate(dv);
+  document.getElementById('sum-time').textContent=`${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+  document.getElementById('sum-dur').textContent=`${durHours % 1 === 0 ? durHours : durHours.toFixed(1)} hour${durHours!==1?'s':''}`;
+  document.getElementById('sum-total').textContent=`₹${total.toLocaleString('en-IN')}`;
+ main
 }
 
 function fillConfirm() {
@@ -844,9 +875,14 @@ async function confirmBooking() {
 
   const dv=document.getElementById('book-date').value;
   const s=[...selectedSlots].sort((a,b)=>a-b);
+codex/fix-issues-on-website-code-7hvw5r
   const bill = getBillingDetails(s.length);
   const dur=bill.durationHours, total=bill.finalTotal;
   const timeLabel=formatSelectedRange(s[0], s[s.length-1]+1);
+
+  const durSlots=s.length, dur=durSlots/2, total=dur*200;
+  const timeLabel=`${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+ main
   const name=document.getElementById('bk-name').value.trim();
   const phone=document.getElementById('bk-phone').value.trim();
   const discountCode=(document.getElementById('bk-discount').value||'').trim().toUpperCase();
