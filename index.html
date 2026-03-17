@@ -975,4 +975,4 @@ function exportCSV() {
 }
 
 
-// \u2500\u2500 INIT \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html> ```  ---  Also do this second fix in the same session:  **Find:** ``` <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false"> ```  **Replace with:** ``` <script data-cfasync="false">
