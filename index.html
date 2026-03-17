@@ -681,7 +681,7 @@ async function loadBookings() {
   if (data) bookings = data.map(b => ({
     id: b.id,
     name: b.name, phone: b.phone, email: b.email||'',
-    date: b.date, slots: b.slots,
+    date: b.date, slots: Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [],
     timeLabel: b.time_label,
     duration: b.duration, amount: b.amount,
     purpose: b.purpose||'Not specified',
@@ -691,7 +691,11 @@ async function loadBookings() {
 function getBookedHours(dateStr) {
   return bookings
     .filter(b => b.date===dateStr)
-    .flatMap(b => (b.slots||[]).flatMap(slot => slot < 24 ? [slot * 2, slot * 2 + 1] : [slot]));
+    .flatMap(b => {
+      const slots = (b.slots||[]).map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v));
+      const isLegacyHourly = Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
+      return isLegacyHourly ? slots.flatMap(slot => [slot * 2, slot * 2 + 1]) : slots;
+    });
 }
 
 // ── UTILS ────────────────────────────────────────────────────
@@ -725,6 +729,13 @@ function getBillingDetails(slotCount) {
 function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function fmtDate(str) { return new Date(str+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
 function fmtDT(iso) { return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function normalizeDateValue(raw) {
+  const val = (raw || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
+  const m = val.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  return val;
+}
 
 // ── ROUTING ──────────────────────────────────────────────────
 window.showPage = function showPage(name) {
@@ -745,7 +756,7 @@ function switchTab(btn,id) {
 // ── BOOKING SLOTS ────────────────────────────────────────────
 let selectedSlots = [];
 function renderSlots() {
-  const dv = document.getElementById('book-date').value;
+  const dv = normalizeDateValue(document.getElementById('book-date').value);
   if (!dv) return;
   document.getElementById('slots-section').style.display='block';
   selectedSlots = [];
@@ -780,7 +791,7 @@ function toggleSlot(h) {
 }
 
 function updatePreview() {
-  const dv = document.getElementById('book-date').value;
+  const dv = normalizeDateValue(document.getElementById('book-date').value);
   const show = selectedSlots.length>0 && dv;
   document.getElementById('step1-summary').style.display = show?'block':'none';
   if (!show) return;
@@ -813,7 +824,8 @@ function handleDiscountInput() {
 
 function goStep(n) {
   if (n===2) {
-    if (!document.getElementById('book-date').value) { alert('Please select a date.'); return; }
+    const selectedDate = normalizeDateValue(document.getElementById('book-date').value);
+    if (!selectedDate) { alert('Please select a date.'); return; }
     if (selectedSlots.length===0) { alert('Please select at least one time slot.'); return; }
     fillSummary();
   }
@@ -830,7 +842,7 @@ function goStep(n) {
 }
 
 function fillSummary() {
-  const dv=document.getElementById('book-date').value;
+  const dv=normalizeDateValue(document.getElementById('book-date').value);
   if (!dv || selectedSlots.length===0) return;
   const s=[...selectedSlots].sort((a,b)=>a-b);
   const bill = getBillingDetails(s.length);
@@ -857,7 +869,12 @@ async function confirmBooking() {
   const btn = document.querySelector('#book-step3 .btn-book:last-child');
   btn.textContent = '⏳ Saving...'; btn.disabled = true;
 
-  const dv=document.getElementById('book-date').value;
+  const dv=normalizeDateValue(document.getElementById('book-date').value);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dv)) {
+    alert('Please enter a valid date.');
+    btn.textContent = '✅ Confirm Booking'; btn.disabled = false;
+    return;
+  }
   const s=[...selectedSlots].sort((a,b)=>a-b);
   const bill = getBillingDetails(s.length);
   const dur=bill.durationHours, total=bill.finalTotal;
