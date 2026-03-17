@@ -168,6 +168,8 @@
   .summary-row.total .s-value { font-size:20px; color:var(--blue); font-family:'Bebas Neue',sans-serif; }
   .btn-book { width:100%; padding:16px; background:var(--blue); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.2s; }
   .btn-book:hover { background:var(--blue-dark); transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,109,196,0.35); }
+  .action-row { display:flex; gap:12px; max-width:480px; }
+  .btn-book-secondary { flex:0 0 110px; background:var(--light); color:var(--black); }
 
   /* ADMIN */
   .admin-hero { background:var(--black); padding:52px 5% 36px; position:relative; overflow:hidden; }
@@ -242,13 +244,27 @@
 
 
   @media(max-width:768px){
-    .nav-links { display:none; }
+    nav { padding:0 14px; }
+    .nav-logo img { height:42px; }
+    .nav-links { display:flex; gap:0; }
+    .nav-links li:not(:last-child) { display:none; }
+    .nav-cta { padding:8px 12px; font-size:12px; white-space:nowrap; }
     .hero-content { flex-direction:column; padding:40px 5%; }
+    .hero-h1 { font-size:clamp(42px,16vw,72px); }
     .hero-right { flex:none; width:100%; }
     .stat-row { grid-template-columns:1fr; }
     .why-grid,.contact-grid,.footer-main { grid-template-columns:1fr; gap:28px; }
-    .hours-grid { grid-template-columns:repeat(4,1fr); }
+    .booking-hero h2 { font-size:40px; }
+    .booking-steps { gap:8px; padding-bottom:20px; margin-bottom:24px; }
+    .step { font-size:12px; }
+    .step-arrow { display:none; }
+    .hours-grid { grid-template-columns:repeat(3,1fr); }
+    .hour-slot { font-size:13px; padding:12px 8px; min-height:44px; display:flex; align-items:center; justify-content:center; }
     .date-row { grid-template-columns:1fr; }
+    .summary-row { flex-direction:column; align-items:flex-start; gap:2px; }
+    .summary-row .s-value { text-align:left; }
+    .action-row { flex-direction:column; }
+    .btn-book-secondary { flex:1 1 auto; }
     .admin-filters { flex-direction:column; align-items:stretch; }
     .bookings-table { font-size:12px; }
     .bookings-table th,.bookings-table td { padding:10px 10px; }
@@ -481,8 +497,8 @@
           <div class="summary-row"><span class="s-label">Duration</span><span class="s-value" id="sum-dur">—</span></div>
           <div class="summary-row total"><span class="s-label">Total (excl. GST)</span><span class="s-value" id="sum-total">—</span></div>
         </div>
-        <div style="display:flex;gap:12px;max-width:480px">
-          <button class="btn-book" style="flex:0 0 110px;background:var(--light);color:var(--black)" onclick="goStep(1)">← Back</button>
+        <div class="action-row">
+          <button class="btn-book btn-book-secondary" onclick="goStep(1)">← Back</button>
           <button class="btn-book" onclick="goStep(3)">Review &amp; Confirm →</button>
         </div>
       </div>
@@ -496,8 +512,8 @@
           <div class="summary-row total"><span class="s-label">Amount Payable (+ GST)</span><span class="s-value" id="conf-total">—</span></div>
         </div>
         <p style="font-size:13px;color:var(--gray);max-width:480px;margin-bottom:24px;line-height:1.6">💡 Payment collected at venue. Our team will confirm via WhatsApp/call shortly.</p>
-        <div style="display:flex;gap:12px;max-width:480px">
-          <button class="btn-book" style="flex:0 0 110px;background:var(--light);color:var(--black)" onclick="goStep(2)">← Back</button>
+        <div class="action-row">
+          <button class="btn-book btn-book-secondary" onclick="goStep(2)">← Back</button>
           <button class="btn-book" onclick="confirmBooking()">✅ Confirm Booking</button>
         </div>
       </div>
