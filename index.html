@@ -168,6 +168,8 @@
   .summary-row.total .s-value { font-size:20px; color:var(--blue); font-family:'Bebas Neue',sans-serif; }
   .btn-book { width:100%; padding:16px; background:var(--blue); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.2s; }
   .btn-book:hover { background:var(--blue-dark); transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,109,196,0.35); }
+  .action-row { display:flex; gap:12px; max-width:480px; }
+  .btn-book-secondary { flex:0 0 110px; background:var(--light); color:var(--black); }
 
   /* ADMIN */
   .admin-hero { background:var(--black); padding:52px 5% 36px; position:relative; overflow:hidden; }
@@ -242,13 +244,27 @@
 
 
   @media(max-width:768px){
-    .nav-links { display:none; }
+    nav { padding:0 14px; }
+    .nav-logo img { height:42px; }
+    .nav-links { display:flex; gap:0; }
+    .nav-links li:not(:last-child) { display:none; }
+    .nav-cta { padding:8px 12px; font-size:12px; white-space:nowrap; }
     .hero-content { flex-direction:column; padding:40px 5%; }
+    .hero-h1 { font-size:clamp(42px,16vw,72px); }
     .hero-right { flex:none; width:100%; }
     .stat-row { grid-template-columns:1fr; }
     .why-grid,.contact-grid,.footer-main { grid-template-columns:1fr; gap:28px; }
-    .hours-grid { grid-template-columns:repeat(4,1fr); }
+    .booking-hero h2 { font-size:40px; }
+    .booking-steps { gap:8px; padding-bottom:20px; margin-bottom:24px; }
+    .step { font-size:12px; }
+    .step-arrow { display:none; }
+    .hours-grid { grid-template-columns:repeat(3,1fr); }
+    .hour-slot { font-size:13px; padding:12px 8px; min-height:44px; display:flex; align-items:center; justify-content:center; }
     .date-row { grid-template-columns:1fr; }
+    .summary-row { flex-direction:column; align-items:flex-start; gap:2px; }
+    .summary-row .s-value { text-align:left; }
+    .action-row { flex-direction:column; }
+    .btn-book-secondary { flex:1 1 auto; }
     .admin-filters { flex-direction:column; align-items:stretch; }
     .bookings-table { font-size:12px; }
     .bookings-table th,.bookings-table td { padding:10px 10px; }
@@ -445,20 +461,21 @@
       <div id="book-step1">
         <div class="form-section"><label>Select Date</label><input type="date" class="form-control" id="book-date" style="max-width:300px" onchange="renderSlots()"></div>
         <div class="form-section" id="slots-section" style="display:none">
-          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive hours)</span></label>
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours · billed by full hour)</span></label>
           <div class="hours-grid" id="hours-grid"></div>
           <div class="legend">
             <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
             <div class="legend-item"><div class="legend-dot sel"></div> Selected</div>
             <div class="legend-item"><div class="legend-dot bkd"></div> Already Booked</div>
           </div>
-          <div id="slot-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">⚠ Please select consecutive hours only.</div>
+          <div id="slot-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">⚠ Please select consecutive half-hour slots only.</div>
         </div>
         <div id="step1-summary" style="display:none;margin-bottom:28px">
           <div class="summary-box"><h4>BOOKING PREVIEW</h4>
             <div class="summary-row"><span class="s-label">Date</span><span class="s-value" id="prev-date">—</span></div>
             <div class="summary-row"><span class="s-label">Time</span><span class="s-value" id="prev-time">—</span></div>
             <div class="summary-row"><span class="s-label">Duration</span><span class="s-value" id="prev-dur">—</span></div>
+            <div class="summary-row"><span class="s-label">Billing Duration</span><span class="s-value" id="prev-bill-dur">—</span></div>
             <div class="summary-row total"><span class="s-label">Total (excl. GST)</span><span class="s-value" id="prev-total">—</span></div>
           </div>
           <button class="btn-book" onclick="goStep(2)">Continue →</button>
@@ -475,14 +492,21 @@
             <option value="">Select purpose</option><option>Client Meeting</option><option>Team Discussion</option><option>Interview / HR</option><option>Workshop / Training</option><option>Video Call / Conference</option><option>Other</option>
           </select>
         </div>
+        <div class="form-section" style="max-width:480px">
+          <label>Silver Crown Resident Discount Code (optional)</label>
+          <input type="text" class="form-control" id="bk-discount" placeholder="Enter resident code" oninput="handleDiscountInput()">
+          <div id="discount-note" style="font-size:12px;color:var(--gray);margin-top:8px">No discount applied.</div>
+        </div>
         <div class="summary-box" style="max-width:480px"><h4>BOOKING SUMMARY</h4>
           <div class="summary-row"><span class="s-label">Date</span><span class="s-value" id="sum-date">—</span></div>
           <div class="summary-row"><span class="s-label">Time</span><span class="s-value" id="sum-time">—</span></div>
           <div class="summary-row"><span class="s-label">Duration</span><span class="s-value" id="sum-dur">—</span></div>
+          <div class="summary-row"><span class="s-label">Billing Duration</span><span class="s-value" id="sum-bill-dur">—</span></div>
+          <div class="summary-row"><span class="s-label">Discount</span><span class="s-value" id="sum-discount">—</span></div>
           <div class="summary-row total"><span class="s-label">Total (excl. GST)</span><span class="s-value" id="sum-total">—</span></div>
         </div>
-        <div style="display:flex;gap:12px;max-width:480px">
-          <button class="btn-book" style="flex:0 0 110px;background:var(--light);color:var(--black)" onclick="goStep(1)">← Back</button>
+        <div class="action-row">
+          <button class="btn-book btn-book-secondary" onclick="goStep(1)">← Back</button>
           <button class="btn-book" onclick="goStep(3)">Review &amp; Confirm →</button>
         </div>
       </div>
@@ -493,11 +517,13 @@
           <div class="summary-row"><span class="s-label">Date</span><span class="s-value" id="conf-date">—</span></div>
           <div class="summary-row"><span class="s-label">Time</span><span class="s-value" id="conf-time">—</span></div>
           <div class="summary-row"><span class="s-label">Duration</span><span class="s-value" id="conf-dur">—</span></div>
+          <div class="summary-row"><span class="s-label">Billing Duration</span><span class="s-value" id="conf-bill-dur">—</span></div>
+          <div class="summary-row"><span class="s-label">Discount</span><span class="s-value" id="conf-discount">—</span></div>
           <div class="summary-row total"><span class="s-label">Amount Payable (+ GST)</span><span class="s-value" id="conf-total">—</span></div>
         </div>
         <p style="font-size:13px;color:var(--gray);max-width:480px;margin-bottom:24px;line-height:1.6">💡 Payment collected at venue. Our team will confirm via WhatsApp/call shortly.</p>
-        <div style="display:flex;gap:12px;max-width:480px">
-          <button class="btn-book" style="flex:0 0 110px;background:var(--light);color:var(--black)" onclick="goStep(2)">← Back</button>
+        <div class="action-row">
+          <button class="btn-book btn-book-secondary" onclick="goStep(2)">← Back</button>
           <button class="btn-book" onclick="confirmBooking()">✅ Confirm Booking</button>
         </div>
       </div>
@@ -593,7 +619,7 @@
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false">
+<script data-cfasync="false">
 // ── CONFIG ────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://tgnosimygldyeqodouky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnbm9zaW15Z2xkeWVxb2RvdWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MTY5NzksImV4cCI6MjA4OTI5Mjk3OX0.izY8rmkQ7gkxujUG38T-wyZfucSf6Usn2FFPY1mxRaE';
@@ -647,11 +673,40 @@ async function loadBookings() {
     bookedAt: b.booked_at
   }));
 }
-function getBookedHours(dateStr) { return bookings.filter(b => b.date===dateStr).flatMap(b=>b.slots); }
+function getBookedHours(dateStr) {
+  return bookings
+    .filter(b => b.date===dateStr)
+    .flatMap(b => (b.slots||[]).flatMap(slot => slot < 24 ? [slot * 2, slot * 2 + 1] : [slot]));
+}
 
 // ── UTILS ────────────────────────────────────────────────────
 const pad = n => String(n).padStart(2,'0');
+const RATE_PER_HOUR = 200;
+const SILVER_CROWN_CODE = 'SILVERCROWN';
+const SILVER_CROWN_DISCOUNT = 10;
 function formatHour(h) { const p=h<12?'AM':'PM'; const d=h===0?12:h>12?h-12:h; return `${d}${p}`; }
+function formatClock(totalMinutes) {
+  const minsDay = ((totalMinutes % (24*60)) + 24*60) % (24*60);
+  const h24 = Math.floor(minsDay / 60);
+  const mins = minsDay % 60;
+  const period = h24 < 12 ? 'AM' : 'PM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return mins === 0 ? `${h12} ${period}` : `${h12}:${String(mins).padStart(2,'0')} ${period}`;
+}
+function formatSlot(slot) {
+  return `${formatClock(slot * 30)} to ${formatClock((slot + 1) * 30)}`;
+}
+function formatSelectedRange(startSlot, endSlotExclusive) {
+  return `${formatClock(startSlot * 30)} to ${formatClock(endSlotExclusive * 30)}`;
+}
+function getBillingDetails(slotCount) {
+  const durationHours = slotCount / 2;
+  const billedHours = Math.max(1, Math.ceil(durationHours));
+  const baseTotal = billedHours * RATE_PER_HOUR;
+  const codeInput = (document.getElementById('bk-discount')?.value || '').trim().toUpperCase();
+  const discountAmount = codeInput === SILVER_CROWN_CODE ? Math.round((baseTotal * SILVER_CROWN_DISCOUNT) / 100) : 0;
+  return { durationHours, billedHours, baseTotal, discountAmount, finalTotal: baseTotal - discountAmount, discountCode: codeInput };
+}
 function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function fmtDate(str) { return new Date(str+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
 function fmtDT(iso) { return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
@@ -683,12 +738,12 @@ function renderSlots() {
   const grid = document.getElementById('hours-grid');
   grid.innerHTML = '';
   const booked = getBookedHours(dv);
-  for (let h=0; h<24; h++) {
+  for (let h=0; h<48; h++) {
     const isB = booked.includes(h);
     const div = document.createElement('div');
     div.className = 'hour-slot'+(isB?' booked':'');
-    div.textContent = formatHour(h);
-    div.dataset.hour = h;
+    div.textContent = formatSlot(h);
+    div.dataset.slot = h;
     if (!isB) div.onclick = ()=>toggleSlot(h,div);
     grid.appendChild(div);
   }
@@ -705,7 +760,7 @@ function toggleSlot(h) {
     if (!valid && selectedSlots.length>0) { document.getElementById('slot-error').style.display='block'; return; }
     selectedSlots = test;
   }
-  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.hour))));
+  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.slot))));
   updatePreview();
 }
 
@@ -714,11 +769,31 @@ function updatePreview() {
   const show = selectedSlots.length>0 && dv;
   document.getElementById('step1-summary').style.display = show?'block':'none';
   if (!show) return;
-  const s=[...selectedSlots].sort((a,b)=>a-b), dur=s.length, total=dur*200;
+  const s=[...selectedSlots].sort((a,b)=>a-b);
+  const bill = getBillingDetails(s.length);
   document.getElementById('prev-date').textContent = fmtDate(dv);
-  document.getElementById('prev-time').textContent = `${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
-  document.getElementById('prev-dur').textContent = `${dur} hour${dur>1?'s':''}`;
-  document.getElementById('prev-total').textContent = `₹${total.toLocaleString('en-IN')}`;
+  document.getElementById('prev-time').textContent = formatSelectedRange(s[0], s[s.length-1]+1);
+  document.getElementById('prev-dur').textContent = `${bill.durationHours % 1 === 0 ? bill.durationHours : bill.durationHours.toFixed(1)} hour${bill.durationHours!==1?'s':''}`;
+  document.getElementById('prev-bill-dur').textContent = `${bill.billedHours} hour${bill.billedHours!==1?'s':''}`;
+  document.getElementById('prev-total').textContent = `₹${bill.finalTotal.toLocaleString('en-IN')}`;
+}
+
+function handleDiscountInput() {
+  const note = document.getElementById('discount-note');
+  const code = (document.getElementById('bk-discount').value || '').trim().toUpperCase();
+  if (!code) {
+    note.textContent = 'No discount applied.';
+    note.style.color = 'var(--gray)';
+  } else if (code === SILVER_CROWN_CODE) {
+    note.textContent = `✅ Silver Crown resident discount applied (${SILVER_CROWN_DISCOUNT}% off).`;
+    note.style.color = '#166534';
+  } else {
+    note.textContent = '❌ Invalid code. Discount is only for Silver Crown residents.';
+    note.style.color = '#ef4444';
+  }
+  updatePreview();
+  fillSummary();
+  fillConfirm();
 }
 
 function goStep(n) {
@@ -740,16 +815,26 @@ function goStep(n) {
 }
 
 function fillSummary() {
-  const dv=document.getElementById('book-date').value, s=[...selectedSlots].sort((a,b)=>a-b), dur=s.length, total=dur*200;
+  const dv=document.getElementById('book-date').value;
+  if (!dv || selectedSlots.length===0) return;
+  const s=[...selectedSlots].sort((a,b)=>a-b);
+  const bill = getBillingDetails(s.length);
   document.getElementById('sum-date').textContent=fmtDate(dv);
-  document.getElementById('sum-time').textContent=`${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
-  document.getElementById('sum-dur').textContent=`${dur} hour${dur>1?'s':''}`;
-  document.getElementById('sum-total').textContent=`₹${total.toLocaleString('en-IN')}`;
+  document.getElementById('sum-time').textContent=formatSelectedRange(s[0], s[s.length-1]+1);
+  document.getElementById('sum-dur').textContent=`${bill.durationHours % 1 === 0 ? bill.durationHours : bill.durationHours.toFixed(1)} hour${bill.durationHours!==1?'s':''}`;
+  document.getElementById('sum-bill-dur').textContent=`${bill.billedHours} hour${bill.billedHours!==1?'s':''} × ₹${RATE_PER_HOUR}`;
+  document.getElementById('sum-discount').textContent=bill.discountAmount>0?`-₹${bill.discountAmount.toLocaleString('en-IN')}`:'₹0';
+  document.getElementById('sum-total').textContent=`₹${bill.finalTotal.toLocaleString('en-IN')}`;
 }
 
 function fillConfirm() {
-  ['conf-name','conf-phone','conf-date','conf-time','conf-dur','conf-total'].forEach((id,i)=>{
-    document.getElementById(id).textContent = document.getElementById(['bk-name','bk-phone','sum-date','sum-time','sum-dur','sum-total'][i]).value||document.getElementById(['bk-name','bk-phone','sum-date','sum-time','sum-dur','sum-total'][i]).textContent;
+  const map = [
+    ['conf-name','bk-name'], ['conf-phone','bk-phone'], ['conf-date','sum-date'], ['conf-time','sum-time'],
+    ['conf-dur','sum-dur'], ['conf-bill-dur','sum-bill-dur'], ['conf-discount','sum-discount'], ['conf-total','sum-total']
+  ];
+  map.forEach(([to, from]) => {
+    const src = document.getElementById(from);
+    document.getElementById(to).textContent = src.value || src.textContent;
   });
 }
 
@@ -759,11 +844,14 @@ async function confirmBooking() {
 
   const dv=document.getElementById('book-date').value;
   const s=[...selectedSlots].sort((a,b)=>a-b);
-  const dur=s.length, total=dur*200;
-  const timeLabel=`${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
+  const bill = getBillingDetails(s.length);
+  const dur=bill.durationHours, total=bill.finalTotal;
+  const timeLabel=formatSelectedRange(s[0], s[s.length-1]+1);
   const name=document.getElementById('bk-name').value.trim();
   const phone=document.getElementById('bk-phone').value.trim();
-  const purpose=document.getElementById('bk-purpose').value||'Not specified';
+  const discountCode=(document.getElementById('bk-discount').value||'').trim().toUpperCase();
+  const purposeBase=document.getElementById('bk-purpose').value||'Not specified';
+  const purpose=discountCode===SILVER_CROWN_CODE ? `${purposeBase} | Silver Crown Discount (${SILVER_CROWN_DISCOUNT}% off)` : purposeBase;
 
   // Save to Supabase
   const result = await sbFetch('bookings', 'POST', {
@@ -793,9 +881,7 @@ document.querySelectorAll('.fade-in').forEach(el=>_obs.observe(el));
 📞 Phone: ${phone}
 📅 Date: ${fmtDate(dv)}
 ⏰ Time: ${timeLabel}
-⏱ Duration: ${dur} hour${dur>1?'s':''}
-💰 Amount: ₹${total.toLocaleString('en-IN')} + GST
-📋 Purpose: ${purpose}`;
+⏱ Duration: ${dur} hour${dur>1?'s':''} (Billed: ${bill.billedHours} hour${bill.billedHours>1?'s':''})\n🎟 Discount: ${bill.discountAmount>0?`-₹${bill.discountAmount.toLocaleString('en-IN')} (${SILVER_CROWN_CODE})`:'₹0'}\n💰 Amount: ₹${total.toLocaleString('en-IN')} + GST\n📋 Purpose: ${purpose}`;
   sendNotification(tgMsg);
 
   btn.textContent = '✅ Confirm Booking'; btn.disabled = false;
@@ -805,6 +891,8 @@ document.querySelectorAll('.fade-in').forEach(el=>_obs.observe(el));
     <div class="modal-detail-row"><span class="ml">Phone</span><strong>${phone}</strong></div>
     <div class="modal-detail-row"><span class="ml">Date</span><strong>${fmtDate(dv)}</strong></div>
     <div class="modal-detail-row"><span class="ml">Time</span><strong>${timeLabel}</strong></div>
+    <div class="modal-detail-row"><span class="ml">Billing</span><strong>${bill.billedHours} hour${bill.billedHours>1?'s':''} × ₹${RATE_PER_HOUR}</strong></div>
+    <div class="modal-detail-row"><span class="ml">Discount</span><strong>${bill.discountAmount>0?`-₹${bill.discountAmount.toLocaleString('en-IN')}`:'₹0'}</strong></div>
     <div class="modal-detail-row"><span class="ml">Total</span><strong>₹${total.toLocaleString('en-IN')} + GST</strong></div>
   `;
   document.getElementById('success-modal').classList.add('show');
@@ -817,8 +905,9 @@ function closeModal() {
   document.getElementById('book-date').value='';
   document.getElementById('slots-section').style.display='none';
   document.getElementById('step1-summary').style.display='none';
-  ['bk-name','bk-phone','bk-email'].forEach(id=>document.getElementById(id).value='');
+  ['bk-name','bk-phone','bk-email','bk-discount'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('bk-purpose').value='';
+  handleDiscountInput();
 }
 
 // ── ENQUIRY ──────────────────────────────────────────────────
@@ -927,7 +1016,7 @@ function renderAdminTable() {
       <td><a href="tel:${b.phone}" style="color:var(--blue);text-decoration:none;font-family:'Space Mono',monospace;font-size:13px">${b.phone}</a></td>
       <td><strong>${b.date}</strong><br>${badge}</td>
       <td style="font-family:'Space Mono',monospace;font-size:12px">${b.timeLabel}</td>
-      <td style="text-align:center">${b.duration}h</td>
+      <td style="text-align:center">${b.duration} hr</td>
       <td><strong style="color:var(--blue)">₹${b.amount.toLocaleString('en-IN')}</strong><br><span style="font-size:11px;color:var(--gray)">+GST</span></td>
       <td style="font-size:12px;color:var(--gray);max-width:120px">${b.purpose}</td>
       <td style="font-size:12px;color:var(--gray);white-space:nowrap">${fmtDT(b.bookedAt)}</td>
@@ -975,4 +1064,4 @@ function exportCSV() {
 }
 
 
-const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html> ```  ---  Also do this second fix in the same session:  **Find:** ``` <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false"> ```  **Replace with:** ``` <script data-cfasync="false">
+const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html>
