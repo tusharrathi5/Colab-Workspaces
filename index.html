@@ -445,14 +445,14 @@
       <div id="book-step1">
         <div class="form-section"><label>Select Date</label><input type="date" class="form-control" id="book-date" style="max-width:300px" onchange="renderSlots()"></div>
         <div class="form-section" id="slots-section" style="display:none">
-          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive hours)</span></label>
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours)</span></label>
           <div class="hours-grid" id="hours-grid"></div>
           <div class="legend">
             <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
             <div class="legend-item"><div class="legend-dot sel"></div> Selected</div>
             <div class="legend-item"><div class="legend-dot bkd"></div> Already Booked</div>
           </div>
-          <div id="slot-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">⚠ Please select consecutive hours only.</div>
+          <div id="slot-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">⚠ Please select consecutive half-hour slots only.</div>
         </div>
         <div id="step1-summary" style="display:none;margin-bottom:28px">
           <div class="summary-box"><h4>BOOKING PREVIEW</h4>
@@ -593,7 +593,7 @@
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false">
+<script data-cfasync="false">
 // ── CONFIG ────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://tgnosimygldyeqodouky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnbm9zaW15Z2xkeWVxb2RvdWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MTY5NzksImV4cCI6MjA4OTI5Mjk3OX0.izY8rmkQ7gkxujUG38T-wyZfucSf6Usn2FFPY1mxRaE';
@@ -647,11 +647,23 @@ async function loadBookings() {
     bookedAt: b.booked_at
   }));
 }
-function getBookedHours(dateStr) { return bookings.filter(b => b.date===dateStr).flatMap(b=>b.slots); }
+function getBookedHours(dateStr) {
+  return bookings
+    .filter(b => b.date===dateStr)
+    .flatMap(b => (b.slots||[]).flatMap(slot => slot < 24 ? [slot * 2, slot * 2 + 1] : [slot]));
+}
 
 // ── UTILS ────────────────────────────────────────────────────
 const pad = n => String(n).padStart(2,'0');
 function formatHour(h) { const p=h<12?'AM':'PM'; const d=h===0?12:h>12?h-12:h; return `${d}${p}`; }
+function formatSlot(slot) {
+  const totalMinutes = slot * 30;
+  const h24 = Math.floor(totalMinutes / 60) % 24;
+  const mins = totalMinutes % 60;
+  const period = h24 < 12 ? 'AM' : 'PM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(mins).padStart(2,'0')} ${period}`;
+}
 function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function fmtDate(str) { return new Date(str+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
 function fmtDT(iso) { return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
@@ -683,12 +695,12 @@ function renderSlots() {
   const grid = document.getElementById('hours-grid');
   grid.innerHTML = '';
   const booked = getBookedHours(dv);
-  for (let h=0; h<24; h++) {
+  for (let h=0; h<48; h++) {
     const isB = booked.includes(h);
     const div = document.createElement('div');
     div.className = 'hour-slot'+(isB?' booked':'');
-    div.textContent = formatHour(h);
-    div.dataset.hour = h;
+    div.textContent = formatSlot(h);
+    div.dataset.slot = h;
     if (!isB) div.onclick = ()=>toggleSlot(h,div);
     grid.appendChild(div);
   }
@@ -705,7 +717,7 @@ function toggleSlot(h) {
     if (!valid && selectedSlots.length>0) { document.getElementById('slot-error').style.display='block'; return; }
     selectedSlots = test;
   }
-  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.hour))));
+  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.slot))));
   updatePreview();
 }
 
@@ -714,10 +726,10 @@ function updatePreview() {
   const show = selectedSlots.length>0 && dv;
   document.getElementById('step1-summary').style.display = show?'block':'none';
   if (!show) return;
-  const s=[...selectedSlots].sort((a,b)=>a-b), dur=s.length, total=dur*200;
+  const s=[...selectedSlots].sort((a,b)=>a-b), durSlots=s.length, durHours=durSlots/2, total=durHours*200;
   document.getElementById('prev-date').textContent = fmtDate(dv);
-  document.getElementById('prev-time').textContent = `${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
-  document.getElementById('prev-dur').textContent = `${dur} hour${dur>1?'s':''}`;
+  document.getElementById('prev-time').textContent = `${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+  document.getElementById('prev-dur').textContent = `${durHours % 1 === 0 ? durHours : durHours.toFixed(1)} hour${durHours!==1?'s':''}`;
   document.getElementById('prev-total').textContent = `₹${total.toLocaleString('en-IN')}`;
 }
 
@@ -740,10 +752,10 @@ function goStep(n) {
 }
 
 function fillSummary() {
-  const dv=document.getElementById('book-date').value, s=[...selectedSlots].sort((a,b)=>a-b), dur=s.length, total=dur*200;
+  const dv=document.getElementById('book-date').value, s=[...selectedSlots].sort((a,b)=>a-b), durSlots=s.length, durHours=durSlots/2, total=durHours*200;
   document.getElementById('sum-date').textContent=fmtDate(dv);
-  document.getElementById('sum-time').textContent=`${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
-  document.getElementById('sum-dur').textContent=`${dur} hour${dur>1?'s':''}`;
+  document.getElementById('sum-time').textContent=`${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+  document.getElementById('sum-dur').textContent=`${durHours % 1 === 0 ? durHours : durHours.toFixed(1)} hour${durHours!==1?'s':''}`;
   document.getElementById('sum-total').textContent=`₹${total.toLocaleString('en-IN')}`;
 }
 
@@ -759,8 +771,8 @@ async function confirmBooking() {
 
   const dv=document.getElementById('book-date').value;
   const s=[...selectedSlots].sort((a,b)=>a-b);
-  const dur=s.length, total=dur*200;
-  const timeLabel=`${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
+  const durSlots=s.length, dur=durSlots/2, total=dur*200;
+  const timeLabel=`${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
   const name=document.getElementById('bk-name').value.trim();
   const phone=document.getElementById('bk-phone').value.trim();
   const purpose=document.getElementById('bk-purpose').value||'Not specified';
@@ -927,7 +939,7 @@ function renderAdminTable() {
       <td><a href="tel:${b.phone}" style="color:var(--blue);text-decoration:none;font-family:'Space Mono',monospace;font-size:13px">${b.phone}</a></td>
       <td><strong>${b.date}</strong><br>${badge}</td>
       <td style="font-family:'Space Mono',monospace;font-size:12px">${b.timeLabel}</td>
-      <td style="text-align:center">${b.duration}h</td>
+      <td style="text-align:center">${b.duration} hr</td>
       <td><strong style="color:var(--blue)">₹${b.amount.toLocaleString('en-IN')}</strong><br><span style="font-size:11px;color:var(--gray)">+GST</span></td>
       <td style="font-size:12px;color:var(--gray);max-width:120px">${b.purpose}</td>
       <td style="font-size:12px;color:var(--gray);white-space:nowrap">${fmtDT(b.bookedAt)}</td>
@@ -975,4 +987,4 @@ function exportCSV() {
 }
 
 
-const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html> ```  ---  Also do this second fix in the same session:  **Find:** ``` <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false"> ```  **Replace with:** ``` <script data-cfasync="false">
+const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html>
