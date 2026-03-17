@@ -168,6 +168,8 @@
   .summary-row.total .s-value { font-size:20px; color:var(--blue); font-family:'Bebas Neue',sans-serif; }
   .btn-book { width:100%; padding:16px; background:var(--blue); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.2s; }
   .btn-book:hover { background:var(--blue-dark); transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,109,196,0.35); }
+  .action-row { display:flex; gap:12px; max-width:480px; }
+  .btn-book-secondary { flex:0 0 110px; background:var(--light); color:var(--black); }
 
   /* ADMIN */
   .admin-hero { background:var(--black); padding:52px 5% 36px; position:relative; overflow:hidden; }
@@ -242,13 +244,27 @@
 
 
   @media(max-width:768px){
-    .nav-links { display:none; }
+    nav { padding:0 14px; }
+    .nav-logo img { height:42px; }
+    .nav-links { display:flex; gap:0; }
+    .nav-links li:not(:last-child) { display:none; }
+    .nav-cta { padding:8px 12px; font-size:12px; white-space:nowrap; }
     .hero-content { flex-direction:column; padding:40px 5%; }
+    .hero-h1 { font-size:clamp(42px,16vw,72px); }
     .hero-right { flex:none; width:100%; }
     .stat-row { grid-template-columns:1fr; }
     .why-grid,.contact-grid,.footer-main { grid-template-columns:1fr; gap:28px; }
-    .hours-grid { grid-template-columns:repeat(4,1fr); }
+    .booking-hero h2 { font-size:40px; }
+    .booking-steps { gap:8px; padding-bottom:20px; margin-bottom:24px; }
+    .step { font-size:12px; }
+    .step-arrow { display:none; }
+    .hours-grid { grid-template-columns:repeat(3,1fr); }
+    .hour-slot { font-size:13px; padding:12px 8px; min-height:44px; display:flex; align-items:center; justify-content:center; }
     .date-row { grid-template-columns:1fr; }
+    .summary-row { flex-direction:column; align-items:flex-start; gap:2px; }
+    .summary-row .s-value { text-align:left; }
+    .action-row { flex-direction:column; }
+    .btn-book-secondary { flex:1 1 auto; }
     .admin-filters { flex-direction:column; align-items:stretch; }
     .bookings-table { font-size:12px; }
     .bookings-table th,.bookings-table td { padding:10px 10px; }
@@ -445,14 +461,14 @@
       <div id="book-step1">
         <div class="form-section"><label>Select Date</label><input type="date" class="form-control" id="book-date" style="max-width:300px" onchange="renderSlots()"></div>
         <div class="form-section" id="slots-section" style="display:none">
-          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive hours)</span></label>
+          <label>Select Time Slots <span style="color:var(--gray);font-size:12px;font-weight:400">(tap consecutive half-hours)</span></label>
           <div class="hours-grid" id="hours-grid"></div>
           <div class="legend">
             <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
             <div class="legend-item"><div class="legend-dot sel"></div> Selected</div>
             <div class="legend-item"><div class="legend-dot bkd"></div> Already Booked</div>
           </div>
-          <div id="slot-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">⚠ Please select consecutive hours only.</div>
+          <div id="slot-error" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">⚠ Please select consecutive half-hour slots only.</div>
         </div>
         <div id="step1-summary" style="display:none;margin-bottom:28px">
           <div class="summary-box"><h4>BOOKING PREVIEW</h4>
@@ -481,8 +497,8 @@
           <div class="summary-row"><span class="s-label">Duration</span><span class="s-value" id="sum-dur">—</span></div>
           <div class="summary-row total"><span class="s-label">Total (excl. GST)</span><span class="s-value" id="sum-total">—</span></div>
         </div>
-        <div style="display:flex;gap:12px;max-width:480px">
-          <button class="btn-book" style="flex:0 0 110px;background:var(--light);color:var(--black)" onclick="goStep(1)">← Back</button>
+        <div class="action-row">
+          <button class="btn-book btn-book-secondary" onclick="goStep(1)">← Back</button>
           <button class="btn-book" onclick="goStep(3)">Review &amp; Confirm →</button>
         </div>
       </div>
@@ -496,8 +512,8 @@
           <div class="summary-row total"><span class="s-label">Amount Payable (+ GST)</span><span class="s-value" id="conf-total">—</span></div>
         </div>
         <p style="font-size:13px;color:var(--gray);max-width:480px;margin-bottom:24px;line-height:1.6">💡 Payment collected at venue. Our team will confirm via WhatsApp/call shortly.</p>
-        <div style="display:flex;gap:12px;max-width:480px">
-          <button class="btn-book" style="flex:0 0 110px;background:var(--light);color:var(--black)" onclick="goStep(2)">← Back</button>
+        <div class="action-row">
+          <button class="btn-book btn-book-secondary" onclick="goStep(2)">← Back</button>
           <button class="btn-book" onclick="confirmBooking()">✅ Confirm Booking</button>
         </div>
       </div>
@@ -593,7 +609,7 @@
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false">
+<script data-cfasync="false">
 // ── CONFIG ────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://tgnosimygldyeqodouky.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnbm9zaW15Z2xkeWVxb2RvdWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MTY5NzksImV4cCI6MjA4OTI5Mjk3OX0.izY8rmkQ7gkxujUG38T-wyZfucSf6Usn2FFPY1mxRaE';
@@ -647,11 +663,23 @@ async function loadBookings() {
     bookedAt: b.booked_at
   }));
 }
-function getBookedHours(dateStr) { return bookings.filter(b => b.date===dateStr).flatMap(b=>b.slots); }
+function getBookedHours(dateStr) {
+  return bookings
+    .filter(b => b.date===dateStr)
+    .flatMap(b => (b.slots||[]).flatMap(slot => slot < 24 ? [slot * 2, slot * 2 + 1] : [slot]));
+}
 
 // ── UTILS ────────────────────────────────────────────────────
 const pad = n => String(n).padStart(2,'0');
 function formatHour(h) { const p=h<12?'AM':'PM'; const d=h===0?12:h>12?h-12:h; return `${d}${p}`; }
+function formatSlot(slot) {
+  const totalMinutes = slot * 30;
+  const h24 = Math.floor(totalMinutes / 60) % 24;
+  const mins = totalMinutes % 60;
+  const period = h24 < 12 ? 'AM' : 'PM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(mins).padStart(2,'0')} ${period}`;
+}
 function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function fmtDate(str) { return new Date(str+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
 function fmtDT(iso) { return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
@@ -683,12 +711,12 @@ function renderSlots() {
   const grid = document.getElementById('hours-grid');
   grid.innerHTML = '';
   const booked = getBookedHours(dv);
-  for (let h=0; h<24; h++) {
+  for (let h=0; h<48; h++) {
     const isB = booked.includes(h);
     const div = document.createElement('div');
     div.className = 'hour-slot'+(isB?' booked':'');
-    div.textContent = formatHour(h);
-    div.dataset.hour = h;
+    div.textContent = formatSlot(h);
+    div.dataset.slot = h;
     if (!isB) div.onclick = ()=>toggleSlot(h,div);
     grid.appendChild(div);
   }
@@ -705,7 +733,7 @@ function toggleSlot(h) {
     if (!valid && selectedSlots.length>0) { document.getElementById('slot-error').style.display='block'; return; }
     selectedSlots = test;
   }
-  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.hour))));
+  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.slot))));
   updatePreview();
 }
 
@@ -714,10 +742,10 @@ function updatePreview() {
   const show = selectedSlots.length>0 && dv;
   document.getElementById('step1-summary').style.display = show?'block':'none';
   if (!show) return;
-  const s=[...selectedSlots].sort((a,b)=>a-b), dur=s.length, total=dur*200;
+  const s=[...selectedSlots].sort((a,b)=>a-b), durSlots=s.length, durHours=durSlots/2, total=durHours*200;
   document.getElementById('prev-date').textContent = fmtDate(dv);
-  document.getElementById('prev-time').textContent = `${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
-  document.getElementById('prev-dur').textContent = `${dur} hour${dur>1?'s':''}`;
+  document.getElementById('prev-time').textContent = `${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+  document.getElementById('prev-dur').textContent = `${durHours % 1 === 0 ? durHours : durHours.toFixed(1)} hour${durHours!==1?'s':''}`;
   document.getElementById('prev-total').textContent = `₹${total.toLocaleString('en-IN')}`;
 }
 
@@ -740,10 +768,10 @@ function goStep(n) {
 }
 
 function fillSummary() {
-  const dv=document.getElementById('book-date').value, s=[...selectedSlots].sort((a,b)=>a-b), dur=s.length, total=dur*200;
+  const dv=document.getElementById('book-date').value, s=[...selectedSlots].sort((a,b)=>a-b), durSlots=s.length, durHours=durSlots/2, total=durHours*200;
   document.getElementById('sum-date').textContent=fmtDate(dv);
-  document.getElementById('sum-time').textContent=`${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
-  document.getElementById('sum-dur').textContent=`${dur} hour${dur>1?'s':''}`;
+  document.getElementById('sum-time').textContent=`${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
+  document.getElementById('sum-dur').textContent=`${durHours % 1 === 0 ? durHours : durHours.toFixed(1)} hour${durHours!==1?'s':''}`;
   document.getElementById('sum-total').textContent=`₹${total.toLocaleString('en-IN')}`;
 }
 
@@ -759,8 +787,8 @@ async function confirmBooking() {
 
   const dv=document.getElementById('book-date').value;
   const s=[...selectedSlots].sort((a,b)=>a-b);
-  const dur=s.length, total=dur*200;
-  const timeLabel=`${formatHour(s[0])} – ${formatHour(s[s.length-1]+1)}`;
+  const durSlots=s.length, dur=durSlots/2, total=dur*200;
+  const timeLabel=`${formatSlot(s[0])} – ${formatSlot(s[s.length-1]+1)}`;
   const name=document.getElementById('bk-name').value.trim();
   const phone=document.getElementById('bk-phone').value.trim();
   const purpose=document.getElementById('bk-purpose').value||'Not specified';
@@ -927,7 +955,7 @@ function renderAdminTable() {
       <td><a href="tel:${b.phone}" style="color:var(--blue);text-decoration:none;font-family:'Space Mono',monospace;font-size:13px">${b.phone}</a></td>
       <td><strong>${b.date}</strong><br>${badge}</td>
       <td style="font-family:'Space Mono',monospace;font-size:12px">${b.timeLabel}</td>
-      <td style="text-align:center">${b.duration}h</td>
+      <td style="text-align:center">${b.duration} hr</td>
       <td><strong style="color:var(--blue)">₹${b.amount.toLocaleString('en-IN')}</strong><br><span style="font-size:11px;color:var(--gray)">+GST</span></td>
       <td style="font-size:12px;color:var(--gray);max-width:120px">${b.purpose}</td>
       <td style="font-size:12px;color:var(--gray);white-space:nowrap">${fmtDT(b.bookedAt)}</td>
@@ -975,4 +1003,4 @@ function exportCSV() {
 }
 
 
-const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html> ```  ---  Also do this second fix in the same session:  **Find:** ``` <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false"> ```  **Replace with:** ``` <script data-cfasync="false">
+const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html>
