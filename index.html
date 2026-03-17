@@ -755,13 +755,19 @@ function switchTab(btn,id) {
 
 // ── BOOKING SLOTS ────────────────────────────────────────────
 let selectedSlots = [];
-function renderSlots() {
+async function renderSlots() {
   const dv = normalizeDateValue(document.getElementById('book-date').value);
   if (!dv) return;
   document.getElementById('slots-section').style.display='block';
   selectedSlots = [];
   updatePreview();
   const grid = document.getElementById('hours-grid');
+
+  // Show loading state while fetching fresh availability from Supabase
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--gray);font-size:14px">⏳ Checking availability...</div>';
+
+  await loadBookings(); // ← THIS IS THE KEY FIX: fetch fresh data every time
+
   grid.innerHTML = '';
   const booked = getBookedHours(dv);
   for (let h=0; h<48; h++) {
