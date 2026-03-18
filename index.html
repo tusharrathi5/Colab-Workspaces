@@ -633,14 +633,24 @@ async function loadBookings() {
     bookedAt: b.booked_at
   }));
 }
+function resolveSlots(slots, duration) {
+  if (!slots || slots.length === 0) return [];
+  // If any slot value > 23, it must already be in half-hour-slot format (0–47)
+  const maxSlot = Math.max(...slots);
+  if (maxSlot > 23) return slots; // new format
+  // If duration matches slots.length it's old hourly format
+  if (Number.isFinite(duration) && Math.abs(duration - slots.length) < 0.001) {
+    return slots.flatMap(s => [s * 2, s * 2 + 1]); // expand legacy hourly → half-hour
+  }
+  return slots; // new format with small slot values (e.g., early AM)
+}
+
 function getBookedHours(dateStr) {
   return bookings
     .filter(b => b.date===dateStr)
     .flatMap(b => {
       const slots = (b.slots||[]).map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v));
-      const isNewFormat = Number.isFinite(b.duration) && slots.length > 0 && Math.abs(b.duration * 2 - slots.length) < 0.001;
-      const isLegacyHourly = !isNewFormat && Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
-      return isLegacyHourly ? slots.flatMap(slot => [slot * 2, slot * 2 + 1]) : slots;
+      return resolveSlots(slots, b.duration);
     });
 }
 
@@ -689,6 +699,14 @@ window.showPage = function showPage(name) {
   document.getElementById('page-'+name).classList.add('active');
   window.scrollTo(0,0);
   if (name==='admin') renderAdminPage();
+  if (name !== 'booking' && _slotPollInterval) {
+    clearInterval(_slotPollInterval);
+    _slotPollInterval = null;
+  }
+  if (name !== 'reschedule' && _rsSlotPollInterval) {
+    clearInterval(_rsSlotPollInterval);
+    _rsSlotPollInterval = null;
+  }
 }
 
 // ── TABS ─────────────────────────────────────────────────────
@@ -701,6 +719,8 @@ function switchTab(btn,id) {
 
 // ── BOOKING SLOTS ────────────────────────────────────────────
 let selectedSlots = [];
+let _slotPollInterval = null;
+let _rsSlotPollInterval = null;
 async function renderSlots() {
   const dv = normalizeDateValue(document.getElementById('book-date').value);
   if (!dv) return;
@@ -718,10 +738,7 @@ async function renderSlots() {
   if (data && Array.isArray(data)) {
     data.forEach(b => {
       const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
-      const isNewFormat = Number.isFinite(b.duration) && slots.length > 0 && Math.abs(b.duration * 2 - slots.length) < 0.001;
-      const isLegacyHourly = !isNewFormat && Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
-      const expanded = isLegacyHourly ? slots.flatMap(s => [s*2, s*2+1]) : slots;
-      expanded.forEach(s => bookedSet.add(s));
+      resolveSlots(slots, b.duration).forEach(s => bookedSet.add(s));
     });
   }
 
@@ -743,6 +760,32 @@ async function renderSlots() {
     if (!isB && !isPast) div.onclick = ()=>toggleSlot(h,div);
     grid.appendChild(div);
   }
+
+  // Poll for newly-booked slots every 20 seconds so other users' bookings appear in real time
+  if (_slotPollInterval) clearInterval(_slotPollInterval);
+  _slotPollInterval = setInterval(async () => {
+    const currentDate = normalizeDateValue(document.getElementById('book-date').value);
+    if (!currentDate) return;
+    const freshData = await sbFetch('bookings', 'GET', null, `?select=slots,duration&date=eq.${currentDate}`);
+    const freshSet = new Set();
+    if (freshData && Array.isArray(freshData)) {
+      freshData.forEach(b => {
+        const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
+        resolveSlots(slots, b.duration).forEach(s => freshSet.add(s));
+      });
+    }
+    document.querySelectorAll('#hours-grid .hour-slot').forEach(el => {
+      const slotIdx = parseInt(el.dataset.slot);
+      if (freshSet.has(slotIdx) && !el.classList.contains('booked')) {
+        el.classList.remove('selected');
+        el.classList.add('booked');
+        el.style.pointerEvents = 'none';
+        el.onclick = null;
+        selectedSlots = selectedSlots.filter(s => s !== slotIdx);
+      }
+    });
+    updatePreview();
+  }, 20000);
 }
 
 function toggleSlot(h) {
@@ -918,6 +961,8 @@ function closeModal() {
   ['bk-name','bk-phone','bk-email','bk-discount'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('bk-purpose').value='';
   handleDiscountInput();
+  const dateVal = document.getElementById('book-date').value;
+  if (dateVal) renderSlots();
 }
 
 // ── ENQUIRY ──────────────────────────────────────────────────
@@ -1059,10 +1104,7 @@ async function renderRescheduleSlots() {
     data.forEach(b => {
       if (rescheduleTargetBooking && b.id === rescheduleTargetBooking.id) return;
       const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
-      const isNewFormat = Number.isFinite(b.duration) && slots.length > 0 && Math.abs(b.duration * 2 - slots.length) < 0.001;
-      const isLegacyHourly = !isNewFormat && Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
-      const expanded = isLegacyHourly ? slots.flatMap(s => [s*2, s*2+1]) : slots;
-      expanded.forEach(s => bookedSet.add(s));
+      resolveSlots(slots, b.duration).forEach(s => bookedSet.add(s));
     });
   }
 
@@ -1084,6 +1126,33 @@ async function renderRescheduleSlots() {
     if (!isB && !isPast) div.onclick = () => toggleRescheduleSlot(h, div);
     grid.appendChild(div);
   }
+
+  // Poll for newly-booked slots every 20 seconds so other users' bookings appear in real time
+  if (_rsSlotPollInterval) clearInterval(_rsSlotPollInterval);
+  _rsSlotPollInterval = setInterval(async () => {
+    const currentDate = normalizeDateValue(document.getElementById('rs-date').value);
+    if (!currentDate) return;
+    const freshData = await sbFetch('bookings', 'GET', null, `?select=slots,duration,id&date=eq.${currentDate}`);
+    const freshSet = new Set();
+    if (freshData && Array.isArray(freshData)) {
+      freshData.forEach(b => {
+        if (rescheduleTargetBooking && b.id === rescheduleTargetBooking.id) return;
+        const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
+        resolveSlots(slots, b.duration).forEach(s => freshSet.add(s));
+      });
+    }
+    document.querySelectorAll('#rs-hours-grid .hour-slot').forEach(el => {
+      const slotIdx = parseInt(el.dataset.slot);
+      if (freshSet.has(slotIdx) && !el.classList.contains('booked')) {
+        el.classList.remove('selected');
+        el.classList.add('booked');
+        el.style.pointerEvents = 'none';
+        el.onclick = null;
+        rescheduleSelectedSlots = rescheduleSelectedSlots.filter(s => s !== slotIdx);
+      }
+    });
+    updateReschedulePreview();
+  }, 20000);
 }
 
 function toggleRescheduleSlot(h) {
