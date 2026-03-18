@@ -858,7 +858,7 @@ function goStep(n) {
   }
   if (n===3) {
     if (!document.getElementById('bk-name').value.trim()) { alert('Please enter your name.'); return; }
-    if (!document.getElementById('bk-phone').value.trim()) { alert('Please enter your phone number.'); return; }
+    const phoneVal = document.getElementById('bk-phone').value.trim().replace(/\D/g,''); if (!phoneVal) { alert('Please enter your phone number.'); return; } if (phoneVal.length !== 10) { alert('Please enter a valid 10-digit mobile number.'); return; }
     fillConfirm();
   }
   [1,2,3].forEach(i => document.getElementById('book-step'+i).style.display=i===n?'block':'none');
@@ -968,7 +968,7 @@ function closeModal() {
 // ── ENQUIRY ──────────────────────────────────────────────────
 async function sendEnquiry() {
   const n=document.getElementById('eq-name').value.trim(), p=document.getElementById('eq-phone').value.trim();
-  if (!n||!p) { alert('Please fill in name and phone.'); return; }
+  if (!n||!p) { alert('Please fill in name and phone.'); return; } const pClean = p.replace(/\D/g,''); if (pClean.length !== 10) { alert('Please enter a valid 10-digit mobile number.'); return; }
   const btn=document.querySelector('#contact .btn-book');
   btn.textContent='⏳ Sending...'; btn.disabled=true;
   const interest=document.getElementById('eq-interest').value;
