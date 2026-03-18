@@ -565,12 +565,10 @@ window.showPage = window.showPage || function(name){
       <div style="text-align:center;margin-bottom:20px"><img src="logo.png" style="height:56px;width:auto"></div>
       <h3>Admin Login</h3>
       <p>Access your meeting room bookings</p>
-      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key
-        'Enter')adminLogin()"></div>
+      <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key == 'Enter')adminLogin()"></div>
       <div class="form-group"><label>Password</label><input type="password" class="form-control" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="btn-book" onclick="adminLogin()">Login →</button>
       <div class="login-err" id="login-err">❌ Incorrect credentials</div>
-      <p style="font-size:12px;color:var(--gray);text-align:center;margin-top:16px;border-top:1px solid var(--border);padding-top:14px">Default login: <strong>admin</strong> / <strong>colab2025</strong></p>
     </div>
   </div>
 
@@ -636,12 +634,15 @@ window.showPage = window.showPage || function(name){
 
 <script data-cfasync="false">
 // ── CONFIG ────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://tgnosimygldyeqodouky.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnbm9zaW15Z2xkeWVxb2RvdWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MTY5NzksImV4cCI6MjA4OTI5Mjk3OX0.izY8rmkQ7gkxujUG38T-wyZfucSf6Usn2FFPY1mxRaE';
-const _t1 = '8617558715';
-const _t2 = 'AAFx-tr3MEitrayOO6wfhloZjELG6jiRY00';
+const _dc = s => atob(s);
+const SUPABASE_URL = _dc('aHR0cHM6Ly90Z25vc2lteWdsZHllcW9kb3VreS5zdXBhYmFzZS5jbw==');
+const SUPABASE_KEY = _dc('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5SbmJtOXphVzE1WjJ4a2VXVnhiMlJ2ZFd0NUlpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTnpNM01UWTVOemtzSW1WNGNDSTZNakE0T1RJNU1qazNPWDAuaXpZOHJta1E3Z2t4dWpVRzM4VC13eVpmdWNTZjZVc24yRkZQWTFteFJhRQ==');
+const _t1 = _dc('ODYxNzU1ODcxNQ==');
+const _t2 = _dc('QUFGeC10cjNNRWl0cmF5T082d2ZobG9aakVMRzZqaVJZMDA=');
 const TELEGRAM_TOKEN = _t1 + ':' + _t2;
-const TELEGRAM_CHAT_ID = '8781330663';
+const TELEGRAM_CHAT_ID = _dc('ODc4MTMzMDY2Mw==');
+const username = _dc('dHVzaGFycmF0aGk1');
+const pass = _dc('Q29sQGIyMDI1');
 
 // ── SUPABASE HELPER ──────────────────────────────────────────
 async function sbFetch(table, method='GET', body=null, filter='') {
@@ -701,7 +702,7 @@ function getBookedHours(dateStr) {
 // ── UTILS ────────────────────────────────────────────────────
 const pad = n => String(n).padStart(2,'0');
 const RATE_PER_HOUR = 200;
-const SILVER_CROWN_CODE = 'SILVERCROWN';
+const SILVER_CROWN_CODE = _dc('U0xWUkNSV04yMDI2LTUw');
 const SILVER_CROWN_DISCOUNT = 10;
 function formatHour(h) { const p=h<12?'AM':'PM'; const d=h===0?12:h>12?h-12:h; return `${d}${p}`; }
 function formatClock(totalMinutes) {
@@ -969,7 +970,7 @@ async function sendEnquiry() {
 let adminLoggedIn=false;
 async function adminLogin() {
   const u=document.getElementById('admin-user').value, p=document.getElementById('admin-pass').value;
-  if (u==='admin'&&p==='colab2025') {
+  if (u===username&&p===pass) {
     adminLoggedIn=true;
     document.getElementById('admin-login-section').style.display='none';
     document.getElementById('admin-dashboard').style.display='block';
