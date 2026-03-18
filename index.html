@@ -1813,7 +1813,7 @@ function toggleFaq(btn) {
     { r: 2.25, opacityMin: 0.45, opacityMax: 0.55, speedFactor: 0.60 }
   ];
   var COLORS = ['rgba(184,217,255,1)', '#6ab0f5', 'rgba(255,255,255,1)'];
-  var COUNT = 60;
+  var COUNT = 150;
   var particles = [];
 
   function mkParticle(tier, spreadX) {
@@ -1896,7 +1896,7 @@ function toggleFaq(btn) {
 
   // Create particles: more far than near for natural depth feel
   for (var i = 0; i < COUNT; i++) {
-    var tier = i < 25 ? 0 : i < 45 ? 1 : 2;
+    var tier = i < 65 ? 0 : i < 115 ? 1 : 2;
     particles.push(mkParticle(tier, true));
   }
 
