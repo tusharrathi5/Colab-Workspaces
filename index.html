@@ -333,6 +333,9 @@
   .form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
   .form-control { width:100%; padding:13px 16px; border:2px solid var(--border); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--black); transition:border-color 0.2s; background:white; }
   .form-control:focus { outline:none; border-color:var(--blue); }
+  .input-error { border-color: #ef4444 !important; background: #fff5f5 !important; }
+  .field-error-msg { color: #ef4444; font-size: 12px; margin-top: 6px; display: none; }
+  .field-error-msg.show { display: block; }
   .sent-msg { background:#dcfce7; color:#166534; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; display:none; margin-top:12px; }
 
   /* BOOKING */
@@ -623,7 +626,11 @@ window.showPage = window.showPage || function(name){
       <div class="contact-form">
         <h3>Send an Enquiry</h3>
         <div class="form-group"><label>Your Name</label><input type="text" class="form-control" id="eq-name" placeholder="e.g. Ravi Sharma"></div>
-        <div class="form-group"><label>Phone Number</label><input type="tel" class="form-control" id="eq-phone" placeholder="+91 XXXXX XXXXX"></div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" class="form-control" id="eq-phone" placeholder="+91 XXXXX XXXXX" oninput="validatePhoneInput(this,'eq-phone-err')" maxlength="15">
+          <div class="field-error-msg" id="eq-phone-err">⚠ Please enter a valid 10-digit mobile number.</div>
+        </div>
         <div class="form-group"><label>Interested In</label><select class="form-control" id="eq-interest"><option value="">Select a service</option><option>Dedicated Seat</option><option>Private Cabin</option><option>Hot Desk</option><option>Flex / Day Pass</option><option>Meeting Room</option></select></div>
         <div class="form-group"><label>Message (Optional)</label><textarea class="form-control" rows="3" id="eq-msg" placeholder="Tell us more about your needs..."></textarea></div>
         <button class="btn-book" onclick="sendEnquiry()">Send Enquiry →</button>
@@ -754,7 +761,11 @@ window.showPage = window.showPage || function(name){
       <div id="book-step2" style="display:none">
         <div class="form-section"><label>Full Name *</label><input type="text" class="form-control" id="bk-name" placeholder="Your full name" style="max-width:480px"></div>
         <div class="date-row" style="max-width:480px">
-          <div class="form-section"><label>Phone Number *</label><input type="tel" class="form-control" id="bk-phone" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="form-section">
+            <label>Phone Number *</label>
+            <input type="tel" class="form-control" id="bk-phone" placeholder="+91 XXXXX XXXXX" oninput="validatePhoneInput(this,'bk-phone-err')" maxlength="15">
+            <div class="field-error-msg" id="bk-phone-err">⚠ Please enter a valid 10-digit mobile number.</div>
+          </div>
           <div class="form-section"><label>Email Address <span style="color:var(--gray);font-size:11px;font-weight:400">(needed for rescheduling)</span></label><input type="email" class="form-control" id="bk-email" placeholder="you@email.com"></div>
         </div>
         <div class="form-section"><label>Purpose (optional)</label>
@@ -979,6 +990,27 @@ function normalizeDateValue(raw) {
   return val;
 }
 
+// ── PHONE VALIDATION ─────────────────────────────────────────
+function isValidIndianPhone(raw) {
+  // Strip spaces, dashes, dots, parentheses
+  const digits = raw.replace(/[\s().+-]/g, '');
+  // Accept: 10-digit number optionally prefixed with 91 (country code)
+  // Valid: 9876543210 | 919876543210 | +919876543210
+  return /^(91)?[6-9]\d{9}$/.test(digits);
+}
+
+function validatePhoneInput(input, errId) {
+  const errEl = document.getElementById(errId);
+  const val = input.value.trim();
+  if (val && !isValidIndianPhone(val)) {
+    input.classList.add('input-error');
+    if (errEl) errEl.classList.add('show');
+  } else {
+    input.classList.remove('input-error');
+    if (errEl) errEl.classList.remove('show');
+  }
+}
+
 // ── ROUTING ──────────────────────────────────────────────────
 window.showPage = function showPage(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1143,8 +1175,18 @@ function goStep(n) {
     fillSummary();
   }
   if (n===3) {
-    if (!document.getElementById('bk-name').value.trim()) { alert('Please enter your name.'); return; }
-    if (!document.getElementById('bk-phone').value.trim()) { alert('Please enter your phone number.'); return; }
+    const name = document.getElementById('bk-name').value.trim();
+    const phone = document.getElementById('bk-phone').value.trim();
+    if (!name) { alert('Please enter your full name.'); return; }
+    if (!phone || !isValidIndianPhone(phone)) {
+      const phoneInput = document.getElementById('bk-phone');
+      const errEl = document.getElementById('bk-phone-err');
+      phoneInput.classList.add('input-error');
+      phoneInput.focus();
+      if (errEl) errEl.classList.add('show');
+      alert('⚠ Please enter a valid 10-digit mobile number.');
+      return;
+    }
     fillConfirm();
   }
   [1,2,3].forEach(i => document.getElementById('book-step'+i).style.display=i===n?'block':'none');
@@ -1254,7 +1296,16 @@ function closeModal() {
 // ── ENQUIRY ──────────────────────────────────────────────────
 async function sendEnquiry() {
   const n=document.getElementById('eq-name').value.trim(), p=document.getElementById('eq-phone').value.trim();
-  if (!n||!p) { alert('Please fill in name and phone.'); return; }
+  if (!n) { alert('Please enter your name.'); return; }
+  if (!p || !isValidIndianPhone(p)) {
+    const phoneInput = document.getElementById('eq-phone');
+    const errEl = document.getElementById('eq-phone-err');
+    phoneInput.classList.add('input-error');
+    phoneInput.focus();
+    if (errEl) errEl.classList.add('show');
+    alert('⚠ Please enter a valid 10-digit mobile number.');
+    return;
+  }
   const btn=document.querySelector('#contact .btn-book');
   btn.textContent='⏳ Sending...'; btn.disabled=true;
   const interest=document.getElementById('eq-interest').value;
