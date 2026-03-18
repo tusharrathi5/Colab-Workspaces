@@ -532,7 +532,7 @@
     .bookings-table th,.bookings-table td { padding:10px 10px; }
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 </head>
 <body>
 <script>
@@ -571,8 +571,7 @@ window.showPage = window.showPage || function(name){
     <div class="hero-line3"></div>
     <div class="hero-orb1"></div>
     <div class="hero-orb2"></div>
-    <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
-    <canvas id="hero-particles" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.35"></canvas>
+    <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.55;"></canvas>
     <div class="hero-content">
       <div class="hero-left fade-in">
         <div class="hero-tag">Jaipur's Neighbourhood Workspace</div>
@@ -1712,127 +1711,8 @@ Object.assign(window, {
   setRescheduleStep
 });
 
-// ── HERO PARTICLE CURSOR EFFECT ──────────────────────────────
-(function(){
-  const canvas = document.getElementById('hero-particles');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, mouseX = -999, mouseY = -999;
-  const particles = [];
-  const MAX = 120;
 
-  function resize() {
-    W = canvas.width = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
 
-  // Static ambient particles
-  for (let i = 0; i < MAX; i++) {
-    particles.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.8 + 0.3,
-      ox: Math.random() * W,
-      oy: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      alpha: Math.random() * 0.5 + 0.1,
-      color: Math.random() > 0.6 ? '#4a9fe8' : Math.random() > 0.5 ? '#ffffff' : '#f47920',
-      flicker: Math.random() * Math.PI * 2,
-      flickerSpeed: Math.random() * 0.04 + 0.01
-    });
-  }
-
-  // Cursor burst particles
-  const bursts = [];
-  const hero = document.querySelector('.hero');
-  if (hero) {
-    hero.addEventListener('mousemove', e => {
-      const rect = hero.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-      // Spawn burst particles on move
-      for (let i = 0; i < 3; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 2.5 + 0.5;
-        bursts.push({
-          x: mouseX, y: mouseY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          r: Math.random() * 2.5 + 0.5,
-          alpha: Math.random() * 0.8 + 0.2,
-          color: Math.random() > 0.5 ? '#4a9fe8' : Math.random() > 0.5 ? '#ffffff' : '#f47920',
-          life: 1.0,
-          decay: Math.random() * 0.03 + 0.02
-        });
-      }
-    });
-    hero.addEventListener('mouseleave', () => { mouseX = -999; mouseY = -999; });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Draw ambient particles
-    particles.forEach(p => {
-      p.flicker += p.flickerSpeed;
-      const flickerAlpha = p.alpha * (0.7 + 0.3 * Math.sin(p.flicker));
-
-      // Gentle float
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0 || p.x > W) p.vx *= -1;
-      if (p.y < 0 || p.y > H) p.vy *= -1;
-
-      // Cursor attraction
-      const dx = mouseX - p.x, dy = mouseY - p.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 120) {
-        const force = (1 - dist/120) * 0.8;
-        p.x += dx * force * 0.04;
-        p.y += dy * force * 0.04;
-        // Glow when near cursor
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p.color;
-      } else {
-        ctx.shadowBlur = 0;
-      }
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = flickerAlpha;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
-    });
-
-    // Draw + update burst particles
-    for (let i = bursts.length - 1; i >= 0; i--) {
-      const b = bursts[i];
-      b.x += b.vx;
-      b.y += b.vy;
-      b.vy += 0.05; // gentle gravity
-      b.vx *= 0.97;
-      b.life -= b.decay;
-      if (b.life <= 0) { bursts.splice(i, 1); continue; }
-      ctx.shadowBlur = 6;
-      ctx.shadowColor = b.color;
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r * b.life, 0, Math.PI * 2);
-      ctx.fillStyle = b.color;
-      ctx.globalAlpha = b.alpha * b.life;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
-    }
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
 const _obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.05});
 document.querySelectorAll('.fade-in').forEach(el=>_obs.observe(el)); </script>
 <script>
@@ -1918,153 +1798,150 @@ function toggleFaq(btn) {
 })();
 </script>
 <script>
-/* ── THREE.JS HERO BACKGROUND PARTICLE SPHERE ─────────────────── */
+/* ── HERO FLOATING PARTICLES ─────────────────────────────────── */
 (function(){
   var canvas = document.getElementById('hero-sphere-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0;
+  var hero = document.querySelector('.hero');
 
-  var heroSection = document.querySelector('.hero');
+  // Depth tier definitions: far / mid / near
+  var TIERS = [
+    { r: 1.0,  opacityMin: 0.18, opacityMax: 0.25, speedFactor: 0.30 },
+    { r: 1.75, opacityMin: 0.30, opacityMax: 0.40, speedFactor: 0.45 },
+    { r: 2.25, opacityMin: 0.45, opacityMax: 0.55, speedFactor: 0.60 }
+  ];
+  var COLORS = ['rgba(184,217,255,1)', '#6ab0f5', 'rgba(255,255,255,1)'];
+  var COUNT = 60;
+  var particles = [];
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(55, 1, 1, 2000);
-  camera.position.set(0, 0, 650);
+  function mkParticle(tier, spreadX) {
+    var t = TIERS[tier];
+    return {
+      x: spreadX ? Math.random() * W : -2,
+      y: Math.random() * H,
+      tier: tier,
+      r: t.r + Math.random() * 0.35,
+      alpha: t.opacityMin + Math.random() * (t.opacityMax - t.opacityMin),
+      speed: t.speedFactor,
+      color: COLORS[tier]
+    };
+  }
 
   function resize() {
-    var w = heroSection ? heroSection.offsetWidth  : window.innerWidth;
-    var h = heroSection ? heroSection.offsetHeight : window.innerHeight;
+    var w = hero ? hero.offsetWidth : window.innerWidth;
+    var h = hero ? hero.offsetHeight : window.innerHeight;
     if (!w || !h) return;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+    if (W && H && particles.length) {
+      var sx = w / W, sy = h / H;
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].x *= sx;
+        particles[i].y *= sy;
+      }
+    }
+    W = canvas.width = w;
+    H = canvas.height = h;
   }
+
+  // Direction state
+  var dir = { x: 1, y: 0 };
+  var releaseDir = { x: 1, y: 0 };
+  var lerpFrames = 0;
+  var LERP_TOTAL = 90;
+  var dragging = false;
+  var lastMX = 0, lastMY = 0;
+
+  function onMouseDown(e) {
+    dragging = true;
+    lerpFrames = 0;
+    var rect = hero.getBoundingClientRect();
+    lastMX = e.clientX - rect.left;
+    lastMY = e.clientY - rect.top;
+  }
+
+  function onMouseMove(e) {
+    if (!dragging) return;
+    var rect = hero.getBoundingClientRect();
+    var mx = e.clientX - rect.left;
+    var my = e.clientY - rect.top;
+    var dx = mx - lastMX;
+    var dy = my - lastMY;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len > 0.5) {
+      dir.x = dx / len;
+      dir.y = dy / len;
+    }
+    lastMX = mx;
+    lastMY = my;
+  }
+
+  function onMouseUp() {
+    if (!dragging) return;
+    dragging = false;
+    releaseDir.x = dir.x;
+    releaseDir.y = dir.y;
+    lerpFrames = LERP_TOTAL;
+  }
+
+  if (hero) {
+    hero.addEventListener('mousedown', onMouseDown);
+    hero.addEventListener('mousemove', onMouseMove);
+    hero.addEventListener('mouseup', onMouseUp);
+    hero.addEventListener('mouseleave', onMouseUp);
+  }
+
   resize();
   window.addEventListener('resize', resize);
 
-  /* ── Glow sprite (soft radial bloom behind sphere) ── */
-  var gc = document.createElement('canvas');
-  gc.width = gc.height = 512;
-  var gx = gc.getContext('2d');
-  var gr = gx.createRadialGradient(256, 256, 0, 256, 256, 256);
-  gr.addColorStop(0,    'rgba(106,176,245,0.30)');
-  gr.addColorStop(0.35, 'rgba(21,88,176,0.14)');
-  gr.addColorStop(1,    'rgba(0,0,0,0)');
-  gx.fillStyle = gr;
-  gx.fillRect(0, 0, 512, 512);
-  var glowTex = new THREE.CanvasTexture(gc);
-  var glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: glowTex, transparent: true, opacity: 0.35, depthWrite: false
-  }));
-  glowSprite.scale.set(650, 650, 1);
-  scene.add(glowSprite);
-
-  /* ── Particle sphere ── */
-  var COUNT = 2500, RADIUS = 220;
-  var orig = new Float32Array(COUNT * 3);
-  var vel  = new Float32Array(COUNT * 3);
-
+  // Create particles: more far than near for natural depth feel
   for (var i = 0; i < COUNT; i++) {
-    var phi   = Math.acos(2 * Math.random() - 1);
-    var theta = 2 * Math.PI * Math.random();
-    orig[i*3]   = RADIUS * Math.sin(phi) * Math.cos(theta);
-    orig[i*3+1] = RADIUS * Math.sin(phi) * Math.sin(theta);
-    orig[i*3+2] = RADIUS * Math.cos(phi);
+    var tier = i < 25 ? 0 : i < 45 ? 1 : 2;
+    particles.push(mkParticle(tier, true));
   }
 
-  var buf = orig.slice();
-  var geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(buf, 3));
-  var ptMat = new THREE.PointsMaterial({
-    color: 0x6ab0f5, size: 3.2, sizeAttenuation: true,
-    transparent: true, opacity: 0.55
-  });
-  var sphereGroup = new THREE.Group();
-  sphereGroup.add(new THREE.Points(geo, ptMat));
-  scene.add(sphereGroup);
-
-  /* ── Mouse tracking ── */
-  var mX = -9999, mY = -9999;
-  if (heroSection) {
-    heroSection.addEventListener('mousemove', function(e) {
-      var r = heroSection.getBoundingClientRect();
-      mX = e.clientX - r.left;
-      mY = e.clientY - r.top;
-    });
-    heroSection.addEventListener('mouseleave', function() { mX = -9999; mY = -9999; });
-  }
-
-  /* ── Pre-allocated helpers ── */
-  var _ray = new THREE.Vector3();
-  var _inv = new THREE.Matrix4();
-
-  /* ── Animation loop ── */
-  var clock = 0;
-  function animate() {
-    requestAnimationFrame(animate);
-    clock += 0.004;
-
-    sphereGroup.rotation.y = clock * 0.28;
-    sphereGroup.rotation.x = clock * 0.10;
-    sphereGroup.updateMatrixWorld();
-
-    var heroW = heroSection ? heroSection.offsetWidth  : window.innerWidth;
-    var heroH = heroSection ? heroSection.offsetHeight : window.innerHeight;
-    var mouseActive = (mX > 0 && mX < heroW && mY > 0 && mY < heroH);
-
-    var mlx = 0, mly = 0, mlz = 0;
-    if (mouseActive) {
-      /* Unproject mouse to the plane z=0 in world space */
-      _ray.set((mX / heroW) * 2 - 1, -(mY / heroH) * 2 + 1, 0.5).unproject(camera);
-      _ray.sub(camera.position).normalize();
-      var tRay = -camera.position.z / _ray.z;
-      var wx = camera.position.x + _ray.x * tRay;
-      var wy = camera.position.y + _ray.y * tRay;
-      /* Convert to local space of sphere group */
-      _inv.copy(sphereGroup.matrixWorld).invert();
-      _ray.set(wx, wy, 0).applyMatrix4(_inv);
-      mlx = _ray.x; mly = _ray.y; mlz = _ray.z;
+  function draw() {
+    // Lerp direction back to default (left→right) after mouse release
+    if (!dragging && lerpFrames > 0) {
+      lerpFrames--;
+      var t = 1 - lerpFrames / LERP_TOTAL;
+      dir.x = releaseDir.x * (1 - t) + t;   // lerp to targetDir.x = 1
+      dir.y = releaseDir.y * (1 - t);        // lerp to targetDir.y = 0
     }
 
-    var pos = geo.attributes.position.array;
-    var REPEL = 140, STRENGTH = 55;
-    for (var j = 0; j < COUNT; j++) {
-      var j3 = j * 3;
-      var ox = orig[j3], oy = orig[j3+1], oz = orig[j3+2];
-      var cx = pos[j3],  cy = pos[j3+1],  cz = pos[j3+2];
+    ctx.clearRect(0, 0, W, H);
 
-      var fx = (ox - cx) * 0.045;
-      var fy = (oy - cy) * 0.045;
-      var fz = (oz - cz) * 0.045;
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += dir.x * p.speed;
+      p.y += dir.y * p.speed;
 
-      if (mouseActive) {
-        var dx = cx - mlx, dy = cy - mly, dz = cz - mlz;
-        var dd = dx*dx + dy*dy + dz*dz;
-        if (dd < REPEL*REPEL && dd > 0.001) {
-          var dLen = Math.sqrt(dd);
-          var rf = (1 - dLen / REPEL) * STRENGTH / dLen;
-          fx += dx * rf;
-          fy += dy * rf;
-          fz += dz * rf * 0.5; /* dampen Z so particles scatter outward rather than away from camera */
-        }
+      // Wrap: off right → reappear at left with fresh random Y
+      if (p.x > W + p.r) {
+        p.x = -p.r;
+        p.y = Math.random() * H;
+      } else if (p.x < -p.r) {
+        p.x = W + p.r;
+        p.y = Math.random() * H;
+      }
+      if (p.y > H + p.r) {
+        p.y = -p.r;
+        p.x = Math.random() * W;
+      } else if (p.y < -p.r) {
+        p.y = H + p.r;
+        p.x = Math.random() * W;
       }
 
-      vel[j3]   = vel[j3]   * 0.82 + fx;
-      vel[j3+1] = vel[j3+1] * 0.82 + fy;
-      vel[j3+2] = vel[j3+2] * 0.82 + fz;
-
-      pos[j3]   = cx + vel[j3];
-      pos[j3+1] = cy + vel[j3+1];
-      pos[j3+2] = cz + vel[j3+2];
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
     }
-    geo.attributes.position.needsUpdate = true;
-
-    glowSprite.material.opacity = 0.4 + 0.18 * Math.sin(clock * 1.5);
-    renderer.render(scene, camera);
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
   }
-  animate();
+  draw();
 })();
 </script>
 <script>
