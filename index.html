@@ -2015,5 +2015,10 @@ function toggleFaq(btn) {
   }
 })();
 </script>
+<script>
+const _d = new Date();
+const _m = n => String(n).padStart(2, '0');
+document.getElementById('book-date').min = _d.getFullYear() + '-' + _m(_d.getMonth() + 1) + '-' + _m(_d.getDate());
+loadBookings();
+</script>
 </body> </html>
-const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings();
