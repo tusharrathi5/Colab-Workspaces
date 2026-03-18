@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel · CO-LAB Workspaces</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --blue:#1a6dc4; --blue-dark:#0f4a8a; --blue-light:#e8f1fb; --orange:#f47920; --black:#111214; --gray:#5a5f6b; --light:#f5f6f8; --white:#ffffff; --border:#dde2ea; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--light); color:var(--black); }
+
+  .form-group { margin-bottom:18px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; color:var(--gray); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+  .form-control { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--black); background:white; transition:border-color 0.2s; }
+  .form-control:focus { outline:none; border-color:var(--blue); }
+  .btn-book { width:100%; padding:14px; background:var(--blue); color:white; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top:4px; }
+  .btn-book:hover { background:var(--blue-dark); }
+
+  /* ADMIN */
+  .admin-hero { background:var(--black); padding:52px 5% 36px; position:relative; overflow:hidden; }
+  .admin-hero::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px); background-size:40px 40px; }
+  .admin-hero-inner { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+  .admin-hero h2 { font-family:'Bebas Neue',sans-serif; font-size:44px; color:white; letter-spacing:1px; }
+  .admin-hero p { color:rgba(255,255,255,0.5); font-size:13px; margin-top:4px; }
+  .admin-body { padding:36px 5%; }
+  .admin-container { max-width:1100px; margin:0 auto; }
+  .admin-login-box { max-width:380px; margin:0 auto; background:white; border-radius:20px; padding:40px; border:1px solid var(--border); box-shadow:0 8px 32px rgba(0,0,0,0.08); }
+  .admin-login-box h3 { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:1px; margin-bottom:6px; text-align:center; }
+  .admin-login-box p { font-size:13px; color:var(--gray); text-align:center; margin-bottom:28px; }
+  .login-err { color:#ef4444; font-size:13px; margin-top:10px; display:none; text-align:center; }
+  .admin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:32px; }
+  .admin-stat { background:white; border:1px solid var(--border); border-radius:16px; padding:22px; }
+  .admin-stat .a-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gray); font-family:'Space Mono',monospace; margin-bottom:8px; }
+  .admin-stat .a-val { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--blue); line-height:1; }
+  .admin-stat .a-sub { font-size:12px; color:var(--gray); margin-top:4px; }
+  .revenue-box { background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dark) 100%); border-radius:16px; padding:22px; color:white; }
+  .revenue-box .a-label { color:rgba(255,255,255,0.6); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-family:'Space Mono',monospace; margin-bottom:8px; }
+  .revenue-box .a-val { font-family:'Bebas Neue',sans-serif; font-size:36px; line-height:1; }
+  .revenue-box .a-sub { font-size:12px; color:rgba(255,255,255,0.6); margin-top:4px; }
+  .admin-filters { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+  .admin-filters input,.admin-filters select { padding:10px 14px; border:2px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--black); background:white; }
+  .admin-filters input:focus,.admin-filters select:focus { outline:none; border-color:var(--blue); }
+  .bookings-table { width:100%; border-collapse:collapse; background:white; }
+  .bookings-table th { background:var(--black); color:rgba(255,255,255,0.7); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; font-weight:600; padding:14px 16px; text-align:left; font-family:'Space Mono',monospace; }
+  .bookings-table td { padding:13px 16px; font-size:14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .bookings-table tr:last-child td { border-bottom:none; }
+  .bookings-table tr:hover td { background:#f8faff; }
+  .no-bookings { text-align:center; padding:60px 20px; color:var(--gray); background:white; border-radius:0 0 16px 16px; }
+  .btn-logout { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; padding:8px 18px; border-radius:8px; font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-logout:hover { background:rgba(255,255,255,0.2); }
+  .btn-delete { background:#fef2f2; color:#ef4444; border:1px solid #fca5a5; padding:5px 12px; border-radius:6px; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-delete:hover { background:#ef4444; color:white; }
+  .badge-today { background:#dcfce7; color:#166534; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+  .badge-upcoming { background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+  .badge-past { background:#f3f4f6; color:#6b7280; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="admin-hero">
+  <div class="admin-hero-inner">
+    <div><h2>🔐 ADMIN PANEL</h2><p>CO-LAB Workspaces · Meeting Room Booking Manager</p></div>
+    <div id="admin-top-actions" style="display:none;align-items:center;gap:12px">
+      <span id="admin-clock" style="color:rgba(255,255,255,0.4);font-size:13px;font-family:'Space Mono',monospace"></span>
+      <button class="btn-logout" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-body" id="admin-login-section">
+  <div class="admin-login-box">
+    <div style="text-align:center;margin-bottom:20px"><img src="../logo.png" style="height:56px;width:auto"></div>
+    <h3>Admin Login</h3>
+    <p>Access your meeting room bookings</p>
+    <div class="form-group"><label>Username</label><input type="text" class="form-control" id="admin-user" placeholder="admin" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+    <div class="form-group"><label>Password</label><input type="password" class="form-control" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+    <button class="btn-book" onclick="adminLogin()">Login →</button>
+    <div class="login-err" id="login-err">❌ Incorrect credentials</div>
+  </div>
+</div>
+
+<div class="admin-body" id="admin-dashboard" style="display:none">
+  <div class="admin-container">
+    <div class="admin-stats" id="admin-stats-row"></div>
+
+    <div style="display:flex;gap:4px;background:var(--light);padding:5px;border-radius:10px;display:inline-flex;margin-bottom:20px">
+      <button id="admin-tab-bookings" onclick="switchAdminTab('bookings')" style="padding:9px 22px;border-radius:7px;border:none;background:white;color:var(--blue);font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.08)">📅 Bookings</button>
+      <button id="admin-tab-enquiries" onclick="switchAdminTab('enquiries')" style="padding:9px 22px;border-radius:7px;border:none;background:transparent;color:var(--gray);font-weight:400;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px">📩 Enquiries</button>
+    </div>
+
+    <div id="admin-bookings-view">
+      <div class="admin-filters">
+        <input type="date" id="filter-date" onchange="renderAdminTable()" title="Filter by date">
+        <input type="text" id="filter-search" placeholder="🔍 Search name or phone..." oninput="renderAdminTable()" style="flex:1;min-width:180px">
+        <select id="filter-status" onchange="renderAdminTable()">
+          <option value="">All Bookings</option>
+          <option value="today">Today Only</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="past">Past</option>
+        </select>
+        <button onclick="exportCSV()" style="padding:10px 18px;background:var(--blue);color:white;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;white-space:nowrap">⬇ Export CSV</button>
+        <button onclick="clearAllBookings()" style="padding:10px 16px;background:#fef2f2;color:#ef4444;border:1px solid #fca5a5;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;white-space:nowrap">🗑 Clear All</button>
+      </div>
+      <div style="overflow-x:auto;border-radius:16px;border:1px solid var(--border)">
+        <table class="bookings-table" id="bookings-table">
+          <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Date</th><th>Time Slot</th><th>Hrs</th><th>Amount</th><th>Purpose</th><th>Booked At</th><th>Del</th></tr></thead>
+          <tbody id="bookings-tbody"></tbody>
+        </table>
+        <div id="no-bookings" class="no-bookings" style="display:none"><p style="font-size:32px;margin-bottom:12px">📋</p><p>No bookings found</p></div>
+      </div>
+    </div>
+
+    <div id="admin-enquiries-view" style="display:none">
+      <div style="overflow-x:auto;border-radius:16px;border:1px solid var(--border)">
+        <table class="bookings-table">
+          <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Interested In</th><th>Message</th><th>Received At</th></tr></thead>
+          <tbody id="enquiries-tbody"></tbody>
+        </table>
+        <div id="no-enquiries" class="no-bookings" style="display:none"><p style="font-size:32px;margin-bottom:12px">📩</p><p>No enquiries yet</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false">
+// ── CONFIG ────────────────────────────────────────────────────
+const _dc = s => atob(s);
+const SUPABASE_URL = _dc('aHR0cHM6Ly90Z25vc2lteWdsZHllcW9kb3VreS5zdXBhYmFzZS5jbw==');
+const SUPABASE_KEY = _dc('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5SbmJtOXphVzE1WjJ4a2VXVnhiMlJ2ZFd0NUlpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTnpNM01UWTVOemtzSW1WNGNDSTZNakE0T1RJNU1qazNPWDAuaXpZOHJta1E3Z2t4dWpVRzM4VC13eVpmdWNTZjZVc24yRkZQWTFteFJhRQ==');
+const username = _dc('dHVzaGFycmF0aGk1');
+const pass = _dc('Q29sQGIyMDI1');
+
+// ── SUPABASE HELPER ──────────────────────────────────────────
+async function sbFetch(table, method='GET', body=null, filter='') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${filter}`, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'return=representation' : ''
+    },
+    body: body ? JSON.stringify(body) : null
+  });
+  if (!res.ok) { const e = await res.text(); console.error('Supabase error:', e); return null; }
+  return res.status === 204 ? true : res.json();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+const pad = n => String(n).padStart(2,'0');
+function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function fmtDT(iso) { return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+// ── DATA ──────────────────────────────────────────────────────
+let bookings = [];
+async function loadBookings() {
+  const data = await sbFetch('bookings', 'GET', null, '?select=*&order=booked_at.desc');
+  if (data) bookings = data.map(b => ({
+    id: b.id,
+    name: b.name, phone: b.phone, email: b.email||'',
+    date: b.date, slots: Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [],
+    timeLabel: b.time_label,
+    duration: b.duration, amount: b.amount,
+    purpose: b.purpose||'Not specified',
+    bookedAt: b.booked_at
+  }));
+}
+
+let enquiries = [];
+async function loadEnquiries() {
+  const data = await sbFetch('enquiries','GET',null,'?select=*&order=created_at.desc');
+  if (data) enquiries = data;
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────
+let adminLoggedIn = false;
+
+async function adminLogin() {
+  const u = document.getElementById('admin-user').value;
+  const p = document.getElementById('admin-pass').value;
+  if (u === username && p === pass) {
+    adminLoggedIn = true;
+    document.getElementById('admin-login-section').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'block';
+    document.getElementById('admin-top-actions').style.display = 'flex';
+    await loadBookings();
+    await loadEnquiries();
+    renderAdminTable();
+    renderAdminStats();
+    setInterval(() => {
+      const el = document.getElementById('admin-clock');
+      if (el) el.textContent = new Date().toLocaleTimeString('en-IN');
+    }, 1000);
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+
+function adminLogout() {
+  adminLoggedIn = false;
+  document.getElementById('admin-login-section').style.display = 'block';
+  document.getElementById('admin-dashboard').style.display = 'none';
+  document.getElementById('admin-top-actions').style.display = 'none';
+  ['admin-user','admin-pass'].forEach(id => document.getElementById(id).value = '');
+}
+
+function renderAdminStats() {
+  const today = todayStr();
+  const todayB = bookings.filter(b => b.date === today);
+  const upB = bookings.filter(b => b.date > today);
+  const tRev = bookings.reduce((s,b) => s + b.amount, 0);
+  document.getElementById('admin-stats-row').innerHTML = `
+    <div class="admin-stat"><div class="a-label">Total Bookings</div><div class="a-val">${bookings.length}</div><div class="a-sub">All time</div></div>
+    <div class="admin-stat"><div class="a-label">Today's Bookings</div><div class="a-val">${todayB.length}</div><div class="a-sub">${today}</div></div>
+    <div class="admin-stat"><div class="a-label">Upcoming</div><div class="a-val">${upB.length}</div><div class="a-sub">Future dates</div></div>
+    <div class="admin-stat"><div class="a-label">Enquiries</div><div class="a-val">${enquiries.length}</div><div class="a-sub">All time</div></div>
+    <div class="revenue-box"><div class="a-label">Total Revenue</div><div class="a-val">₹${tRev.toLocaleString('en-IN')}</div><div class="a-sub">Excl. GST · All bookings</div></div>
+  `;
+}
+
+let adminTab = 'bookings';
+function switchAdminTab(tab) {
+  adminTab = tab;
+  document.getElementById('admin-tab-bookings').style.fontWeight = tab === 'bookings' ? '700' : '400';
+  document.getElementById('admin-tab-enquiries').style.fontWeight = tab === 'enquiries' ? '700' : '400';
+  document.getElementById('admin-bookings-view').style.display = tab === 'bookings' ? 'block' : 'none';
+  document.getElementById('admin-enquiries-view').style.display = tab === 'enquiries' ? 'block' : 'none';
+}
+
+function renderAdminTable() {
+  const df = document.getElementById('filter-date').value;
+  const sr = document.getElementById('filter-search').value.toLowerCase();
+  const st = document.getElementById('filter-status').value;
+  const today = todayStr();
+  let fl = [...bookings].sort((a,b) => new Date(b.bookedAt) - new Date(a.bookedAt));
+  if (df) fl = fl.filter(b => b.date === df);
+  if (sr) fl = fl.filter(b => b.name.toLowerCase().includes(sr) || b.phone.includes(sr));
+  if (st === 'today') fl = fl.filter(b => b.date === today);
+  if (st === 'upcoming') fl = fl.filter(b => b.date > today);
+  if (st === 'past') fl = fl.filter(b => b.date < today);
+
+  const noEl = document.getElementById('no-bookings'), tbl = document.getElementById('bookings-table');
+  noEl.style.display = fl.length === 0 ? 'block' : 'none';
+  tbl.style.display = fl.length === 0 ? 'none' : 'table';
+
+  document.getElementById('bookings-tbody').innerHTML = fl.map((b,i) => {
+    const isPast = b.date < today, isToday = b.date === today;
+    const badge = isToday ? '<span class="badge-today">TODAY</span>' : isPast ? '<span class="badge-past">Past</span>' : '<span class="badge-upcoming">Upcoming</span>';
+    return `<tr style="${isPast ? 'opacity:0.6' : ''}">
+      <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${fl.length - i}</td>
+      <td><strong>${b.name}</strong></td>
+      <td><a href="tel:${b.phone}" style="color:var(--blue);text-decoration:none;font-family:'Space Mono',monospace;font-size:13px">${b.phone}</a></td>
+      <td><strong>${b.date}</strong><br>${badge}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:12px">${b.timeLabel}</td>
+      <td style="text-align:center">${b.duration} hr</td>
+      <td><strong style="color:var(--blue)">₹${b.amount.toLocaleString('en-IN')}</strong><br><span style="font-size:11px;color:var(--gray)">+GST</span></td>
+      <td style="font-size:12px;color:var(--gray);max-width:120px">${b.purpose}</td>
+      <td style="font-size:12px;color:var(--gray);white-space:nowrap">${fmtDT(b.bookedAt)}</td>
+      <td><button class="btn-delete" onclick="deleteBooking(${b.id})">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('enquiries-tbody').innerHTML = enquiries.map((e,i) => `
+    <tr>
+      <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${enquiries.length - i}</td>
+      <td><strong>${e.name}</strong></td>
+      <td><a href="tel:${e.phone}" style="color:var(--blue);text-decoration:none">${e.phone}</a></td>
+      <td style="font-size:13px;color:var(--gray)">${e.interest || '—'}</td>
+      <td style="font-size:13px;color:var(--gray);max-width:200px">${e.message || '—'}</td>
+      <td style="font-size:12px;color:var(--gray);white-space:nowrap">${fmtDT(e.created_at)}</td>
+    </tr>`).join('');
+
+  renderAdminStats();
+}
+
+async function deleteBooking(id) {
+  if (!confirm('Delete this booking?')) return;
+  await sbFetch('bookings', 'DELETE', null, `?id=eq.${id}`);
+  await loadBookings();
+  renderAdminTable();
+}
+
+async function clearAllBookings() {
+  if (!confirm('Delete ALL bookings? This cannot be undone.')) return;
+  await sbFetch('bookings', 'DELETE', null, '?id=gt.0');
+  await loadBookings();
+  renderAdminTable();
+}
+
+function exportCSV() {
+  if (!bookings.length) { alert('No bookings to export.'); return; }
+  const h = ['#','Name','Phone','Email','Date','Time','Duration(hrs)','Amount(INR)','Purpose','Booked At'];
+  const r = bookings.map((b,i) => [i+1, b.name, b.phone, b.email||'', b.date, b.timeLabel, b.duration, b.amount, b.purpose, fmtDT(b.bookedAt)]);
+  const csv = [h,...r].map(row => row.map(c => `"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `colab-bookings-${todayStr()}.csv`;
+  a.click();
+}
+</script>
+</body>
+</html>
