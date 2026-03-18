@@ -748,8 +748,10 @@ async function renderSlots() {
 function toggleSlot(h) {
   document.getElementById('slot-error').style.display = 'none';
   if (selectedSlots.includes(h)) {
-    // Deselect: clear the entire selection so user starts fresh with consecutive slots
-    selectedSlots = [];
+    // Trim: keep only slots before the clicked one so the user can shrink from either end
+    const sorted = [...selectedSlots].sort((a, b) => a - b);
+    const idx = sorted.indexOf(h);
+    selectedSlots = sorted.slice(0, idx);
   } else {
     // Try to add: check if result would be consecutive
     const test = [...selectedSlots, h].sort((a, b) => a - b);
@@ -879,8 +881,6 @@ async function confirmBooking() {
 
   // Reload bookings from DB (only if Supabase save succeeded)
   if (result) await loadBookings();
-const _obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.05});
-document.querySelectorAll('.fade-in').forEach(el=>_obs.observe(el));
 
   // Send WhatsApp to Tushar
   const tgMsg =
@@ -1089,8 +1089,10 @@ async function renderRescheduleSlots() {
 function toggleRescheduleSlot(h) {
   document.getElementById('rs-slot-error').style.display = 'none';
   if (rescheduleSelectedSlots.includes(h)) {
-    // Deselect: clear the entire selection so user starts fresh with consecutive slots
-    rescheduleSelectedSlots = [];
+    // Trim: keep only slots before the clicked one so the user can shrink from either end
+    const sorted = [...rescheduleSelectedSlots].sort((a, b) => a - b);
+    const idx = sorted.indexOf(h);
+    rescheduleSelectedSlots = sorted.slice(0, idx);
   } else {
     const test = [...rescheduleSelectedSlots, h].sort((a, b) => a - b);
     let valid = true;
@@ -1218,4 +1220,6 @@ Object.assign(window, {
   setRescheduleStep
 });
 
-const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings(); </script> </body> </html>
+const _d=new Date(); const _m=n=>String(n).padStart(2,'0'); document.getElementById('book-date').min=_d.getFullYear()+'-'+_m(_d.getMonth()+1)+'-'+_m(_d.getDate()); loadBookings();
+const _obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.05});
+document.querySelectorAll('.fade-in').forEach(el=>_obs.observe(el)); </script> </body> </html>
