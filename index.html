@@ -583,6 +583,7 @@ window.showPage = window.showPage || function(name){
         </div>
       </div>
       <div class="hero-right fade-in">
+        <div class="stat-card tilt-card"><div class="label">Open Hours</div><div class="value">24<span>/7</span></div><div class="desc">Always accessible, always secure</div></div>
         <div class="stat-row">
           <div class="stat-card tilt-card"><div class="label">Hot Desk</div><div class="value">₹500<span>/day</span></div><div class="desc">Walk-in ready</div></div>
           <div class="stat-card tilt-card"><div class="label">Meeting Room</div><div class="value">₹200<span>/hr</span></div><div class="desc">Book online</div></div>
@@ -1946,20 +1947,20 @@ function toggleFaq(btn) {
   gc.width = gc.height = 512;
   var gx = gc.getContext('2d');
   var gr = gx.createRadialGradient(256, 256, 0, 256, 256, 256);
-  gr.addColorStop(0,    'rgba(106,176,245,0.45)');
-  gr.addColorStop(0.35, 'rgba(21,88,176,0.22)');
+  gr.addColorStop(0,    'rgba(106,176,245,0.30)');
+  gr.addColorStop(0.35, 'rgba(21,88,176,0.14)');
   gr.addColorStop(1,    'rgba(0,0,0,0)');
   gx.fillStyle = gr;
   gx.fillRect(0, 0, 512, 512);
   var glowTex = new THREE.CanvasTexture(gc);
   var glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: glowTex, transparent: true, opacity: 0.55, depthWrite: false
+    map: glowTex, transparent: true, opacity: 0.35, depthWrite: false
   }));
-  glowSprite.scale.set(900, 900, 1);
+  glowSprite.scale.set(650, 650, 1);
   scene.add(glowSprite);
 
   /* ── Particle sphere ── */
-  var COUNT = 2500, RADIUS = 300;
+  var COUNT = 2500, RADIUS = 220;
   var orig = new Float32Array(COUNT * 3);
   var vel  = new Float32Array(COUNT * 3);
 
@@ -1976,7 +1977,7 @@ function toggleFaq(btn) {
   geo.setAttribute('position', new THREE.BufferAttribute(buf, 3));
   var ptMat = new THREE.PointsMaterial({
     color: 0x6ab0f5, size: 3.2, sizeAttenuation: true,
-    transparent: true, opacity: 0.78
+    transparent: true, opacity: 0.55
   });
   var sphereGroup = new THREE.Group();
   sphereGroup.add(new THREE.Points(geo, ptMat));
