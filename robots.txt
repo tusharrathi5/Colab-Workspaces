@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block admin panel from indexing
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://tusharrathi5.github.io/Colab-Workspaces/sitemap.xml
