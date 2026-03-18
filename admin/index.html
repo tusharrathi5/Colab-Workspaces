@@ -117,7 +117,7 @@
     <div id="admin-enquiries-view" style="display:none">
       <div style="overflow-x:auto;border-radius:16px;border:1px solid var(--border)">
         <table class="bookings-table">
-          <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Interested In</th><th>Message</th><th>Received At</th></tr></thead>
+          <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Interested In</th><th>Message</th><th>Received At</th><th>Del</th></tr></thead>
           <tbody id="enquiries-tbody"></tbody>
         </table>
         <div id="no-enquiries" class="no-bookings" style="display:none"><p style="font-size:32px;margin-bottom:12px">📩</p><p>No enquiries yet</p></div>
@@ -232,8 +232,14 @@ function renderAdminStats() {
 let adminTab = 'bookings';
 function switchAdminTab(tab) {
   adminTab = tab;
-  document.getElementById('admin-tab-bookings').style.fontWeight = tab === 'bookings' ? '700' : '400';
-  document.getElementById('admin-tab-enquiries').style.fontWeight = tab === 'enquiries' ? '700' : '400';
+  const bBtn = document.getElementById('admin-tab-bookings');
+  const eBtn = document.getElementById('admin-tab-enquiries');
+  bBtn.style.fontWeight = tab === 'bookings' ? '700' : '400';
+  bBtn.style.background = tab === 'bookings' ? 'white' : 'transparent';
+  bBtn.style.boxShadow = tab === 'bookings' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
+  eBtn.style.fontWeight = tab === 'enquiries' ? '700' : '400';
+  eBtn.style.background = tab === 'enquiries' ? 'white' : 'transparent';
+  eBtn.style.boxShadow = tab === 'enquiries' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
   document.getElementById('admin-bookings-view').style.display = tab === 'bookings' ? 'block' : 'none';
   document.getElementById('admin-enquiries-view').style.display = tab === 'enquiries' ? 'block' : 'none';
 }
@@ -281,6 +287,7 @@ function renderAdminTable() {
       <td style="font-size:13px;color:var(--gray)">${e.interest || '—'}</td>
       <td style="font-size:13px;color:var(--gray);max-width:200px">${e.message || '—'}</td>
       <td style="font-size:12px;color:var(--gray);white-space:nowrap">${fmtDT(e.created_at)}</td>
+      <td><button class="btn-delete" onclick="deleteEnquiry(${e.id})">✕</button></td>
     </tr>`).join('');
 
   renderAdminStats();
@@ -290,6 +297,13 @@ async function deleteBooking(id) {
   if (!confirm('Delete this booking?')) return;
   await sbFetch('bookings', 'DELETE', null, `?id=eq.${id}`);
   await loadBookings();
+  renderAdminTable();
+}
+
+async function deleteEnquiry(id) {
+  if (!confirm('Delete this enquiry?')) return;
+  await sbFetch('enquiries', 'DELETE', null, `?id=eq.${id}`);
+  await loadEnquiries();
   renderAdminTable();
 }
 
