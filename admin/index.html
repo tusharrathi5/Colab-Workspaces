@@ -55,6 +55,7 @@
   .badge-today { background:#dcfce7; color:#166534; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
   .badge-upcoming { background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
   .badge-past { background:#f3f4f6; color:#6b7280; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+  .badge-rescheduled { background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
 </style>
 </head>
 <body>
@@ -254,12 +255,14 @@ function renderAdminTable() {
 
   document.getElementById('bookings-tbody').innerHTML = fl.map((b,i) => {
     const isPast = b.date < today, isToday = b.date === today;
+    const isRescheduled = b.purpose && b.purpose.includes('Rescheduled from');
     const badge = isToday ? '<span class="badge-today">TODAY</span>' : isPast ? '<span class="badge-past">Past</span>' : '<span class="badge-upcoming">Upcoming</span>';
+    const rsBadge = isRescheduled ? ' <span class="badge-rescheduled">Rescheduled</span>' : '';
     return `<tr style="${isPast ? 'opacity:0.6' : ''}">
       <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${fl.length - i}</td>
       <td><strong>${b.name}</strong></td>
       <td><a href="tel:${b.phone}" style="color:var(--blue);text-decoration:none;font-family:'Space Mono',monospace;font-size:13px">${b.phone}</a></td>
-      <td><strong>${b.date}</strong><br>${badge}</td>
+      <td><strong>${b.date}</strong><br>${badge}${rsBadge}</td>
       <td style="font-family:'Space Mono',monospace;font-size:12px">${b.timeLabel}</td>
       <td style="text-align:center">${b.duration} hr</td>
       <td><strong style="color:var(--blue)">₹${b.amount.toLocaleString('en-IN')}</strong><br><span style="font-size:11px;color:var(--gray)">+GST</span></td>
