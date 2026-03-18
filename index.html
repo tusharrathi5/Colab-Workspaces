@@ -246,7 +246,17 @@
   .stat-card .value span { color:#ff9d4d; font-size:32px; font-family:'Bebas Neue',sans-serif; }
   .stat-card .desc { font-size:13px; color:rgba(255,255,255,0.38); margin-top:6px; font-weight:300; letter-spacing:0.2px; }
   .stat-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .hero-strip { position:relative; z-index:2; background:linear-gradient(135deg,#1558b0 0%,#1a6dc4 50%,#1558b0 100%); padding:17px 5%; display:flex; align-items:center; overflow:hidden; box-shadow:0 4px 24px rgba(21,88,176,0.4); }
+
+  /* ── 3D Hero Canvas ── */
+  .hero-3d-wrap { position:relative; width:100%; height:320px; border-radius:24px; overflow:hidden; background:radial-gradient(ellipse at 50% 50%, rgba(21,88,176,0.25) 0%, transparent 70%); border:1px solid rgba(106,176,245,0.12); box-shadow:0 0 60px rgba(21,88,176,0.2), inset 0 0 40px rgba(21,88,176,0.05); }
+  #hero-3d-canvas { width:100% !important; height:100% !important; display:block; }
+  .hero-3d-label { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:5px; color:rgba(106,176,245,0.5); pointer-events:none; }
+  @media(max-width:768px){ .hero-3d-wrap { height:220px; } }
+
+  /* ── 3D Tilt on stat cards ── */
+  .tilt-card { transition:transform 0.15s ease, box-shadow 0.15s ease !important; transform-style:preserve-3d; will-change:transform; }
+
+ { position:relative; z-index:2; background:linear-gradient(135deg,#1558b0 0%,#1a6dc4 50%,#1558b0 100%); padding:17px 5%; display:flex; align-items:center; overflow:hidden; box-shadow:0 4px 24px rgba(21,88,176,0.4); }
   .hero-strip::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.06) 50%,transparent 100%); }
   .strip-items { display:flex; gap:36px; align-items:center; flex-wrap:nowrap; position:relative; z-index:1; animation:strip-scroll 22s linear infinite; white-space:nowrap; min-width:max-content; }
   .strip-item { font-size:13px; color:rgba(255,255,255,0.92); font-weight:500; letter-spacing:0.2px; flex-shrink:0; }
@@ -442,8 +452,54 @@
   .reveal-stagger:nth-child(5) { transition-delay:0.32s; }
   .reveal-stagger:nth-child(6) { transition-delay:0.40s; }
 
+  /* ── Direction-aware reveal ── */
+  .reveal-left  { opacity:0; transform:translateX(-40px); transition:opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+  .reveal-right { opacity:0; transform:translateX(40px);  transition:opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+  .reveal-left.revealed, .reveal-right.revealed { opacity:1; transform:translateX(0); }
 
-  /* FAQ */
+  /* ── Scale-in for cards/icons ── */
+  .reveal-scale { opacity:0; transform:scale(0.88); transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+  .reveal-scale.revealed { opacity:1; transform:scale(1); }
+
+  /* ── Staggered children (up to 8) ── */
+  .stagger > *:nth-child(1) { transition-delay:0s !important; }
+  .stagger > *:nth-child(2) { transition-delay:0.10s !important; }
+  .stagger > *:nth-child(3) { transition-delay:0.20s !important; }
+  .stagger > *:nth-child(4) { transition-delay:0.30s !important; }
+  .stagger > *:nth-child(5) { transition-delay:0.40s !important; }
+  .stagger > *:nth-child(6) { transition-delay:0.50s !important; }
+  .stagger > *:nth-child(7) { transition-delay:0.60s !important; }
+  .stagger > *:nth-child(8) { transition-delay:0.70s !important; }
+
+  /* ── Count-up number flash ── */
+  @keyframes num-flash { 0%{color:var(--orange)} 100%{color:var(--blue)} }
+  .count-up-done { animation: num-flash 0.5s ease-out; }
+
+  /* ── Booking page hero entrance ── */
+  .booking-hero-animate { animation: booking-hero-in 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+  @keyframes booking-hero-in { from{opacity:0;transform:translateY(-24px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── Amenity icon spin on hover ── */
+  .amenity-icon { transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.3s; }
+  .amenity-item:hover .amenity-icon { transform: rotate(15deg) scale(1.15); background:rgba(26,109,196,0.35); }
+
+  /* ── Service card 3D perspective tilt ── */
+  .service-card { perspective:600px; }
+
+  /* ── Why item left-border glow ── */
+  .why-item { border-left:3px solid transparent; transition:all 0.3s, border-left-color 0.3s; }
+  .why-item:hover { border-left-color:var(--blue); }
+
+  /* ── Nav shimmer on load ── */
+  @keyframes nav-in { from{opacity:0;transform:translateY(-100%)} to{opacity:1;transform:translateY(0)} }
+  nav { animation: nav-in 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+
+  /* ── Section title underline draw ── */
+  .section-title-anim { position:relative; display:inline-block; }
+  .section-title-anim::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:3px; background:linear-gradient(90deg,var(--orange),var(--blue)); border-radius:2px; transition:width 0.7s cubic-bezier(0.22,1,0.36,1) 0.3s; }
+  .section-title-anim.revealed::after { width:100%; }
+
+
   .faq-item { border:1px solid var(--border); border-radius:14px; margin-bottom:12px; overflow:hidden; background:white; box-shadow:var(--shadow-sm); }
   .faq-q { width:100%; display:flex; justify-content:space-between; align-items:center; padding:20px 24px; background:white; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600; color:var(--black); text-align:left; transition:background 0.2s; gap:12px; }
   .faq-q:hover { background:var(--blue-light); }
@@ -482,6 +538,7 @@
     .bookings-table th,.bookings-table td { padding:10px 10px; }
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 <script>
@@ -531,12 +588,15 @@ window.showPage = window.showPage || function(name){
         </div>
       </div>
       <div class="hero-right fade-in">
-        <div class="stat-card"><div class="label">Open Hours</div><div class="value">24<span>/7</span></div><div class="desc">Always accessible, always secure</div></div>
-        <div class="stat-row">
-          <div class="stat-card"><div class="label">Hot Desk</div><div class="value">₹500<span>/day</span></div><div class="desc">Walk-in ready</div></div>
-          <div class="stat-card"><div class="label">Meeting Room</div><div class="value">₹200<span>/hr</span></div><div class="desc">Book online</div></div>
+        <div class="hero-3d-wrap">
+          <canvas id="hero-3d-canvas"></canvas>
+          <div class="hero-3d-label">CO-LAB</div>
         </div>
-        <div class="stat-card"><div class="label">Dedicated Seat from</div><div class="value">₹2000<span>/mo</span></div><div class="desc">Annual plan · Best value</div></div>
+        <div class="stat-row">
+          <div class="stat-card tilt-card"><div class="label">Hot Desk</div><div class="value">₹500<span>/day</span></div><div class="desc">Walk-in ready</div></div>
+          <div class="stat-card tilt-card"><div class="label">Meeting Room</div><div class="value">₹200<span>/hr</span></div><div class="desc">Book online</div></div>
+        </div>
+        <div class="stat-card tilt-card"><div class="label">Dedicated Seat from</div><div class="value">₹2000<span>/mo</span></div><div class="desc">Annual plan · Best value</div></div>
       </div>
     </div>
     <div class="hero-strip">
@@ -559,21 +619,21 @@ window.showPage = window.showPage || function(name){
 
   <section id="services">
     <div class="services-header">
-      <div><div class="section-tag">// What We Offer</div><h2 class="section-title">WORKSPACE<br>SOLUTIONS</h2></div>
-      <p class="section-desc">From solo freelancers to growing teams — a space that fits your work style perfectly.</p>
+      <div><div class="section-tag">// What We Offer</div><h2 class="section-title reveal reveal-left">WORKSPACE<br>SOLUTIONS</h2></div>
+      <p class="section-desc reveal reveal-right">From solo freelancers to growing teams — a space that fits your work style perfectly.</p>
     </div>
-    <div class="services-grid">
-      <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 7H5v-2h6v2zm8 0h-6v-2h6v2z"/></svg></div><h3>Dedicated Seats</h3><p>Your own permanent seat. Come and go anytime, 24×7. Perfect for daily professionals who need consistency.</p></div>
-      <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zm0 10h8v8h-8zM3 13h8v8H3z"/></svg></div><h3>Private Cabins</h3><p>3-seater enclosed cabins for teams that need privacy. Available in Essential, Executive, Elite &amp; Signature tiers.</p></div>
-      <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><h3>Hot Desk</h3><p>Pick any available seat per day. No commitment — just walk in and work. Ideal for occasional visitors.</p></div>
-      <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-1 9H6v-2h12v2z"/></svg></div><h3>Flex / Day Pass</h3><p>Pre-purchase entry passes valid for 3, 6, or 12 months. Flexible scheduling with significant savings.</p></div>
-      <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div><h3>Meeting Room</h3><p>Professional meeting room, book by the hour. ₹200/hr, available 24×7. Perfect for client meetings and interviews.</p></div>
+    <div class="services-grid stagger">
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 7H5v-2h6v2zm8 0h-6v-2h6v2z"/></svg></div><h3>Dedicated Seats</h3><p>Your own permanent seat. Come and go anytime, 24×7. Perfect for daily professionals who need consistency.</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zm0 10h8v8h-8zM3 13h8v8H3z"/></svg></div><h3>Private Cabins</h3><p>3-seater enclosed cabins for teams that need privacy. Available in Essential, Executive, Elite &amp; Signature tiers.</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><h3>Hot Desk</h3><p>Pick any available seat per day. No commitment — just walk in and work. Ideal for occasional visitors.</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-1 9H6v-2h12v2z"/></svg></div><h3>Flex / Day Pass</h3><p>Pre-purchase entry passes valid for 3, 6, or 12 months. Flexible scheduling with significant savings.</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div><h3>Meeting Room</h3><p>Professional meeting room, book by the hour. ₹200/hr, available 24×7. Perfect for client meetings and interviews.</p></div>
     </div>
   </section>
 
   <section id="pricing">
     <div style="margin-bottom:56px"><div class="section-tag">// Transparent Pricing</div><h2 class="section-title">FLEXIBLE PLANS<br>FOR EVERYONE</h2></div>
-    <div class="pricing-tabs">
+    <div class="pricing-tabs reveal">
       <button class="tab-btn active" onclick="switchTab(this,'dedicated')">Dedicated Seats</button>
       <button class="tab-btn" onclick="switchTab(this,'cabins')">Private Cabins</button>
       <button class="tab-btn" onclick="switchTab(this,'flex')">Flex / Day Pass</button>
@@ -581,32 +641,32 @@ window.showPage = window.showPage || function(name){
     </div>
     <div id="tab-dedicated" class="tab-content active">
       <div class="pricing-grid">
-        <div class="price-card"><div class="plan-name">Monthly</div><div class="plan-period">Per seat / month</div><div class="price-amount"><sup>₹</sup>4,000<div class="per">/month</div></div></div>
-        <div class="price-card"><div class="plan-name">3 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount"><sup>₹</sup>3,500<div class="per">/month</div></div></div>
-        <div class="price-card featured"><div class="price-badge">Popular</div><div class="plan-name">6 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount"><sup>₹</sup>3,000<div class="per">/month</div></div></div>
-        <div class="price-card"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">12 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount"><sup>₹</sup>2,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">Monthly</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="4000" data-suffix="/month"><sup>₹</sup>4,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">3 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3500" data-suffix="/month"><sup>₹</sup>3,500<div class="per">/month</div></div></div>
+        <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">6 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3000" data-suffix="/month"><sup>₹</sup>3,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">12 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="2000" data-suffix="/month"><sup>₹</sup>2,000<div class="per">/month</div></div></div>
       </div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
     <div id="tab-cabins" class="tab-content">
       <div class="pricing-grid">
-        <div class="price-card"><div class="plan-name">Essential Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount"><sup>₹</sup>8,000<div class="per">/month</div></div></div>
-        <div class="price-card featured"><div class="plan-name">Executive Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount"><sup>₹</sup>10,000<div class="per">/month</div></div></div>
-        <div class="price-card"><div class="plan-name">Elite Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount"><sup>₹</sup>12,000<div class="per">/month</div></div></div>
-        <div class="price-card"><div class="price-badge" style="background:var(--blue)">Premium</div><div class="plan-name">Signature Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount"><sup>₹</sup>14,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">Essential Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="8000" data-suffix="/month"><sup>₹</sup>8,000<div class="per">/month</div></div></div>
+        <div class="price-card featured reveal reveal-scale"><div class="plan-name">Executive Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="10000" data-suffix="/month"><sup>₹</sup>10,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">Elite Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="12000" data-suffix="/month"><sup>₹</sup>12,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Premium</div><div class="plan-name">Signature Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="14000" data-suffix="/month"><sup>₹</sup>14,000<div class="per">/month</div></div></div>
       </div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
     <div id="tab-flex" class="tab-content">
       <div class="pricing-grid" style="grid-template-columns:repeat(3,1fr)">
-        <div class="price-card"><div class="plan-name">10 Entries</div><div class="plan-period">Valid 3 months</div><div class="price-amount"><sup>₹</sup>3,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹300 per entry</p></div>
-        <div class="price-card featured"><div class="price-badge">Popular</div><div class="plan-name">24 Entries</div><div class="plan-period">Valid 6 months</div><div class="price-amount"><sup>₹</sup>6,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹250 per entry</p></div>
-        <div class="price-card"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">60 Entries</div><div class="plan-period">Valid 12 months</div><div class="price-amount"><sup>₹</sup>12,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹200 per entry</p></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">10 Entries</div><div class="plan-period">Valid 3 months</div><div class="price-amount" data-count-target="3000" data-prefix="₹" data-suffix=""><sup>₹</sup>3,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹300 per entry</p></div>
+        <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">24 Entries</div><div class="plan-period">Valid 6 months</div><div class="price-amount" data-count-target="6000" data-prefix="₹" data-suffix=""><sup>₹</sup>6,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹250 per entry</p></div>
+        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">60 Entries</div><div class="plan-period">Valid 12 months</div><div class="price-amount" data-count-target="12000" data-prefix="₹" data-suffix=""><sup>₹</sup>12,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹200 per entry</p></div>
       </div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
     <div id="tab-hotdesk" class="tab-content">
-      <div class="pricing-grid" style="grid-template-columns:1fr"><div class="price-card featured" style="max-width:340px"><div class="plan-name">Hot Desk</div><div class="plan-period">Walk-in · Any available seat</div><div class="price-amount"><sup>₹</sup>500<div class="per">/day</div></div><p style="font-size:13px;color:var(--gray);margin-top:12px">No booking required. Just show up and plug in.</p></div></div>
+      <div class="pricing-grid" style="grid-template-columns:1fr"><div class="price-card featured reveal reveal-scale" style="max-width:340px"><div class="plan-name">Hot Desk</div><div class="plan-period">Walk-in · Any available seat</div><div class="price-amount" data-count-target="500" data-suffix="/day"><sup>₹</sup>500<div class="per">/day</div></div><p style="font-size:13px;color:var(--gray);margin-top:12px">No booking required. Just show up and plug in.</p></div></div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
   </section>
@@ -614,26 +674,26 @@ window.showPage = window.showPage || function(name){
   <section id="amenities">
     <div class="section-tag">// Everything Included</div><h2 class="section-title" style="color:white">ALL AMENITIES INCLUDED</h2>
     <p class="section-desc">Everything you need for a productive day — built right in.</p>
-    <div class="amenities-grid">
-      <div class="amenity-item"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zm7-2l8 4v14l-8-4V4zM2 7l5-3v13L2 20V7zm20 10l-5 3V7l5-3v13z"/></svg></div><span>High-Speed Internet</span></div>
-      <div class="amenity-item"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div><span>24×7 CCTV Security</span></div>
-      <div class="amenity-item"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/></svg></div><span>Complimentary Tea &amp; Coffee</span></div>
-      <div class="amenity-item"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M18 18.5c0 .83-.67 1.5-1.5 1.5S15 19.33 15 18.5 15.67 17 16.5 17s1.5.67 1.5 1.5zM5 17c-.83 0-1.5.67-1.5 1.5S4.17 20 5 20s1.5-.67 1.5-1.5S5.83 17 5 17zm14-7l-3-5H4L2 10v3h1.5c0-1.66 1.34-3 3-3s3 1.34 3 3h5c0-1.66 1.34-3 3-3s3 1.34 3 3H22v-3h-3z"/></svg></div><span>Ample Parking Space</span></div>
-      <div class="amenity-item"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></div><span>Ergonomic Furniture</span></div>
-      <div class="amenity-item"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Clean &amp; Hygienic Space</span></div>
+    <div class="amenities-grid stagger">
+      <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zm7-2l8 4v14l-8-4V4zM2 7l5-3v13L2 20V7zm20 10l-5 3V7l5-3v13z"/></svg></div><span>High-Speed Internet</span></div>
+      <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div><span>24×7 CCTV Security</span></div>
+      <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/></svg></div><span>Complimentary Tea &amp; Coffee</span></div>
+      <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M18 18.5c0 .83-.67 1.5-1.5 1.5S15 19.33 15 18.5 15.67 17 16.5 17s1.5.67 1.5 1.5zM5 17c-.83 0-1.5.67-1.5 1.5S4.17 20 5 20s1.5-.67 1.5-1.5S5.83 17 5 17zm14-7l-3-5H4L2 10v3h1.5c0-1.66 1.34-3 3-3s3 1.34 3 3h5c0-1.66 1.34-3 3-3s3 1.34 3 3H22v-3h-3z"/></svg></div><span>Ample Parking Space</span></div>
+      <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></div><span>Ergonomic Furniture</span></div>
+      <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Clean &amp; Hygienic Space</span></div>
     </div>
   </section>
 
   <section id="why">
-    <div class="section-tag">// Why Choose Us</div><h2 class="section-title">YOUR BEST<br>WORKSPACE CHOICE</h2>
+    <div class="section-tag">// Why Choose Us</div><h2 class="section-title section-title-anim reveal">YOUR BEST<br>WORKSPACE CHOICE</h2>
     <div class="why-grid">
-      <div class="why-items">
-        <div class="why-item"><div class="why-num">01</div><div><h4>Work Close to Home</h4><p>Gandhi Path West, Jaipur — a professional environment without the long commute.</p></div></div>
-        <div class="why-item"><div class="why-num">02</div><div><h4>Flexible Plans</h4><p>Daily, monthly, or annual — choose a plan that fits your schedule and budget.</p></div></div>
-        <div class="why-item"><div class="why-num">03</div><div><h4>Zero Hidden Costs</h4><p>Transparent pricing with all amenities included. No surprise fees, ever.</p></div></div>
-        <div class="why-item"><div class="why-num">04</div><div><h4>Professional Community</h4><p>Surrounded by like-minded professionals in a supportive, focused environment.</p></div></div>
+      <div class="why-items stagger">
+        <div class="why-item reveal reveal-left"><div class="why-num">01</div><div><h4>Work Close to Home</h4><p>Gandhi Path West, Jaipur — a professional environment without the long commute.</p></div></div>
+        <div class="why-item reveal reveal-left"><div class="why-num">02</div><div><h4>Flexible Plans</h4><p>Daily, monthly, or annual — choose a plan that fits your schedule and budget.</p></div></div>
+        <div class="why-item reveal reveal-left"><div class="why-num">03</div><div><h4>Zero Hidden Costs</h4><p>Transparent pricing with all amenities included. No surprise fees, ever.</p></div></div>
+        <div class="why-item reveal reveal-left"><div class="why-num">04</div><div><h4>Professional Community</h4><p>Surrounded by like-minded professionals in a supportive, focused environment.</p></div></div>
       </div>
-      <div class="why-visual">
+      <div class="why-visual reveal reveal-right">
         <div class="big-text">WORK<br>SMARTER.<br>WORK<br>BETTER.</div>
         <p>A thoughtfully designed coworking space built for the modern professional in Jaipur.</p>
         <div class="contact-box">
@@ -648,14 +708,14 @@ window.showPage = window.showPage || function(name){
   <section id="contact">
     <div class="section-tag">// Get In Touch</div><h2 class="section-title">READY TO JOIN CO-LAB?</h2>
     <div class="contact-grid">
-      <div class="contact-info">
+      <div class="contact-info reveal reveal-left">
         <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div><div><h4>Call Us</h4><p><a href="tel:+919351864351">+91 9351864351</a></p><p style="font-size:12px;color:var(--gray);margin-top:4px">Founder: Tushar Rathi</p></div></div>
         <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div><div><h4>Email Us</h4><p>contact&#64;nexgenhires&#46;com</p></div></div>
         <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div><div><h4>Visit Us</h4><p><a href="https://share.google/Xjq1kWjOxFDEaLQxi" target="_blank" style="color:var(--blue);text-decoration:none">Shop No. 1, Silver Crown Residency<br>Gandhi Path West, Jaipur 🗺️</a></p></div></div>
         <div class="contact-card" style="background:linear-gradient(135deg,#e7faf0 0%,#d4f5e2 100%);border-color:#a8e6c1"><div class="contact-card-icon" style="background:#25d366"><svg viewBox="0 0 24 24" style="fill:white;width:22px;height:22px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div><div><h4 style="color:#166534">WhatsApp Us</h4><p><a href="https://wa.me/919351864351?text=Hi%2C%20I%20came%20across%20your%20website%20and%20I%27m%20interested%20in%20your%20services.%20Can%20you%20share%20more%20details%3F" target="_blank" style="color:#16a34a;text-decoration:none;font-weight:600">+91 9351864351 →</a></p><p style="font-size:12px;color:#4b7a5e;margin-top:4px">Quick replies on WhatsApp</p></div></div>
         <button class="btn-primary" onclick="showPage('booking')" style="justify-content:center">📅 Book Meeting Room Online</button>
       </div>
-      <div class="contact-form">
+      <div class="contact-form reveal reveal-right">
         <h3>Send an Enquiry</h3>
         <div class="form-group"><label>Your Name</label><input type="text" class="form-control" id="eq-name" placeholder="e.g. Ravi Sharma"></div>
         <div class="form-group">
@@ -677,7 +737,7 @@ window.showPage = window.showPage || function(name){
     <h2 class="section-title">QUICK<br>ANSWERS</h2>
     <p class="section-desc" style="margin-bottom:48px">Everything you need to know about CO-LAB Workspaces, Jaipur.</p>
     <div style="max-width:780px">
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
           What is the best coworking space in Jaipur?
           <span class="faq-icon">+</span>
@@ -686,7 +746,7 @@ window.showPage = window.showPage || function(name){
           CO-LAB Workspaces at Gandhi Path West is one of Jaipur's top coworking spaces — offering dedicated seats, private cabins, hot desks, and a professional meeting room, all open 24×7 with high-speed internet, CCTV security, and complimentary tea &amp; coffee.
         </div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
           How much does a hot desk cost at CO-LAB?
           <span class="faq-icon">+</span>
@@ -695,7 +755,7 @@ window.showPage = window.showPage || function(name){
           A hot desk is available for just <strong>₹500/day</strong> — no booking required. Walk in and start working. GST applicable as per government norms.
         </div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
           Is CO-LAB Workspaces open 24/7?
           <span class="faq-icon">+</span>
@@ -704,7 +764,7 @@ window.showPage = window.showPage || function(name){
           Yes! CO-LAB Workspaces is open <strong>24×7, 365 days a year</strong>. Members can access the space at any time with CCTV security ensuring a safe working environment around the clock.
         </div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
           What monthly coworking plans are available?
           <span class="faq-icon">+</span>
@@ -713,7 +773,7 @@ window.showPage = window.showPage || function(name){
           We offer flexible plans: <strong>Dedicated seats</strong> from ₹2,000/month (annual plan) to ₹4,000/month. <strong>Private 3-seater cabins</strong> from ₹8,000 to ₹14,000/month. <strong>Flex day-pass bundles</strong> from ₹3,000 for 10 entries. All plans include all amenities.
         </div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
           How do I book a meeting room?
           <span class="faq-icon">+</span>
@@ -722,7 +782,7 @@ window.showPage = window.showPage || function(name){
           Book online directly on this website — select your date, pick your half-hour time slots, enter your details and confirm. The meeting room is available at <strong>₹200/hour</strong>, 24×7. Payment is collected at the venue.
         </div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
           Where exactly is CO-LAB Workspaces located?
           <span class="faq-icon">+</span>
@@ -746,7 +806,7 @@ window.showPage = window.showPage || function(name){
 
 <!-- ══════════ BOOKING ══════════ -->
 <div id="page-booking" class="page page-main">
-  <div class="booking-hero">
+  <div class="booking-hero booking-hero-animate">
     <p style="color:rgba(255,255,255,0.6);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;margin-bottom:8px;position:relative;z-index:1">CO-LAB WORKSPACES</p>
     <h2>BOOK MEETING ROOM</h2>
     <p>Available 24×7 · Professional &amp; fully equipped</p>
@@ -1815,12 +1875,16 @@ function toggleFaq(btn) {
 
   staggerSelectors.forEach(function(sel) {
     document.querySelectorAll(sel).forEach(function(el) {
-      el.classList.add('reveal','reveal-stagger');
+      if (!el.classList.contains('reveal-left') && !el.classList.contains('reveal-right') && !el.classList.contains('reveal-scale')) {
+        el.classList.add('reveal','reveal-stagger');
+      }
     });
   });
   simpleSelectors.forEach(function(sel) {
     document.querySelectorAll(sel).forEach(function(el) {
-      el.classList.add('reveal');
+      if (!el.classList.contains('reveal')) {
+        el.classList.add('reveal');
+      }
     });
   });
 
@@ -1831,7 +1895,7 @@ function toggleFaq(btn) {
         revealObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.12, rootMargin:'0px 0px -40px 0px' });
 
   var fadeObserver = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
@@ -1842,8 +1906,167 @@ function toggleFaq(btn) {
     });
   }, { threshold: 0.15 });
 
-  document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
-  document.querySelectorAll('.fade-in').forEach(function(el) { fadeObserver.observe(el); });
+  function observe(){
+    document.querySelectorAll('.reveal, .fade-in, .reveal-left, .reveal-right, .reveal-scale, .section-title-anim').forEach(function(el){
+      revealObserver.observe(el);
+    });
+    document.querySelectorAll('.fade-in').forEach(function(el){ fadeObserver.observe(el); });
+  }
+  observe();
+
+  /* Re-observe when page switches */
+  var origShowPage = window.showPage;
+  window.showPage = function(name){
+    var r = origShowPage ? origShowPage(name) : false;
+    setTimeout(observe, 80);
+    return r;
+  };
+})();
+</script>
+<script>
+/* ── THREE.JS 3D HERO ORB ──────────────────────────────── */
+(function(){
+  var canvas = document.getElementById('hero-3d-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+  camera.position.set(0, 0, 4.5);
+
+  function resize(){
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    if(w === 0 || h === 0) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── Outer wireframe torus (rotates slowly) ── */
+  var torusGeo = new THREE.TorusGeometry(1.5, 0.45, 18, 60);
+  var torusMat = new THREE.MeshBasicMaterial({ color:0x1a6dc4, wireframe:true, opacity:0.35, transparent:true });
+  var torus = new THREE.Mesh(torusGeo, torusMat);
+  scene.add(torus);
+
+  /* ── Inner torus (orange accent, counter-rotates) ── */
+  var torus2Geo = new THREE.TorusGeometry(1.0, 0.18, 12, 48);
+  var torus2Mat = new THREE.MeshBasicMaterial({ color:0xf47920, wireframe:true, opacity:0.22, transparent:true });
+  var torus2 = new THREE.Mesh(torus2Geo, torus2Mat);
+  torus2.rotation.x = Math.PI / 3;
+  scene.add(torus2);
+
+  /* ── Floating particle sphere ── */
+  var ptCount = 400;
+  var ptPositions = new Float32Array(ptCount * 3);
+  for(var i=0; i<ptCount; i++){
+    var phi   = Math.acos(2*Math.random()-1);
+    var theta = 2*Math.PI*Math.random();
+    var r     = 1.6 + (Math.random()-0.5)*0.6;
+    ptPositions[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    ptPositions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    ptPositions[i*3+2] = r * Math.cos(phi);
+  }
+  var ptGeo = new THREE.BufferGeometry();
+  ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPositions, 3));
+  var ptMat = new THREE.PointsMaterial({ color:0x6ab0f5, size:0.032, transparent:true, opacity:0.7 });
+  var points = new THREE.Points(ptGeo, ptMat);
+  scene.add(points);
+
+  /* ── Central glowing sphere ── */
+  var coreGeo = new THREE.SphereGeometry(0.32, 24, 24);
+  var coreMat = new THREE.MeshBasicMaterial({ color:0x1558b0, transparent:true, opacity:0.9 });
+  var core = new THREE.Mesh(coreGeo, coreMat);
+  scene.add(core);
+
+  /* ── Mouse parallax ── */
+  var mX = 0, mY = 0;
+  var wrap = canvas.closest('.hero-3d-wrap');
+  if(wrap){
+    wrap.addEventListener('mousemove', function(e){
+      var rect = wrap.getBoundingClientRect();
+      mX = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
+      mY = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
+    });
+    wrap.addEventListener('mouseleave', function(){ mX=0; mY=0; });
+  }
+
+  /* ── Animate ── */
+  var t = 0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t += 0.006;
+
+    torus.rotation.x  = t * 0.38 + mY * 0.4;
+    torus.rotation.y  = t * 0.55 + mX * 0.4;
+    torus2.rotation.y = -t * 0.5;
+    torus2.rotation.z = t * 0.3;
+    points.rotation.y = t * 0.12;
+    points.rotation.x = t * 0.07;
+    core.scale.setScalar(1 + 0.06 * Math.sin(t * 2.5));
+
+    torusMat.opacity  = 0.25 + 0.12 * Math.sin(t * 1.8);
+    torus2Mat.opacity = 0.15 + 0.10 * Math.sin(t * 2.2 + 1);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+<script>
+/* ── COUNT-UP for price-amount on first scroll-reveal ── */
+(function(){
+  function countUp(el, target, prefix, suffix, duration){
+    var start = Date.now();
+    var tick = function() {
+      var elapsed = Date.now() - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      var cur = Math.round(ease * target);
+      el.innerHTML = '<sup>' + prefix + '</sup>' + cur.toLocaleString('en-IN') + '<div class="per">' + suffix + '</div>';
+      if(progress < 1) requestAnimationFrame(tick);
+      else el.classList.add('count-up-done');
+    };
+    requestAnimationFrame(tick);
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      var el = en.target;
+      var raw = el.dataset.countTarget;
+      if(!raw) return;
+      var prefix = el.dataset.prefix || '₹';
+      var num = parseInt(raw);
+      var suffix = el.dataset.suffix || '';
+      countUp(el, num, prefix, suffix, 900);
+      io.unobserve(el);
+    });
+  }, {threshold:0.5});
+
+  document.querySelectorAll('.price-amount[data-count-target]').forEach(function(el){ io.observe(el); });
+})();
+</script>
+<script>
+/* ── 3D TILT on .tilt-card ── */
+(function(){
+  document.querySelectorAll('.tilt-card').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width  - 0.5;
+      var y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = 'perspective(600px) rotateX(' + (-y*14) + 'deg) rotateY(' + (x*14) + 'deg) translateY(-4px)';
+      card.style.boxShadow = (-x*12) + 'px ' + (y*12) + 'px 28px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12)';
+    });
+    card.addEventListener('mouseleave', function(){
+      card.style.transform = '';
+      card.style.boxShadow = '';
+    });
+  });
 })();
 </script>
 </body> </html>
