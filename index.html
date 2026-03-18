@@ -904,7 +904,7 @@ async function confirmBooking() {
   }
   const s=[...selectedSlots].sort((a,b)=>a-b);
   const bill = getBillingDetails(s.length);
-  const dur=bill.billedHours, total=bill.finalTotal;
+  const dur=bill.durationHours, total=bill.finalTotal;
   const timeLabel=formatSelectedRange(s[0], s[s.length-1]+1);
   const name=document.getElementById('bk-name').value.trim();
   const phone=document.getElementById('bk-phone').value.trim();
