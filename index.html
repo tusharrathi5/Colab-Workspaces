@@ -737,7 +737,7 @@ async function renderSlots() {
   const bookedSet = new Set();
   if (data && Array.isArray(data)) {
     data.forEach(b => {
-      const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
+      const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : (b.slots!=null ? [parseInt(b.slots,10)] : []);
       resolveSlots(slots, b.duration).forEach(s => bookedSet.add(s));
     });
   }
@@ -770,7 +770,7 @@ async function renderSlots() {
     const freshSet = new Set();
     if (freshData && Array.isArray(freshData)) {
       freshData.forEach(b => {
-        const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
+        const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : (b.slots!=null ? [parseInt(b.slots,10)] : []);
         resolveSlots(slots, b.duration).forEach(s => freshSet.add(s));
       });
     }
@@ -1103,7 +1103,7 @@ async function renderRescheduleSlots() {
   if (data && Array.isArray(data)) {
     data.forEach(b => {
       if (rescheduleTargetBooking && b.id === rescheduleTargetBooking.id) return;
-      const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
+      const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : (b.slots!=null ? [parseInt(b.slots,10)] : []);
       resolveSlots(slots, b.duration).forEach(s => bookedSet.add(s));
     });
   }
@@ -1137,7 +1137,7 @@ async function renderRescheduleSlots() {
     if (freshData && Array.isArray(freshData)) {
       freshData.forEach(b => {
         if (rescheduleTargetBooking && b.id === rescheduleTargetBooking.id) return;
-        const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
+        const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : (b.slots!=null ? [parseInt(b.slots,10)] : []);
         resolveSlots(slots, b.duration).forEach(s => freshSet.add(s));
       });
     }
