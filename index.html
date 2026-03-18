@@ -542,6 +542,7 @@ window.showPage = window.showPage || function(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   target.classList.add('active');
   window.scrollTo(0,0);
+  history.replaceState(null, '', name === 'home' ? (window.location.pathname) : '#' + name);
   return false;
 };
 </script>
@@ -1100,6 +1101,7 @@ window.showPage = function showPage(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   window.scrollTo(0,0);
+  history.replaceState(null, '', name === 'home' ? (window.location.pathname) : '#' + name);
   if (name==='admin') renderAdminPage();
   if (name !== 'booking' && _slotPollInterval) {
     clearInterval(_slotPollInterval);
@@ -2115,6 +2117,25 @@ function toggleFaq(btn) {
       card.style.boxShadow = '';
     });
   });
+})();
+</script>
+<script>
+/* ── HASH ROUTING: restore page on refresh ───────────────────── */
+(function() {
+  var hash = window.location.hash.replace('#', '').trim();
+  var validPages = ['home', 'booking', 'reschedule', 'admin'];
+  if (hash && validPages.indexOf(hash) !== -1 && hash !== 'home') {
+    var restore = function() {
+      if (typeof window.showPage === 'function' && document.getElementById('page-' + hash)) {
+        window.showPage(hash);
+      }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', restore);
+    } else {
+      restore();
+    }
+  }
 })();
 </script>
 </body> </html>
