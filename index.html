@@ -671,17 +671,27 @@ async function renderSlots() {
 }
 
 function toggleSlot(h) {
-  document.getElementById('slot-error').style.display='none';
+  document.getElementById('slot-error').style.display = 'none';
   if (selectedSlots.includes(h)) {
-    selectedSlots = selectedSlots.filter(s=>s!==h);
+    // Deselect: remove this slot
+    selectedSlots = selectedSlots.filter(s => s !== h);
   } else {
-    const test = [...selectedSlots,h].sort((a,b)=>a-b);
-    let valid=true;
-    for (let i=1;i<test.length;i++) { if(test[i]-test[i-1]!==1){valid=false;break;} }
-    if (!valid && selectedSlots.length>0) { document.getElementById('slot-error').style.display='block'; return; }
+    // Try to add: check if result would be consecutive
+    const test = [...selectedSlots, h].sort((a, b) => a - b);
+    let valid = true;
+    for (let i = 1; i < test.length; i++) {
+      if (test[i] - test[i - 1] !== 1) { valid = false; break; }
+    }
+    // Only block if there are EXISTING selected slots AND the new slot breaks consecutiveness
+    if (!valid && selectedSlots.length > 0) {
+      document.getElementById('slot-error').style.display = 'block';
+      return;
+    }
     selectedSlots = test;
   }
-  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s=>s.classList.toggle('selected',selectedSlots.includes(parseInt(s.dataset.slot))));
+  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s =>
+    s.classList.toggle('selected', selectedSlots.includes(parseInt(s.dataset.slot)))
+  );
   updatePreview();
 }
 
