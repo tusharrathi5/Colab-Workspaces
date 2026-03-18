@@ -247,12 +247,6 @@
   .stat-card .desc { font-size:13px; color:rgba(255,255,255,0.38); margin-top:6px; font-weight:300; letter-spacing:0.2px; }
   .stat-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
-  /* ── 3D Hero Canvas ── */
-  .hero-3d-wrap { position:relative; width:100%; height:320px; border-radius:24px; overflow:hidden; background:radial-gradient(ellipse at 50% 50%, rgba(21,88,176,0.25) 0%, transparent 70%); border:1px solid rgba(106,176,245,0.12); box-shadow:0 0 60px rgba(21,88,176,0.2), inset 0 0 40px rgba(21,88,176,0.05); }
-  #hero-3d-canvas { width:100% !important; height:100% !important; display:block; }
-  .hero-3d-label { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:5px; color:rgba(106,176,245,0.5); pointer-events:none; }
-  @media(max-width:768px){ .hero-3d-wrap { height:220px; } }
-
   /* ── 3D Tilt on stat cards ── */
   .tilt-card { transition:transform 0.15s ease, box-shadow 0.15s ease !important; transform-style:preserve-3d; will-change:transform; }
 
@@ -576,7 +570,8 @@ window.showPage = window.showPage || function(name){
     <div class="hero-line3"></div>
     <div class="hero-orb1"></div>
     <div class="hero-orb2"></div>
-    <canvas id="hero-particles" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.6"></canvas>
+    <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
+    <canvas id="hero-particles" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.35"></canvas>
     <div class="hero-content">
       <div class="hero-left fade-in">
         <div class="hero-tag">Jaipur's Neighbourhood Workspace</div>
@@ -588,10 +583,6 @@ window.showPage = window.showPage || function(name){
         </div>
       </div>
       <div class="hero-right fade-in">
-        <div class="hero-3d-wrap">
-          <canvas id="hero-3d-canvas"></canvas>
-          <div class="hero-3d-label">CO-LAB</div>
-        </div>
         <div class="stat-row">
           <div class="stat-card tilt-card"><div class="label">Hot Desk</div><div class="value">₹500<span>/day</span></div><div class="desc">Walk-in ready</div></div>
           <div class="stat-card tilt-card"><div class="label">Meeting Room</div><div class="value">₹200<span>/hr</span></div><div class="desc">Book online</div></div>
@@ -1924,22 +1915,25 @@ function toggleFaq(btn) {
 })();
 </script>
 <script>
-/* ── THREE.JS 3D HERO ORB ──────────────────────────────── */
+/* ── THREE.JS HERO BACKGROUND PARTICLE SPHERE ─────────────────── */
 (function(){
-  var canvas = document.getElementById('hero-3d-canvas');
+  var canvas = document.getElementById('hero-sphere-canvas');
   if (!canvas || typeof THREE === 'undefined') return;
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias:true, alpha:true });
+  var heroSection = document.querySelector('.hero');
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
-  camera.position.set(0, 0, 4.5);
+  var camera = new THREE.PerspectiveCamera(55, 1, 1, 2000);
+  camera.position.set(0, 0, 650);
 
-  function resize(){
-    var w = canvas.clientWidth, h = canvas.clientHeight;
-    if(w === 0 || h === 0) return;
+  function resize() {
+    var w = heroSection ? heroSection.offsetWidth  : window.innerWidth;
+    var h = heroSection ? heroSection.offsetHeight : window.innerHeight;
+    if (!w || !h) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -1947,71 +1941,124 @@ function toggleFaq(btn) {
   resize();
   window.addEventListener('resize', resize);
 
-  /* ── Outer wireframe torus (rotates slowly) ── */
-  var torusGeo = new THREE.TorusGeometry(1.5, 0.45, 18, 60);
-  var torusMat = new THREE.MeshBasicMaterial({ color:0x1a6dc4, wireframe:true, opacity:0.35, transparent:true });
-  var torus = new THREE.Mesh(torusGeo, torusMat);
-  scene.add(torus);
+  /* ── Glow sprite (soft radial bloom behind sphere) ── */
+  var gc = document.createElement('canvas');
+  gc.width = gc.height = 512;
+  var gx = gc.getContext('2d');
+  var gr = gx.createRadialGradient(256, 256, 0, 256, 256, 256);
+  gr.addColorStop(0,    'rgba(106,176,245,0.45)');
+  gr.addColorStop(0.35, 'rgba(21,88,176,0.22)');
+  gr.addColorStop(1,    'rgba(0,0,0,0)');
+  gx.fillStyle = gr;
+  gx.fillRect(0, 0, 512, 512);
+  var glowTex = new THREE.CanvasTexture(gc);
+  var glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowTex, transparent: true, opacity: 0.55, depthWrite: false
+  }));
+  glowSprite.scale.set(900, 900, 1);
+  scene.add(glowSprite);
 
-  /* ── Inner torus (orange accent, counter-rotates) ── */
-  var torus2Geo = new THREE.TorusGeometry(1.0, 0.18, 12, 48);
-  var torus2Mat = new THREE.MeshBasicMaterial({ color:0xf47920, wireframe:true, opacity:0.22, transparent:true });
-  var torus2 = new THREE.Mesh(torus2Geo, torus2Mat);
-  torus2.rotation.x = Math.PI / 3;
-  scene.add(torus2);
+  /* ── Particle sphere ── */
+  var COUNT = 2500, RADIUS = 300;
+  var orig = new Float32Array(COUNT * 3);
+  var vel  = new Float32Array(COUNT * 3);
 
-  /* ── Floating particle sphere ── */
-  var ptCount = 400;
-  var ptPositions = new Float32Array(ptCount * 3);
-  for(var i=0; i<ptCount; i++){
-    var phi   = Math.acos(2*Math.random()-1);
-    var theta = 2*Math.PI*Math.random();
-    var r     = 1.6 + (Math.random()-0.5)*0.6;
-    ptPositions[i*3]   = r * Math.sin(phi) * Math.cos(theta);
-    ptPositions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-    ptPositions[i*3+2] = r * Math.cos(phi);
+  for (var i = 0; i < COUNT; i++) {
+    var phi   = Math.acos(2 * Math.random() - 1);
+    var theta = 2 * Math.PI * Math.random();
+    orig[i*3]   = RADIUS * Math.sin(phi) * Math.cos(theta);
+    orig[i*3+1] = RADIUS * Math.sin(phi) * Math.sin(theta);
+    orig[i*3+2] = RADIUS * Math.cos(phi);
   }
-  var ptGeo = new THREE.BufferGeometry();
-  ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPositions, 3));
-  var ptMat = new THREE.PointsMaterial({ color:0x6ab0f5, size:0.032, transparent:true, opacity:0.7 });
-  var points = new THREE.Points(ptGeo, ptMat);
-  scene.add(points);
 
-  /* ── Central glowing sphere ── */
-  var coreGeo = new THREE.SphereGeometry(0.32, 24, 24);
-  var coreMat = new THREE.MeshBasicMaterial({ color:0x1558b0, transparent:true, opacity:0.9 });
-  var core = new THREE.Mesh(coreGeo, coreMat);
-  scene.add(core);
+  var buf = orig.slice();
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(buf, 3));
+  var ptMat = new THREE.PointsMaterial({
+    color: 0x6ab0f5, size: 3.2, sizeAttenuation: true,
+    transparent: true, opacity: 0.78
+  });
+  var sphereGroup = new THREE.Group();
+  sphereGroup.add(new THREE.Points(geo, ptMat));
+  scene.add(sphereGroup);
 
-  /* ── Mouse parallax ── */
-  var mX = 0, mY = 0;
-  var wrap = canvas.closest('.hero-3d-wrap');
-  if(wrap){
-    wrap.addEventListener('mousemove', function(e){
-      var rect = wrap.getBoundingClientRect();
-      mX = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
-      mY = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
+  /* ── Mouse tracking ── */
+  var mX = -9999, mY = -9999;
+  if (heroSection) {
+    heroSection.addEventListener('mousemove', function(e) {
+      var r = heroSection.getBoundingClientRect();
+      mX = e.clientX - r.left;
+      mY = e.clientY - r.top;
     });
-    wrap.addEventListener('mouseleave', function(){ mX=0; mY=0; });
+    heroSection.addEventListener('mouseleave', function() { mX = -9999; mY = -9999; });
   }
 
-  /* ── Animate ── */
-  var t = 0;
-  function animate(){
+  /* ── Pre-allocated helpers ── */
+  var _ray = new THREE.Vector3();
+  var _inv = new THREE.Matrix4();
+
+  /* ── Animation loop ── */
+  var clock = 0;
+  function animate() {
     requestAnimationFrame(animate);
-    t += 0.006;
+    clock += 0.004;
 
-    torus.rotation.x  = t * 0.38 + mY * 0.4;
-    torus.rotation.y  = t * 0.55 + mX * 0.4;
-    torus2.rotation.y = -t * 0.5;
-    torus2.rotation.z = t * 0.3;
-    points.rotation.y = t * 0.12;
-    points.rotation.x = t * 0.07;
-    core.scale.setScalar(1 + 0.06 * Math.sin(t * 2.5));
+    sphereGroup.rotation.y = clock * 0.28;
+    sphereGroup.rotation.x = clock * 0.10;
+    sphereGroup.updateMatrixWorld();
 
-    torusMat.opacity  = 0.25 + 0.12 * Math.sin(t * 1.8);
-    torus2Mat.opacity = 0.15 + 0.10 * Math.sin(t * 2.2 + 1);
+    var heroW = heroSection ? heroSection.offsetWidth  : window.innerWidth;
+    var heroH = heroSection ? heroSection.offsetHeight : window.innerHeight;
+    var mouseActive = (mX > 0 && mX < heroW && mY > 0 && mY < heroH);
 
+    var mlx = 0, mly = 0, mlz = 0;
+    if (mouseActive) {
+      /* Unproject mouse to the plane z=0 in world space */
+      _ray.set((mX / heroW) * 2 - 1, -(mY / heroH) * 2 + 1, 0.5).unproject(camera);
+      _ray.sub(camera.position).normalize();
+      var tRay = -camera.position.z / _ray.z;
+      var wx = camera.position.x + _ray.x * tRay;
+      var wy = camera.position.y + _ray.y * tRay;
+      /* Convert to local space of sphere group */
+      _inv.copy(sphereGroup.matrixWorld).invert();
+      _ray.set(wx, wy, 0).applyMatrix4(_inv);
+      mlx = _ray.x; mly = _ray.y; mlz = _ray.z;
+    }
+
+    var pos = geo.attributes.position.array;
+    var REPEL = 140, STRENGTH = 55;
+    for (var j = 0; j < COUNT; j++) {
+      var j3 = j * 3;
+      var ox = orig[j3], oy = orig[j3+1], oz = orig[j3+2];
+      var cx = pos[j3],  cy = pos[j3+1],  cz = pos[j3+2];
+
+      var fx = (ox - cx) * 0.045;
+      var fy = (oy - cy) * 0.045;
+      var fz = (oz - cz) * 0.045;
+
+      if (mouseActive) {
+        var dx = cx - mlx, dy = cy - mly, dz = cz - mlz;
+        var dd = dx*dx + dy*dy + dz*dz;
+        if (dd < REPEL*REPEL && dd > 0.001) {
+          var dLen = Math.sqrt(dd);
+          var rf = (1 - dLen / REPEL) * STRENGTH / dLen;
+          fx += dx * rf;
+          fy += dy * rf;
+          fz += dz * rf * 0.5; /* dampen Z so particles scatter outward rather than away from camera */
+        }
+      }
+
+      vel[j3]   = vel[j3]   * 0.82 + fx;
+      vel[j3+1] = vel[j3+1] * 0.82 + fy;
+      vel[j3+2] = vel[j3+2] * 0.82 + fz;
+
+      pos[j3]   = cx + vel[j3];
+      pos[j3+1] = cy + vel[j3+1];
+      pos[j3+2] = cz + vel[j3+2];
+    }
+    geo.attributes.position.needsUpdate = true;
+
+    glowSprite.material.opacity = 0.4 + 0.18 * Math.sin(clock * 1.5);
     renderer.render(scene, camera);
   }
   animate();
