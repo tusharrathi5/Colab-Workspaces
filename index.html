@@ -638,7 +638,8 @@ function getBookedHours(dateStr) {
     .filter(b => b.date===dateStr)
     .flatMap(b => {
       const slots = (b.slots||[]).map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v));
-      const isLegacyHourly = Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
+      const isNewFormat = Number.isFinite(b.duration) && slots.length > 0 && Math.abs(b.duration * 2 - slots.length) < 0.001;
+      const isLegacyHourly = !isNewFormat && Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
       return isLegacyHourly ? slots.flatMap(slot => [slot * 2, slot * 2 + 1]) : slots;
     });
 }
@@ -717,7 +718,8 @@ async function renderSlots() {
   if (data && Array.isArray(data)) {
     data.forEach(b => {
       const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
-      const isLegacyHourly = Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
+      const isNewFormat = Number.isFinite(b.duration) && slots.length > 0 && Math.abs(b.duration * 2 - slots.length) < 0.001;
+      const isLegacyHourly = !isNewFormat && Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
       const expanded = isLegacyHourly ? slots.flatMap(s => [s*2, s*2+1]) : slots;
       expanded.forEach(s => bookedSet.add(s));
     });
@@ -746,8 +748,8 @@ async function renderSlots() {
 function toggleSlot(h) {
   document.getElementById('slot-error').style.display = 'none';
   if (selectedSlots.includes(h)) {
-    // Deselect: remove this slot
-    selectedSlots = selectedSlots.filter(s => s !== h);
+    // Deselect: clear the entire selection so user starts fresh with consecutive slots
+    selectedSlots = [];
   } else {
     // Try to add: check if result would be consecutive
     const test = [...selectedSlots, h].sort((a, b) => a - b);
@@ -762,9 +764,11 @@ function toggleSlot(h) {
     }
     selectedSlots = test;
   }
-  document.querySelectorAll('.hour-slot:not(.booked)').forEach(s =>
-    s.classList.toggle('selected', selectedSlots.includes(parseInt(s.dataset.slot)))
-  );
+  document.querySelectorAll('.hour-slot').forEach(s => {
+    if (!s.classList.contains('booked') && !s.classList.contains('past')) {
+      s.classList.toggle('selected', selectedSlots.includes(parseInt(s.dataset.slot)));
+    }
+  });
   updatePreview();
 }
 
@@ -1055,7 +1059,8 @@ async function renderRescheduleSlots() {
     data.forEach(b => {
       if (rescheduleTargetBooking && b.id === rescheduleTargetBooking.id) return;
       const slots = Array.isArray(b.slots) ? b.slots.map(v=>parseInt(v,10)).filter(v=>!Number.isNaN(v)) : [];
-      const isLegacyHourly = Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
+      const isNewFormat = Number.isFinite(b.duration) && slots.length > 0 && Math.abs(b.duration * 2 - slots.length) < 0.001;
+      const isLegacyHourly = !isNewFormat && Number.isFinite(b.duration) && Math.abs(b.duration - slots.length) < 0.001;
       const expanded = isLegacyHourly ? slots.flatMap(s => [s*2, s*2+1]) : slots;
       expanded.forEach(s => bookedSet.add(s));
     });
@@ -1084,7 +1089,8 @@ async function renderRescheduleSlots() {
 function toggleRescheduleSlot(h) {
   document.getElementById('rs-slot-error').style.display = 'none';
   if (rescheduleSelectedSlots.includes(h)) {
-    rescheduleSelectedSlots = rescheduleSelectedSlots.filter(s => s !== h);
+    // Deselect: clear the entire selection so user starts fresh with consecutive slots
+    rescheduleSelectedSlots = [];
   } else {
     const test = [...rescheduleSelectedSlots, h].sort((a, b) => a - b);
     let valid = true;
@@ -1097,9 +1103,11 @@ function toggleRescheduleSlot(h) {
     }
     rescheduleSelectedSlots = test;
   }
-  document.querySelectorAll('#rs-hours-grid .hour-slot:not(.booked):not(.past)').forEach(s =>
-    s.classList.toggle('selected', rescheduleSelectedSlots.includes(parseInt(s.dataset.slot)))
-  );
+  document.querySelectorAll('#rs-hours-grid .hour-slot').forEach(s => {
+    if (!s.classList.contains('booked') && !s.classList.contains('past')) {
+      s.classList.toggle('selected', rescheduleSelectedSlots.includes(parseInt(s.dataset.slot)));
+    }
+  });
   const btn = document.getElementById('rs-confirm-btn');
   btn.disabled = rescheduleSelectedSlots.length === 0;
   btn.style.opacity = rescheduleSelectedSlots.length === 0 ? '0.5' : '1';
