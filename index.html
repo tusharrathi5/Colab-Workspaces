@@ -262,7 +262,7 @@
   .section-desc { font-size:16px; color:var(--gray); line-height:1.75; max-width:540px; font-weight:300; } 50%{box-shadow:0 6px 32px rgba(37,211,102,0.7),0 0 0 8px rgba(37,211,102,0.12)} }
 
   #services { background:linear-gradient(180deg,#f0f4fa 0%,var(--light) 100%); }
-  .services-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:56px; flex-wrap:wrap; gap:24px; }
+  .services-header { display:flex; flex-direction:column; align-items:flex-start; margin-bottom:56px; gap:12px; }
   .services-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
   .service-card { background:white; border-radius:22px; padding:38px 34px; border:1px solid rgba(221,226,234,0.7); transition:all 0.35s cubic-bezier(0.25,0.46,0.45,0.94); position:relative; overflow:hidden; box-shadow:var(--shadow-sm); }
   .service-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--blue) 0%,#4a9fe8 100%); transform:scaleX(0); transform-origin:left; transition:transform 0.35s; }
@@ -611,8 +611,7 @@ window.showPage = window.showPage || function(name){
 
   <section id="services">
     <div class="services-header">
-      <div><div class="section-tag">// What We Offer</div><h2 class="section-title reveal reveal-left">WORKSPACE<br>SOLUTIONS</h2></div>
-      <p class="section-desc reveal reveal-right">From solo freelancers to growing teams — a space that fits your work style perfectly.</p>
+      <div><div class="section-tag">// What We Offer</div><h2 class="section-title reveal reveal-left">WORKSPACE<br>SOLUTIONS</h2><p class="section-desc reveal reveal-right">From solo freelancers to growing teams — a space that fits your work style perfectly.</p></div>
     </div>
     <div class="services-grid stagger">
       <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 7H5v-2h6v2zm8 0h-6v-2h6v2z"/></svg></div><h3>Dedicated Seats</h3><p>Your own permanent seat. Come and go anytime, 24×7. Perfect for daily professionals who need consistency.</p></div>
