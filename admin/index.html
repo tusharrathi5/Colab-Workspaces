@@ -260,7 +260,7 @@
       <div class="section-card" id="inv-preview-card" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
           <div class="section-title" style="margin-bottom:0">Invoice Preview</div>
-          <button class="btn-primary" onclick="downloadInvoiceWord()" style="background:#166534">⬇ Download .doc</button>
+          <button class="btn-primary" onclick="downloadInvoicePDF(_currentInvoiceData)" style="background:#166534">⬇ Download PDF</button>
         </div>
         <div id="inv-preview-html"></div>
       </div>
@@ -659,100 +659,100 @@ function buildInvoiceHTML(d, inline) {
   const clientGstinLine = d.clientGstin ? d.clientGstin : 'Unregistered';
   // Backward compat: old invoices stored single d.desc + d.amt instead of d.services
   const services = d.services && d.services.length ? d.services : [{ desc: d.desc || d.category, amt: d.amt || 0 }];
-  return `<div style="font-family:Arial,sans-serif;max-width:780px;margin:0 auto;padding:30px;border:1px solid #ddd;background:#fff;font-size:13px">
+  return `<div style="font-family:Arial,sans-serif;max-width:780px;margin:0 auto;padding:20px 24px;border:1px solid #ddd;background:#fff;font-size:11px;line-height:1.4">
   <!-- Header -->
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;padding-bottom:16px;border-bottom:3px solid #e8b84b;margin-bottom:20px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;padding-bottom:10px;border-bottom:3px solid #e8b84b;margin-bottom:12px">
     <div>
-      <img src="https://tusharrathi5.github.io/Colab-Workspaces/logo.png" alt="Co-Lab Workspaces" style="height:64px;max-width:200px;object-fit:contain;display:block;margin-bottom:6px">
-      <div style="font-size:12px;color:#555;margin-top:2px">${SUPPLIER.legalName} · ${SUPPLIER.type}</div>
-      <div style="font-size:12px;color:#888;margin-top:1px;font-style:italic">${SUPPLIER.unit}</div>
-      <div style="font-size:12px;color:#555;margin-top:2px">${SUPPLIER.address}</div>
-      <div style="font-size:12px;color:#333;margin-top:4px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
-      ${d.tenantGstin ? `<div style="font-size:12px;color:#333"><strong>Tenant GSTIN:</strong> ${d.tenantGstin}</div>` : ''}
+      <img src="https://tusharrathi5.github.io/Colab-Workspaces/logo.png" alt="Co-Lab Workspaces" style="height:44px;width:auto;max-width:180px;object-fit:contain;display:block;margin-bottom:4px">
+      <div style="font-size:11px;color:#555;margin-top:2px">${SUPPLIER.legalName} · ${SUPPLIER.type}</div>
+      <div style="font-size:11px;color:#888;margin-top:1px;font-style:italic">${SUPPLIER.unit}</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">${SUPPLIER.address}</div>
+      <div style="font-size:11px;color:#333;margin-top:2px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
+      ${d.tenantGstin ? `<div style="font-size:11px;color:#333"><strong>Tenant GSTIN:</strong> ${d.tenantGstin}</div>` : ''}
     </div>
     <div style="text-align:right">
-      <div style="font-size:11px;color:#888;margin-bottom:4px">Page 1 of 1</div>
-      <div style="font-size:26px;font-weight:800;color:#1a1a1a;letter-spacing:2px">${d.gstOn ? 'TAX INVOICE' : 'REGULAR INVOICE'}</div>
-      <div style="font-family:'Courier New',monospace;font-size:15px;font-weight:700;color:#1a6dc4;margin-top:8px">${d.invoiceNo}</div>
-      <div style="font-size:12px;color:#555;margin-top:4px">Date: <strong>${d.date}</strong></div>
-      <div style="font-size:12px;color:#555;margin-top:2px">Place of Supply: ${d.pos}</div>
-      <div style="font-size:12px;color:#555;margin-top:2px">Reverse Charge: ${d.rc}</div>
+      <div style="font-size:9px;color:#888;margin-bottom:4px">Page 1 of 1</div>
+      <div style="font-size:20px;font-weight:800;color:#1a1a1a;letter-spacing:2px">${d.gstOn ? 'TAX INVOICE' : 'REGULAR INVOICE'}</div>
+      <div style="font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:#1a6dc4;margin-top:6px">${d.invoiceNo}</div>
+      <div style="font-size:11px;color:#555;margin-top:4px">Date: <strong>${d.date}</strong></div>
+      <div style="font-size:11px;color:#555;margin-top:2px">Place of Supply: ${d.pos}</div>
+      <div style="font-size:11px;color:#555;margin-top:2px">Reverse Charge: ${d.rc}</div>
     </div>
   </div>
   <!-- Bill From / Bill To -->
-  <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
-    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:6px;padding:14px">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f6b;margin-bottom:8px;font-weight:700">From</div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:10px">
+    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:6px;padding:10px">
+      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#5a5f6b;margin-bottom:6px;font-weight:700">From</div>
       <div style="font-weight:700">${SUPPLIER.tradeName}</div>
-      <div style="color:#555;font-size:12px;margin-top:2px">${SUPPLIER.address}</div>
-      <div style="font-size:12px;margin-top:4px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
+      <div style="color:#555;font-size:11px;margin-top:2px">${SUPPLIER.address}</div>
+      <div style="font-size:11px;margin-top:4px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
     </div>
-    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:6px;padding:14px">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f6b;margin-bottom:8px;font-weight:700">Bill To</div>
+    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:6px;padding:10px">
+      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#5a5f6b;margin-bottom:6px;font-weight:700">Bill To</div>
       <div style="font-weight:700">${d.clientName || '—'}</div>
-      <div style="color:#555;font-size:12px;margin-top:2px">${d.clientAddr || '—'}</div>
-      ${d.clientState ? `<div style="font-size:12px;margin-top:2px">State: ${d.clientState}</div>` : ''}
-      <div style="font-size:12px;margin-top:4px"><strong>GSTIN:</strong> ${clientGstinLine}</div>
+      <div style="color:#555;font-size:11px;margin-top:2px">${d.clientAddr || '—'}</div>
+      ${d.clientState ? `<div style="font-size:11px;margin-top:2px">State: ${d.clientState}</div>` : ''}
+      <div style="font-size:11px;margin-top:4px"><strong>GSTIN:</strong> ${clientGstinLine}</div>
     </div>
   </div>
   <!-- Services Table -->
-  <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:8px">
     <thead>
       <tr style="background:#1a1a2e;color:#fff">
-        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;width:40px">#</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase">Description</th>
-        <th style="padding:10px 14px;text-align:right;font-size:11px;letter-spacing:1px;text-transform:uppercase;width:130px">Amount</th>
+        <th style="padding:5px 8px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;width:40px">#</th>
+        <th style="padding:5px 8px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase">Description</th>
+        <th style="padding:5px 8px;text-align:right;font-size:10px;letter-spacing:1px;text-transform:uppercase;width:130px">Amount</th>
       </tr>
     </thead>
     <tbody>
       ${services.map((svc, idx) => `<tr style="border-bottom:1px solid #dde2ea${idx % 2 === 1 ? ';background:#fafafa' : ''}">
-        <td style="padding:12px 14px;color:#888">${idx + 1}</td>
-        <td style="padding:12px 14px">${svc.desc || d.category}</td>
-        <td style="padding:12px 14px;text-align:right;font-weight:600">${fmt(svc.amt)}</td>
+        <td style="padding:5px 8px;color:#888">${idx + 1}</td>
+        <td style="padding:5px 8px">${svc.desc || d.category}</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600">${fmt(svc.amt)}</td>
       </tr>`).join('')}
     </tbody>
   </table>
   <!-- Totals -->
   ${d.gstOn ? `
-  <table style="width:100%;border-collapse:collapse;margin-bottom:20px;max-width:340px;margin-left:auto">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:10px;max-width:340px;margin-left:auto">
     <tbody>
-      <tr><td style="padding:8px 14px;border:1px solid #dde2ea;color:#555">Subtotal</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.amt)}</td></tr>
-      <tr><td style="padding:8px 14px;border:1px solid #dde2ea;color:#555">CGST @ 9%</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.cgst)}</td></tr>
-      <tr><td style="padding:8px 14px;border:1px solid #dde2ea;color:#555">SGST @ 9%</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.sgst)}</td></tr>
-      <tr style="background:#1a6dc4;color:white"><td style="padding:10px 14px;border:1px solid #1a6dc4;font-weight:700">TOTAL</td><td style="padding:10px 14px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:15px">${fmt(d.total)}</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#555">Subtotal</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea">${fmt(d.amt)}</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#555">CGST @ 9%</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea">${fmt(d.cgst)}</td></tr>
+      <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#555">SGST @ 9%</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea">${fmt(d.sgst)}</td></tr>
+      <tr style="background:#1a6dc4;color:white"><td style="padding:6px 8px;border:1px solid #1a6dc4;font-weight:700">TOTAL</td><td style="padding:6px 8px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:13px">${fmt(d.total)}</td></tr>
     </tbody>
   </table>` : `
-  <table style="width:100%;border-collapse:collapse;margin-bottom:20px;max-width:340px;margin-left:auto">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:10px;max-width:340px;margin-left:auto">
     <tbody>
-      <tr style="background:#1a6dc4;color:white"><td style="padding:10px 14px;border:1px solid #1a6dc4;font-weight:700">TOTAL (Excl. GST)</td><td style="padding:10px 14px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:15px">${fmt(d.total)}</td></tr>
+      <tr style="background:#1a6dc4;color:white"><td style="padding:6px 8px;border:1px solid #1a6dc4;font-weight:700">TOTAL (Excl. GST)</td><td style="padding:6px 8px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:13px">${fmt(d.total)}</td></tr>
     </tbody>
   </table>`}
   <!-- Bank / Payment Details -->
-  <div style="border-top:3px solid #e8b84b;margin-top:24px;padding-top:16px">
+  <div style="border-top:3px solid #e8b84b;margin-top:12px;padding-top:10px">
     <div style="display:flex;gap:24px;flex-wrap:wrap">
       <div style="flex:1;min-width:200px">
-        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:10px">Payment Information</div>
-        <div style="font-size:13px;margin-bottom:4px"><strong>Invoice No:</strong> ${d.invoiceNo}</div>
-        <div style="font-size:13px"><strong>Amount Due:</strong> <span style="color:#1a6dc4;font-weight:700">${fmt(d.total)}</span></div>
+        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:6px">Payment Information</div>
+        <div style="font-size:11px;margin-bottom:4px"><strong>Invoice No:</strong> ${d.invoiceNo}</div>
+        <div style="font-size:11px"><strong>Amount Due:</strong> <span style="color:#1a6dc4;font-weight:700">${fmt(d.total)}</span></div>
       </div>
       <div style="flex:1;min-width:200px;text-align:right">
-        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:10px">Bank Details</div>
-        <div style="font-size:12px;line-height:1.9">
+        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:6px">Bank Details</div>
+        <div style="font-size:11px;line-height:1.6">
           <div><strong>Account Name:</strong> Nexgen Hires</div>
           <div><strong>Account Number:</strong> 924020071921674</div>
           <div><strong>Bank Name:</strong> Axis Bank</div>
           <div><strong>IFSC Code:</strong> UTIB0003235</div>
           <div><strong>UPI ID:</strong> tusharrathi5-2@okaxis</div>
         </div>
-        <div style="margin-top:8px">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=tusharrathi5-2@okaxis%26pn=Nexgen%20Hires" alt="UPI QR Code" style="width:90px;height:90px;border:1px solid #ddd;border-radius:4px">
+        <div style="margin-top:4px">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=tusharrathi5-2@okaxis%26pn=Nexgen%20Hires" alt="UPI QR Code" style="width:80px;height:80px;border:1px solid #ddd;border-radius:4px">
           <div style="font-size:10px;color:#888;margin-top:2px">Scan to pay via UPI</div>
         </div>
       </div>
     </div>
   </div>
   <!-- Footer -->
-  <div style="margin-top:20px;padding:10px 16px;background:#1a1a2e;color:#ccc;text-align:center;font-size:11px;border-radius:0 0 4px 4px">
+  <div style="margin-top:12px;padding:8px 12px;background:#1a1a2e;color:#ccc;text-align:center;font-size:10px;border-radius:0 0 4px 4px">
     <strong style="color:#fff">${SUPPLIER.tradeName}</strong> &nbsp;|&nbsp; ${SUPPLIER.address} &nbsp;|&nbsp; GSTIN: ${SUPPLIER.gstin}
   </div>
 </div>`;
@@ -769,18 +769,35 @@ function previewInvoice() {
 }
 
 let _currentInvoiceData = null;
-function downloadInvoiceWord() {
-  const d = _currentInvoiceData || collectInvoiceData();
+function downloadInvoicePDF(d) {
+  d = d || _currentInvoiceData || collectInvoiceData();
   if (!d.invoiceNo) { alert('Please fill in Invoice Number.'); return; }
   const html = buildInvoiceHTML(d, true);
-  const full = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice ${d.invoiceNo}</title></head><body>${html}</body></html>`;
-  const blob = new Blob(['\ufeff', full], { type: 'application/msword' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Invoice-${d.invoiceNo}.doc`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  const newWin = window.open('', '_blank', 'width=900,height=700');
+  if (!newWin) { alert('Please allow popups to download the PDF.'); return; }
+  newWin.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice ${d.invoiceNo}</title>
+  <style>
+    @page { size: A4; margin: 12mm; }
+    body { margin: 0; font-family: Arial, sans-serif; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @media print { body { margin: 0; padding: 0; } }
+  </style>
+</head>
+<body>
+  ${html}
+  <script>
+    window.onload = function() {
+      window.print();
+      window.onafterprint = function() { window.close(); };
+    };
+  <\/script>
+</body>
+</html>`);
+  newWin.document.close();
 }
 
 function saveAndDownloadInvoice() {
@@ -797,7 +814,7 @@ function saveAndDownloadInvoice() {
   const card = document.getElementById('inv-preview-card');
   card.style.display = 'block';
   card.scrollIntoView({ behavior:'smooth', block:'start' });
-  downloadInvoiceWord();
+  downloadInvoicePDF(_currentInvoiceData);
   renderInvoiceHistory();
   resetInvoiceForm();
 }
@@ -872,7 +889,7 @@ function renderInvoiceHistory() {
 function redownloadInvoice(idx) {
   const invs = getInvoices();
   _currentInvoiceData = invs[idx];
-  downloadInvoiceWord();
+  downloadInvoicePDF(_currentInvoiceData);
 }
 
 function deleteInvoice(idx) {
