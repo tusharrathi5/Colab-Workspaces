@@ -586,8 +586,9 @@ function exportCSV() {
 
 // ── INVOICE ───────────────────────────────────────────────────
 const SUPPLIER = {
-  legalName: 'Tushar Rathi',
+  legalName: 'Nexgen Hires',
   tradeName: 'Co-Lab Workspaces',
+  unit: 'A unit of NexGen Hires',
   gstin: '08DPCPR8713B1ZW',
   type: 'Proprietorship',
   address: 'F-711, Block 3, Lalarpura Road, Amrapali Nagar, Jaipur – 302021, Rajasthan'
@@ -664,13 +665,14 @@ function buildInvoiceHTML(d, inline) {
     <div>
       <img src="https://tusharrathi5.github.io/Colab-Workspaces/logo.png" alt="Co-Lab Workspaces" style="height:64px;max-width:200px;object-fit:contain;display:block;margin-bottom:6px">
       <div style="font-size:12px;color:#555;margin-top:2px">${SUPPLIER.legalName} · ${SUPPLIER.type}</div>
+      <div style="font-size:12px;color:#888;margin-top:1px;font-style:italic">${SUPPLIER.unit}</div>
       <div style="font-size:12px;color:#555;margin-top:2px">${SUPPLIER.address}</div>
       <div style="font-size:12px;color:#333;margin-top:4px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
       ${d.tenantGstin ? `<div style="font-size:12px;color:#333"><strong>Tenant GSTIN:</strong> ${d.tenantGstin}</div>` : ''}
     </div>
     <div style="text-align:right">
       <div style="font-size:11px;color:#888;margin-bottom:4px">Page 1 of 1</div>
-      <div style="font-size:26px;font-weight:800;color:#1a1a1a;letter-spacing:2px">TAX INVOICE</div>
+      <div style="font-size:26px;font-weight:800;color:#1a1a1a;letter-spacing:2px">${d.gstOn ? 'TAX INVOICE' : 'REGULAR INVOICE'}</div>
       <div style="font-family:'Courier New',monospace;font-size:15px;font-weight:700;color:#1a6dc4;margin-top:8px">${d.invoiceNo}</div>
       <div style="font-size:12px;color:#555;margin-top:4px">Date: <strong>${d.date}</strong></div>
       <div style="font-size:12px;color:#555;margin-top:2px">Place of Supply: ${d.pos}</div>
@@ -733,14 +735,18 @@ function buildInvoiceHTML(d, inline) {
         <div style="font-size:13px;margin-bottom:4px"><strong>Invoice No:</strong> ${d.invoiceNo}</div>
         <div style="font-size:13px"><strong>Amount Due:</strong> <span style="color:#1a6dc4;font-weight:700">${fmt(d.total)}</span></div>
       </div>
-      <div style="flex:1;min-width:200px">
+      <div style="flex:1;min-width:200px;text-align:right">
         <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:10px">Bank Details</div>
         <div style="font-size:12px;line-height:1.9">
-          <div><strong>Account Name:</strong> Co-Lab Workspaces</div>
-          <div><strong>Account Number:</strong> [Bank Account Number]</div>
-          <div><strong>Bank Name:</strong> [Bank Name]</div>
-          <div><strong>IFSC Code:</strong> [IFSC Code]</div>
-          <div><strong>UPI ID:</strong> [UPI ID]</div>
+          <div><strong>Account Name:</strong> Nexgen Hires</div>
+          <div><strong>Account Number:</strong> 924020071921674</div>
+          <div><strong>Bank Name:</strong> Axis Bank</div>
+          <div><strong>IFSC Code:</strong> UTIB0003235</div>
+          <div><strong>UPI ID:</strong> tusharrathi5-2@okaxis</div>
+        </div>
+        <div style="margin-top:8px">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=tusharrathi5-2@okaxis%26pn=Nexgen%20Hires" alt="UPI QR Code" style="width:90px;height:90px;border:1px solid #ddd;border-radius:4px">
+          <div style="font-size:10px;color:#888;margin-top:2px">Scan to pay via UPI</div>
         </div>
       </div>
     </div>
