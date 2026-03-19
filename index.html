@@ -531,10 +531,81 @@
     .bookings-table { font-size:12px; }
     .bookings-table th,.bookings-table td { padding:10px 10px; }
   }
+
+/* ── Custom Magnetic Cursor ── */
+* { cursor: none !important; }
+
+#cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #f47920;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width 0.15s, height 0.15s, background 0.15s, opacity 0.2s;
+  box-shadow: 0 0 10px 2px rgba(244,121,32,0.7);
+  will-change: transform;
+}
+
+#cursor-ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(106,176,245,0.7);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s cubic-bezier(0.25,0.46,0.45,0.94),
+              height 0.25s cubic-bezier(0.25,0.46,0.45,0.94),
+              border-color 0.2s,
+              opacity 0.2s,
+              background 0.2s;
+  backdrop-filter: blur(1px);
+  will-change: transform;
+}
+
+/* State: hovering a magnetic element */
+body.cursor-hovering #cursor-dot {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  box-shadow: 0 0 18px 4px rgba(244,121,32,0.9);
+}
+body.cursor-hovering #cursor-ring {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(244,121,32,0.8);
+  background: rgba(244,121,32,0.06);
+}
+
+/* State: clicking */
+body.cursor-clicking #cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+}
+body.cursor-clicking #cursor-ring {
+  width: 28px;
+  height: 28px;
+  border-color: rgba(106,176,245,1);
+  background: rgba(21,88,176,0.1);
+}
+
+/* Hide on touch devices */
+@media (pointer: coarse) {
+  #cursor-dot, #cursor-ring { display: none !important; }
+  * { cursor: auto !important; }
+}
 </style>
 
 </head>
 <body>
+<!-- ── Magnetic Cursor ── -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
 <script>
 window.showPage = window.showPage || function(name){
   const target = document.getElementById('page-'+name);
@@ -2019,5 +2090,86 @@ const _d = new Date();
 const _m = n => String(n).padStart(2, '0');
 document.getElementById('book-date').min = _d.getFullYear() + '-' + _m(_d.getMonth() + 1) + '-' + _m(_d.getDate());
 loadBookings();
+</script>
+<script>
+// ── MAGNETIC CURSOR ──────────────────────────────────────────────
+(function() {
+  const dot   = document.getElementById('cursor-dot');
+  const ring  = document.getElementById('ring-cursor') || document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+
+  // Only run on non-touch devices
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let ringX  = mouseX, ringY  = mouseY;
+  let magX = mouseX, magY = mouseY;
+  let isMagnetic = false;
+  let currentTarget = null;
+  const SPRING = 0.13;   // ring follow speed
+  const MAG_STRENGTH = 0.38; // magnetic pull (0–1)
+
+  // Magnetic selectors — elements that attract the cursor
+  const MAG_SEL = [
+    'a', 'button', '.btn-primary', '.btn-secondary', '.btn-book',
+    '.nav-cta', '.stat-card', '.service-card', '.price-card',
+    '.amenity-item', '.why-item', '.faq-q', '.tab-btn',
+    '.hero-tag', '.footer-col ul a'
+  ].join(',');
+
+  // Track raw mouse
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    // Magnetic pull toward nearest magnetic element
+    const el = e.target.closest(MAG_SEL);
+    if (el) {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width  / 2;
+      const cy = r.top  + r.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      magX = cx + dx * (1 - MAG_STRENGTH);
+      magY = cy + dy * (1 - MAG_STRENGTH);
+      if (!isMagnetic) {
+        isMagnetic = true;
+        currentTarget = el;
+        document.body.classList.add('cursor-hovering');
+      }
+    } else {
+      magX = mouseX;
+      magY = mouseY;
+      if (isMagnetic) {
+        isMagnetic = false;
+        currentTarget = null;
+        document.body.classList.remove('cursor-hovering');
+      }
+    }
+  });
+
+  document.addEventListener('mousedown', () => document.body.classList.add('cursor-clicking'));
+  document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-clicking'));
+
+  // Hide cursor when leaving window
+  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+  document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
+
+  // RAF loop — dot follows exactly, ring springs behind
+  function tick() {
+    // Dot: instant (use CSS transform directly)
+    dot.style.left  = magX + 'px';
+    dot.style.top   = magY + 'px';
+
+    // Ring: spring interpolation
+    ringX += (magX - ringX) * SPRING;
+    ringY += (magY - ringY) * SPRING;
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
 </script>
 </body> </html>
