@@ -189,13 +189,15 @@
               <option value="Other">Other</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>SAC Code</label>
-            <input type="text" class="form-control" id="inv-sac" value="997212" readonly style="background:#f5f6f8;color:var(--gray)">
-          </div>
           <div class="form-group span2">
-            <label>Service Description</label>
-            <textarea class="form-control" id="inv-desc" rows="2" placeholder="Co-working space usage for March 2026" style="resize:vertical"></textarea>
+            <label>Services</label>
+            <div id="inv-service-rows">
+              <div class="inv-service-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start">
+                <input type="text" class="form-control inv-svc-desc" placeholder="Service description (e.g. Co-working space usage for March 2026)" style="flex:1">
+                <input type="number" class="form-control inv-svc-amt" placeholder="Amount (₹)" min="0" style="width:160px" oninput="updateInvGST()">
+              </div>
+            </div>
+            <button type="button" class="btn-secondary" onclick="addServiceRow()" style="margin-top:6px;padding:6px 14px;font-size:13px">+ Add Service</button>
           </div>
           <div class="form-group">
             <label>Place of Supply</label>
@@ -223,10 +225,6 @@
           <div class="form-group">
             <label>Client State &amp; Code</label>
             <input type="text" class="form-control" id="inv-client-state" placeholder="e.g. Rajasthan – 08">
-          </div>
-          <div class="form-group">
-            <label>Service Amount (₹)</label>
-            <input type="number" class="form-control" id="inv-amount" placeholder="0" min="0" oninput="updateInvGST()">
           </div>
           <div class="form-group" style="display:flex;flex-direction:column;justify-content:center">
             <label>GST</label>
@@ -612,7 +610,8 @@ function initInvoiceForm() {
 
 function updateInvGST() {
   const gstOn = document.getElementById('inv-gst-toggle').checked;
-  const amt = parseFloat(document.getElementById('inv-amount').value) || 0;
+  let amt = 0;
+  document.querySelectorAll('.inv-svc-amt').forEach(el => { amt += parseFloat(el.value) || 0; });
   document.getElementById('inv-gst-summary').style.display = gstOn ? 'block' : 'none';
   document.getElementById('inv-tenant-gstin-row').style.display = gstOn ? 'block' : 'none';
   document.getElementById('inv-gst-label').textContent = gstOn ? 'GST (18%) included' : 'Include GST (18%)';
@@ -626,7 +625,13 @@ function updateInvGST() {
 
 function collectInvoiceData() {
   const gstOn = document.getElementById('inv-gst-toggle').checked;
-  const amt = parseFloat(document.getElementById('inv-amount').value) || 0;
+  const descEls = document.querySelectorAll('.inv-svc-desc');
+  const amtEls = document.querySelectorAll('.inv-svc-amt');
+  const services = [];
+  descEls.forEach((el, i) => {
+    services.push({ desc: el.value.trim(), amt: parseFloat(amtEls[i].value) || 0 });
+  });
+  const amt = services.reduce((s, r) => s + r.amt, 0);
   const cgst = gstOn ? amt * 0.09 : 0;
   const sgst = gstOn ? amt * 0.09 : 0;
   const total = amt + cgst + sgst;
@@ -635,8 +640,7 @@ function collectInvoiceData() {
     invoiceNo: document.getElementById('inv-number').value.trim(),
     date: document.getElementById('inv-date').value,
     category: document.getElementById('inv-category').value,
-    sac: document.getElementById('inv-sac').value,
-    desc: document.getElementById('inv-desc').value.trim(),
+    services,
     pos: document.getElementById('inv-pos').value.trim() || 'Rajasthan',
     rc,
     clientName: document.getElementById('inv-client-name').value.trim(),
@@ -651,81 +655,99 @@ function collectInvoiceData() {
 
 function buildInvoiceHTML(d, inline) {
   const fmt = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2});
-  const s = inline ? 'style=' : 'class=';
   const clientGstinLine = d.clientGstin ? d.clientGstin : 'Unregistered';
-  return `<div style="font-family:Arial,sans-serif;max-width:780px;margin:0 auto;padding:24px;border:1px solid #ccc;font-size:13px">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;padding-bottom:16px;border-bottom:2px solid #1a6dc4;margin-bottom:20px">
+  // Backward compat: old invoices stored single d.desc + d.amt instead of d.services
+  const services = d.services && d.services.length ? d.services : [{ desc: d.desc || d.category, amt: d.amt || 0 }];
+  return `<div style="font-family:Arial,sans-serif;max-width:780px;margin:0 auto;padding:30px;border:1px solid #ddd;background:#fff;font-size:13px">
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;padding-bottom:16px;border-bottom:3px solid #e8b84b;margin-bottom:20px">
     <div>
-      <div style="font-family:'Bebas Neue',Arial,sans-serif;font-size:32px;color:#1a6dc4;letter-spacing:1px">${SUPPLIER.tradeName}</div>
+      <img src="https://tusharrathi5.github.io/Colab-Workspaces/logo.png" alt="Co-Lab Workspaces" style="height:64px;max-width:200px;object-fit:contain;display:block;margin-bottom:6px">
       <div style="font-size:12px;color:#555;margin-top:2px">${SUPPLIER.legalName} · ${SUPPLIER.type}</div>
       <div style="font-size:12px;color:#555;margin-top:2px">${SUPPLIER.address}</div>
       <div style="font-size:12px;color:#333;margin-top:4px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
       ${d.tenantGstin ? `<div style="font-size:12px;color:#333"><strong>Tenant GSTIN:</strong> ${d.tenantGstin}</div>` : ''}
     </div>
     <div style="text-align:right">
-      <div style="font-family:'Courier New',monospace;font-size:20px;font-weight:700;color:#111">${d.invoiceNo}</div>
-      <div style="font-size:13px;color:#555;margin-top:4px">Invoice Date: <strong>${d.date}</strong></div>
+      <div style="font-size:11px;color:#888;margin-bottom:4px">Page 1 of 1</div>
+      <div style="font-size:26px;font-weight:800;color:#1a1a1a;letter-spacing:2px">TAX INVOICE</div>
+      <div style="font-family:'Courier New',monospace;font-size:15px;font-weight:700;color:#1a6dc4;margin-top:8px">${d.invoiceNo}</div>
+      <div style="font-size:12px;color:#555;margin-top:4px">Date: <strong>${d.date}</strong></div>
       <div style="font-size:12px;color:#555;margin-top:2px">Place of Supply: ${d.pos}</div>
       <div style="font-size:12px;color:#555;margin-top:2px">Reverse Charge: ${d.rc}</div>
     </div>
   </div>
-  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:20px">
-    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:8px;padding:14px">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f6b;margin-bottom:8px;font-weight:700">Bill From (Supplier)</div>
+  <!-- Bill From / Bill To -->
+  <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
+    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:6px;padding:14px">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f6b;margin-bottom:8px;font-weight:700">From</div>
       <div style="font-weight:700">${SUPPLIER.tradeName}</div>
       <div style="color:#555;font-size:12px;margin-top:2px">${SUPPLIER.address}</div>
       <div style="font-size:12px;margin-top:4px"><strong>GSTIN:</strong> ${SUPPLIER.gstin}</div>
     </div>
-    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:8px;padding:14px">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f6b;margin-bottom:8px;font-weight:700">Bill To (Client)</div>
+    <div style="flex:1;min-width:200px;background:#f8faff;border:1px solid #dde2ea;border-radius:6px;padding:14px">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f6b;margin-bottom:8px;font-weight:700">Bill To</div>
       <div style="font-weight:700">${d.clientName || '—'}</div>
       <div style="color:#555;font-size:12px;margin-top:2px">${d.clientAddr || '—'}</div>
       ${d.clientState ? `<div style="font-size:12px;margin-top:2px">State: ${d.clientState}</div>` : ''}
       <div style="font-size:12px;margin-top:4px"><strong>GSTIN:</strong> ${clientGstinLine}</div>
     </div>
   </div>
+  <!-- Services Table -->
   <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
     <thead>
-      <tr style="background:#111214;color:rgba(255,255,255,0.85)">
-        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase">#</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase">Service Description</th>
-        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase">SAC Code</th>
-        <th style="padding:10px 14px;text-align:right;font-size:11px;letter-spacing:1px;text-transform:uppercase">Amount</th>
+      <tr style="background:#1a1a2e;color:#fff">
+        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;width:40px">#</th>
+        <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase">Description</th>
+        <th style="padding:10px 14px;text-align:right;font-size:11px;letter-spacing:1px;text-transform:uppercase;width:130px">Amount</th>
       </tr>
     </thead>
     <tbody>
-      <tr style="border-bottom:1px solid #dde2ea">
-        <td style="padding:12px 14px">1</td>
-        <td style="padding:12px 14px">${d.desc || d.category}</td>
-        <td style="padding:12px 14px;font-family:'Courier New',monospace">${d.sac}</td>
-        <td style="padding:12px 14px;text-align:right;font-weight:600">${fmt(d.amt)}</td>
-      </tr>
+      ${services.map((svc, idx) => `<tr style="border-bottom:1px solid #dde2ea${idx % 2 === 1 ? ';background:#fafafa' : ''}">
+        <td style="padding:12px 14px;color:#888">${idx + 1}</td>
+        <td style="padding:12px 14px">${svc.desc || d.category}</td>
+        <td style="padding:12px 14px;text-align:right;font-weight:600">${fmt(svc.amt)}</td>
+      </tr>`).join('')}
     </tbody>
   </table>
+  <!-- Totals -->
   ${d.gstOn ? `
-  <table style="width:100%;border-collapse:collapse;margin-bottom:16px;max-width:360px;margin-left:auto">
-    <thead>
-      <tr style="background:#f0f4f8">
-        <th style="padding:8px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid #dde2ea">Particulars</th>
-        <th style="padding:8px 14px;text-align:right;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid #dde2ea">Amount</th>
-      </tr>
-    </thead>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:20px;max-width:340px;margin-left:auto">
     <tbody>
-      <tr><td style="padding:8px 14px;border:1px solid #dde2ea">Service Amount</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.amt)}</td></tr>
-      <tr><td style="padding:8px 14px;border:1px solid #dde2ea">CGST @ 9%</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.cgst)}</td></tr>
-      <tr><td style="padding:8px 14px;border:1px solid #dde2ea">SGST @ 9%</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.sgst)}</td></tr>
+      <tr><td style="padding:8px 14px;border:1px solid #dde2ea;color:#555">Subtotal</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.amt)}</td></tr>
+      <tr><td style="padding:8px 14px;border:1px solid #dde2ea;color:#555">CGST @ 9%</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.cgst)}</td></tr>
+      <tr><td style="padding:8px 14px;border:1px solid #dde2ea;color:#555">SGST @ 9%</td><td style="padding:8px 14px;text-align:right;border:1px solid #dde2ea">${fmt(d.sgst)}</td></tr>
       <tr style="background:#1a6dc4;color:white"><td style="padding:10px 14px;border:1px solid #1a6dc4;font-weight:700">TOTAL</td><td style="padding:10px 14px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:15px">${fmt(d.total)}</td></tr>
     </tbody>
   </table>` : `
-  <table style="width:100%;border-collapse:collapse;margin-bottom:16px;max-width:360px;margin-left:auto">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:20px;max-width:340px;margin-left:auto">
     <tbody>
       <tr style="background:#1a6dc4;color:white"><td style="padding:10px 14px;border:1px solid #1a6dc4;font-weight:700">TOTAL (Excl. GST)</td><td style="padding:10px 14px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:15px">${fmt(d.total)}</td></tr>
     </tbody>
   </table>`}
-  <div style="margin-top:20px;padding-top:14px;border-top:1px solid #dde2ea;color:#5a5f6b;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <span>Place of Supply: ${d.pos}</span>
-    <span>Reverse Charge: ${d.rc}</span>
-    <span style="color:#1a6dc4;font-weight:600">Thank you for your business!</span>
+  <!-- Bank / Payment Details -->
+  <div style="border-top:3px solid #e8b84b;margin-top:24px;padding-top:16px">
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:10px">Payment Information</div>
+        <div style="font-size:13px;margin-bottom:4px"><strong>Invoice No:</strong> ${d.invoiceNo}</div>
+        <div style="font-size:13px"><strong>Amount Due:</strong> <span style="color:#1a6dc4;font-weight:700">${fmt(d.total)}</span></div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:10px">Bank Details</div>
+        <div style="font-size:12px;line-height:1.9">
+          <div><strong>Account Name:</strong> Co-Lab Workspaces</div>
+          <div><strong>Account Number:</strong> [Bank Account Number]</div>
+          <div><strong>Bank Name:</strong> [Bank Name]</div>
+          <div><strong>IFSC Code:</strong> [IFSC Code]</div>
+          <div><strong>UPI ID:</strong> [UPI ID]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <div style="margin-top:20px;padding:10px 16px;background:#1a1a2e;color:#ccc;text-align:center;font-size:11px;border-radius:0 0 4px 4px">
+    <strong style="color:#fff">${SUPPLIER.tradeName}</strong> &nbsp;|&nbsp; ${SUPPLIER.address} &nbsp;|&nbsp; GSTIN: ${SUPPLIER.gstin}
   </div>
 </div>`;
 }
@@ -759,7 +781,7 @@ function saveAndDownloadInvoice() {
   const d = collectInvoiceData();
   if (!d.invoiceNo) { alert('Please enter an Invoice Number.'); return; }
   if (!d.clientName) { alert('Please enter the Client/Tenant Name.'); return; }
-  if (!d.amt) { alert('Please enter a Service Amount.'); return; }
+  if (!d.services || !d.services.some(s => s.amt > 0)) { alert('Please enter at least one service amount.'); return; }
   const invs = getInvoices();
   invs.unshift(d);
   saveInvoices(invs);
@@ -775,10 +797,17 @@ function saveAndDownloadInvoice() {
 }
 
 function resetInvoiceForm() {
-  ['inv-number','inv-date','inv-desc','inv-client-name','inv-client-addr','inv-client-gstin','inv-client-state','inv-amount','inv-tenant-gstin'].forEach(id => {
+  ['inv-number','inv-date','inv-client-name','inv-client-addr','inv-client-gstin','inv-client-state','inv-tenant-gstin'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  const container = document.getElementById('inv-service-rows');
+  if (container) {
+    container.innerHTML = `<div class="inv-service-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start">
+      <input type="text" class="form-control inv-svc-desc" placeholder="Service description (e.g. Co-working space usage for March 2026)" style="flex:1">
+      <input type="number" class="form-control inv-svc-amt" placeholder="Amount (₹)" min="0" style="width:160px" oninput="updateInvGST()">
+    </div>`;
+  }
   document.getElementById('inv-number').dataset.auto = '';
   document.getElementById('inv-gst-toggle').checked = false;
   document.querySelector('input[name="inv-rc"][value="No"]').checked = true;
@@ -786,6 +815,24 @@ function resetInvoiceForm() {
   document.getElementById('inv-gst-summary').style.display = 'none';
   document.getElementById('inv-tenant-gstin-row').style.display = 'none';
   initInvoiceForm();
+}
+
+function addServiceRow() {
+  const container = document.getElementById('inv-service-rows');
+  const row = document.createElement('div');
+  row.className = 'inv-service-row';
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:flex-start';
+  row.innerHTML = `<input type="text" class="form-control inv-svc-desc" placeholder="Service description" style="flex:1">
+    <input type="number" class="form-control inv-svc-amt" placeholder="Amount (₹)" min="0" style="width:160px" oninput="updateInvGST()">
+    <button type="button" onclick="removeServiceRow(this)" aria-label="Remove service row" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:8px 10px;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0">×</button>`;
+  container.appendChild(row);
+}
+
+function removeServiceRow(btn) {
+  if (document.querySelectorAll('.inv-service-row').length <= 1) return;
+  const row = btn.closest('.inv-service-row');
+  if (row) row.remove();
+  updateInvGST();
 }
 
 function renderInvoiceHistory() {
