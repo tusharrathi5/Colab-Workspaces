@@ -211,13 +211,11 @@
   .nav-cta:hover { transform:translateY(-1px) !important; box-shadow:0 12px 32px rgba(21,88,176,0.32) !important; }
 
   .hero { min-height:100vh; background:#ffffff; display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
-  .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 55% at 75% 25%,rgba(21,88,176,0.12) 0%,transparent 65%),radial-gradient(ellipse 50% 65% at 10% 90%,rgba(21,88,176,0.08) 0%,transparent 60%),radial-gradient(ellipse 80% 30% at 50% 105%,rgba(21,88,176,0.12) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(106,176,245,0.10) 0%,transparent 60%); opacity:0; transition:opacity 0.6s ease; pointer-events:none; }
-  .hero:hover .hero-bg { opacity:1; }
+  .hero-bg { display:none; }
   /* Accent lines removed */
   /* Premium orbs */
-  .hero-orb1 { position:absolute; width:700px; height:700px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.14) 0%,transparent 70%); top:-150px; right:-120px; pointer-events:none; opacity:0; transition:opacity 0.6s ease; }
-  .hero-orb2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.10) 0%,transparent 70%); bottom:0; left:-100px; pointer-events:none; opacity:0; transition:opacity 0.6s ease; }
-  .hero:hover .hero-orb1, .hero:hover .hero-orb2 { opacity:1; }
+  .hero-orb1 { display:none; }
+  .hero-orb2 { display:none; }
   /* Horizontal separator line */
   .hero-sep { position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent 0%,rgba(21,88,176,0.15) 30%,rgba(21,88,176,0.3) 50%,rgba(21,88,176,0.15) 70%,transparent 100%); opacity:0; transition:opacity 0.6s ease; }
   .hero:hover .hero-sep { opacity:1; }
@@ -447,7 +445,7 @@
     animation:hero-glow-burst 0.75s ease-out forwards;
   }
   /* Hero mouse-tracked gradient overlay */
-  #hero-mouse-glow { position:absolute; inset:0; pointer-events:none; z-index:1; transition:background 0.15s ease; }
+  #hero-mouse-glow { display:none; }
   @keyframes hero-glow-burst {
     0%   { transform:scale(0);   opacity:1; }
     60%  { transform:scale(1.4); opacity:0.6; }
@@ -662,7 +660,7 @@ window.showPage = window.showPage || function(name){
       <div class="mesh-layer mesh-l2"></div>
       <div class="mesh-layer mesh-l3"></div>
     </div>
-    <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.55;"></canvas>
+    <canvas id="hero-sphere-canvas" style="display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.55;"></canvas>
     <div class="hero-content">
       <div class="hero-left fade-in">
         <div class="hero-tag">Jaipur's Neighbourhood Workspace</div>
