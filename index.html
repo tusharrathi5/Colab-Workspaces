@@ -210,12 +210,12 @@
   .nav-cta { background:linear-gradient(135deg,var(--blue-mid) 0%,var(--blue) 100%) !important; color:white !important; padding:10px 22px !important; border-radius:9px !important; font-weight:600 !important; box-shadow:var(--shadow-blue) !important; transition:all 0.2s !important; }
   .nav-cta:hover { transform:translateY(-1px) !important; box-shadow:0 12px 32px rgba(21,88,176,0.32) !important; }
 
-  .hero { min-height:100vh; background:linear-gradient(135deg,#daeeff 0%,#f5f0ff 40%,#fff3e8 100%); display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
-  .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 55% at 75% 25%,rgba(21,88,176,0.30) 0%,transparent 65%),radial-gradient(ellipse 50% 65% at 10% 90%,rgba(244,121,32,0.22) 0%,transparent 60%),radial-gradient(ellipse 80% 30% at 50% 105%,rgba(21,88,176,0.18) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(106,176,245,0.20) 0%,transparent 60%); }
+  .hero { min-height:100vh; background:linear-gradient(135deg,#daeeff 0%,#eef4ff 40%,#f5f8ff 100%); display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
+  .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 55% at 75% 25%,rgba(21,88,176,0.28) 0%,transparent 65%),radial-gradient(ellipse 50% 65% at 10% 90%,rgba(21,88,176,0.14) 0%,transparent 60%),radial-gradient(ellipse 80% 30% at 50% 105%,rgba(21,88,176,0.18) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(106,176,245,0.20) 0%,transparent 60%); }
   /* Accent lines removed */
   /* Premium orbs */
   .hero-orb1 { position:absolute; width:700px; height:700px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.14) 0%,transparent 70%); top:-150px; right:-120px; pointer-events:none; }
-  .hero-orb2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(244,121,32,0.12) 0%,transparent 70%); bottom:0; left:-100px; pointer-events:none; }
+  .hero-orb2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.10) 0%,transparent 70%); bottom:0; left:-100px; pointer-events:none; }
   /* Horizontal separator line */
   .hero-sep { position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent 0%,rgba(21,88,176,0.15) 30%,rgba(21,88,176,0.3) 50%,rgba(21,88,176,0.15) 70%,transparent 100%); }
   .hero-content { position:relative; z-index:2; display:flex; flex:1; align-items:center; padding:32px 5% 68px; gap:70px; }
@@ -430,7 +430,7 @@
   .hero-click-glow {
     position:absolute; border-radius:50%; width:300px; height:300px;
     margin-left:-150px; margin-top:-150px;
-    background:radial-gradient(circle,rgba(21,88,176,0.35) 0%,rgba(244,121,32,0.15) 40%,transparent 70%);
+    background:radial-gradient(circle,rgba(21,88,176,0.35) 0%,rgba(106,176,245,0.12) 40%,transparent 70%);
     pointer-events:none; z-index:1;
     animation:hero-glow-burst 0.75s ease-out forwards;
   }
@@ -645,7 +645,7 @@ window.showPage = window.showPage || function(name){
     <div class="hero-bg"></div>
     <div class="hero-orb1"></div>
     <div class="hero-orb2"></div>
-    <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.3;"></canvas>
+    <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.55;"></canvas>
     <div class="hero-content">
       <div class="hero-left fade-in">
         <div class="hero-tag">Jaipur's Neighbourhood Workspace</div>
@@ -1840,7 +1840,7 @@ function toggleFaq(btn) {
     if (!rafPending) {
       rafPending = true;
       requestAnimationFrame(function() {
-        glow.style.background = 'radial-gradient(circle 700px at ' + pendingX + 'px ' + pendingY + 'px, rgba(21,88,176,0.13) 0%, rgba(244,121,32,0.07) 45%, transparent 70%)';
+        glow.style.background = 'radial-gradient(circle 700px at ' + pendingX + 'px ' + pendingY + 'px, rgba(21,88,176,0.13) 0%, rgba(106,176,245,0.06) 45%, transparent 70%)';
         rafPending = false;
       });
     }
@@ -1907,7 +1907,7 @@ function toggleFaq(btn) {
 })();
 </script>
 <script>
-/* ── HERO FLOATING PARTICLES ─────────────────────────────────── */
+/* ── HERO NETWORK PARTICLES (wave-flow, line-connected) ─────── */
 (function(){
   var canvas = document.getElementById('hero-sphere-canvas');
   if (!canvas) return;
@@ -1915,26 +1915,26 @@ function toggleFaq(btn) {
   var W = 0, H = 0;
   var hero = document.querySelector('.hero');
 
-  // Depth tier definitions: far / mid / near
-  var TIERS = [
-    { r: 1.0,  opacityMin: 0.18, opacityMax: 0.25, speedFactor: 0.30 },
-    { r: 1.75, opacityMin: 0.30, opacityMax: 0.40, speedFactor: 0.45 },
-    { r: 2.25, opacityMin: 0.45, opacityMax: 0.55, speedFactor: 0.60 }
-  ];
-  var COLORS = ['rgba(184,217,255,1)', '#6ab0f5', 'rgba(255,255,255,1)'];
-  var COUNT = 150;
-  var particles = [];
+  var COUNT = 70;          // fewer nodes = cleaner, less distracting
+  var CONNECT_DIST = 140;  // max px to draw a line between two nodes
+  var BASE_SPEED = 0.28;   // very slow drift — barely perceptible
+  var WAVE_AMP = 0.18;     // vertical sine wave amplitude added to y velocity
+  var WAVE_FREQ = 0.0018;  // how fast the wave cycles (time-based)
 
-  function mkParticle(tier, spreadX) {
-    var t = TIERS[tier];
+  var particles = [];
+  var t = 0; // global time counter for wave
+
+  function mkParticle(spread) {
+    var angle = Math.random() * Math.PI * 2;
+    var speed = BASE_SPEED * (0.5 + Math.random() * 0.7);
     return {
-      x: spreadX ? Math.random() * W : -2,
+      x: spread ? Math.random() * W : -4,
       y: Math.random() * H,
-      tier: tier,
-      r: t.r + Math.random() * 0.35,
-      alpha: t.opacityMin + Math.random() * (t.opacityMax - t.opacityMin),
-      speed: t.speedFactor,
-      color: COLORS[tier]
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed * 0.5, // flatten vertical movement
+      r: 1.4 + Math.random() * 1.4,
+      alpha: 0.35 + Math.random() * 0.35,
+      phaseOffset: Math.random() * Math.PI * 2 // unique wave phase per node
     };
   }
 
@@ -1953,103 +1953,64 @@ function toggleFaq(btn) {
     H = canvas.height = h;
   }
 
-  // Direction state
-  var dir = { x: 1, y: 0 };
-  var releaseDir = { x: 1, y: 0 };
-  var lerpFrames = 0;
-  var LERP_TOTAL = 90;
-  var dragging = false;
-  var lastMX = 0, lastMY = 0;
-
-  function onMouseDown(e) {
-    dragging = true;
-    lerpFrames = 0;
-    var rect = hero.getBoundingClientRect();
-    lastMX = e.clientX - rect.left;
-    lastMY = e.clientY - rect.top;
-  }
-
-  function onMouseMove(e) {
-    if (!dragging) return;
-    var rect = hero.getBoundingClientRect();
-    var mx = e.clientX - rect.left;
-    var my = e.clientY - rect.top;
-    var dx = mx - lastMX;
-    var dy = my - lastMY;
-    var len = Math.sqrt(dx * dx + dy * dy);
-    if (len > 0.5) {
-      dir.x = dx / len;
-      dir.y = dy / len;
-    }
-    lastMX = mx;
-    lastMY = my;
-  }
-
-  function onMouseUp() {
-    if (!dragging) return;
-    dragging = false;
-    releaseDir.x = dir.x;
-    releaseDir.y = dir.y;
-    lerpFrames = LERP_TOTAL;
-  }
-
-  if (hero) {
-    hero.addEventListener('mousedown', onMouseDown);
-    hero.addEventListener('mousemove', onMouseMove);
-    hero.addEventListener('mouseup', onMouseUp);
-    hero.addEventListener('mouseleave', onMouseUp);
-  }
-
   resize();
   window.addEventListener('resize', resize);
 
-  // Create particles: more far than near for natural depth feel
   for (var i = 0; i < COUNT; i++) {
-    var tier = i < 65 ? 0 : i < 115 ? 1 : 2;
-    particles.push(mkParticle(tier, true));
+    particles.push(mkParticle(true));
   }
 
   function draw() {
-    // Lerp direction back to default (left→right) after mouse release
-    if (!dragging && lerpFrames > 0) {
-      lerpFrames--;
-      var t = 1 - lerpFrames / LERP_TOTAL;
-      dir.x = releaseDir.x * (1 - t) + t;   // lerp to targetDir.x = 1
-      dir.y = releaseDir.y * (1 - t);        // lerp to targetDir.y = 0
-    }
-
     ctx.clearRect(0, 0, W, H);
+    t += 1;
 
+    // Update positions with wave flow
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
-      p.x += dir.x * p.speed;
-      p.y += dir.y * p.speed;
 
-      // Wrap: off right → reappear at left with fresh random Y
-      if (p.x > W + p.r) {
-        p.x = -p.r;
-        p.y = Math.random() * H;
-      } else if (p.x < -p.r) {
-        p.x = W + p.r;
-        p.y = Math.random() * H;
-      }
-      if (p.y > H + p.r) {
-        p.y = -p.r;
-        p.x = Math.random() * W;
-      } else if (p.y < -p.r) {
-        p.y = H + p.r;
-        p.x = Math.random() * W;
-      }
+      // Add gentle sine wave to vertical velocity
+      var wave = Math.sin(t * WAVE_FREQ * Math.PI * 2 + p.phaseOffset) * WAVE_AMP;
+      p.x += p.vx;
+      p.y += p.vy + wave;
 
+      // Wrap around edges
+      if (p.x > W + p.r)  { p.x = -p.r;  p.y = Math.random() * H; }
+      if (p.x < -p.r)     { p.x = W + p.r; p.y = Math.random() * H; }
+      if (p.y > H + p.r)  { p.y = -p.r;  p.x = Math.random() * W; }
+      if (p.y < -p.r)     { p.y = H + p.r; p.x = Math.random() * W; }
+    }
+
+    // Draw lines between nearby nodes first (below dots)
+    for (var i = 0; i < particles.length; i++) {
+      for (var j = i + 1; j < particles.length; j++) {
+        var a = particles[i], b = particles[j];
+        var dx = a.x - b.x, dy = a.y - b.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          // Line opacity: strong near centre, fades at max distance
+          var lineAlpha = (1 - dist / CONNECT_DIST) * 0.18;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = 'rgba(106,176,245,' + lineAlpha + ')';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes on top
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = 'rgba(180,215,255,' + p.alpha + ')';
       ctx.fill();
     }
-    ctx.globalAlpha = 1;
+
     requestAnimationFrame(draw);
   }
+
   draw();
 })();
 </script>
