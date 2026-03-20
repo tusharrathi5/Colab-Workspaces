@@ -210,14 +210,26 @@
   .nav-cta { background:linear-gradient(135deg,var(--blue-mid) 0%,var(--blue) 100%) !important; color:white !important; padding:10px 22px !important; border-radius:9px !important; font-weight:600 !important; box-shadow:var(--shadow-blue) !important; transition:all 0.2s !important; }
   .nav-cta:hover { transform:translateY(-1px) !important; box-shadow:0 12px 32px rgba(21,88,176,0.32) !important; }
 
-  .hero { min-height:100vh; background:linear-gradient(135deg,#daeeff 0%,#eef4ff 40%,#f5f8ff 100%); display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
-  .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 55% at 75% 25%,rgba(21,88,176,0.28) 0%,transparent 65%),radial-gradient(ellipse 50% 65% at 10% 90%,rgba(21,88,176,0.14) 0%,transparent 60%),radial-gradient(ellipse 80% 30% at 50% 105%,rgba(21,88,176,0.18) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(106,176,245,0.20) 0%,transparent 60%); }
+  .hero { min-height:100vh; background:#ffffff; display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
+  .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 55% at 75% 25%,rgba(21,88,176,0.12) 0%,transparent 65%),radial-gradient(ellipse 50% 65% at 10% 90%,rgba(21,88,176,0.08) 0%,transparent 60%),radial-gradient(ellipse 80% 30% at 50% 105%,rgba(21,88,176,0.12) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(106,176,245,0.10) 0%,transparent 60%); opacity:0; transition:opacity 0.6s ease; pointer-events:none; }
+  .hero:hover .hero-bg { opacity:1; }
   /* Accent lines removed */
   /* Premium orbs */
-  .hero-orb1 { position:absolute; width:700px; height:700px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.14) 0%,transparent 70%); top:-150px; right:-120px; pointer-events:none; }
-  .hero-orb2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.10) 0%,transparent 70%); bottom:0; left:-100px; pointer-events:none; }
+  .hero-orb1 { position:absolute; width:700px; height:700px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.14) 0%,transparent 70%); top:-150px; right:-120px; pointer-events:none; opacity:0; transition:opacity 0.6s ease; }
+  .hero-orb2 { position:absolute; width:350px; height:350px; border-radius:50%; background:radial-gradient(circle,rgba(21,88,176,0.10) 0%,transparent 70%); bottom:0; left:-100px; pointer-events:none; opacity:0; transition:opacity 0.6s ease; }
+  .hero:hover .hero-orb1, .hero:hover .hero-orb2 { opacity:1; }
   /* Horizontal separator line */
-  .hero-sep { position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent 0%,rgba(21,88,176,0.15) 30%,rgba(21,88,176,0.3) 50%,rgba(21,88,176,0.15) 70%,transparent 100%); }
+  .hero-sep { position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent 0%,rgba(21,88,176,0.15) 30%,rgba(21,88,176,0.3) 50%,rgba(21,88,176,0.15) 70%,transparent 100%); opacity:0; transition:opacity 0.6s ease; }
+  .hero:hover .hero-sep { opacity:1; }
+  /* Stripe-like animated corner mesh */
+  .hero-stripe-mesh { position:absolute; top:-60px; right:-80px; width:55%; height:110%; pointer-events:none; z-index:0; opacity:0; transition:opacity 0.9s ease; overflow:hidden; border-radius:0 0 0 60% / 0 0 0 40%; }
+  .hero:hover .hero-stripe-mesh { opacity:1; }
+  .mesh-layer { position:absolute; inset:0; border-radius:inherit; }
+  .mesh-l1 { background:conic-gradient(from 200deg at 70% 40%,#c8b6ff 0deg,#f9a8d4 60deg,#fbbf24 110deg,#fb923c 150deg,#f472b6 200deg,#a78bfa 270deg,#c8b6ff 360deg); opacity:0.55; animation:mesh-rotate 18s linear infinite; transform-origin:65% 45%; will-change:transform; }
+  .mesh-l2 { background:conic-gradient(from 30deg at 50% 60%,#fed7aa 0deg,#fca5a5 80deg,#e879f9 160deg,#818cf8 240deg,#fed7aa 360deg); opacity:0.40; filter:blur(8px); animation:mesh-drift 14s ease-in-out infinite alternate; transform-origin:50% 50%; will-change:transform; }
+  .mesh-l3 { background:radial-gradient(ellipse 80% 80% at 60% 40%,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.0) 70%); }
+  @keyframes mesh-rotate { 0%{transform:rotate(0deg) scale(1)} 50%{transform:rotate(180deg) scale(1.06)} 100%{transform:rotate(360deg) scale(1)} }
+  @keyframes mesh-drift { 0%{transform:translate(0px,0px) scale(1)} 33%{transform:translate(12px,-10px) scale(1.03)} 66%{transform:translate(-8px,14px) scale(0.98)} 100%{transform:translate(6px,-6px) scale(1.02)} }
   .hero-content { position:relative; z-index:2; display:flex; flex:1; align-items:center; padding:32px 5% 68px; gap:70px; }
   .hero-left { flex:1; }
   .hero-tag { display:inline-flex; align-items:center; gap:10px; background:rgba(21,88,176,0.1); border:1px solid rgba(21,88,176,0.3); color:#1558b0; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:3px; padding:8px 18px; border-radius:100px; margin-bottom:32px; text-transform:uppercase; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 0 28px rgba(21,88,176,0.12),inset 0 0 12px rgba(21,88,176,0.04); }
@@ -645,6 +657,11 @@ window.showPage = window.showPage || function(name){
     <div class="hero-bg"></div>
     <div class="hero-orb1"></div>
     <div class="hero-orb2"></div>
+    <div class="hero-stripe-mesh" aria-hidden="true">
+      <div class="mesh-layer mesh-l1"></div>
+      <div class="mesh-layer mesh-l2"></div>
+      <div class="mesh-layer mesh-l3"></div>
+    </div>
     <canvas id="hero-sphere-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.55;"></canvas>
     <div class="hero-content">
       <div class="hero-left fade-in">
