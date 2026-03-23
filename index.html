@@ -948,7 +948,7 @@ window.showPage = window.showPage || function(name){
             <input type="tel" class="form-control" id="bk-phone" placeholder="+91 XXXXX XXXXX" oninput="validatePhoneInput(this,'bk-phone-err')" maxlength="15">
             <div class="field-error-msg" id="bk-phone-err">⚠ Please enter a valid 10-digit mobile number.</div>
           </div>
-          <div class="form-section"><label>Email Address <span style="color:var(--gray);font-size:11px;font-weight:400">(needed for rescheduling)</span></label><input type="email" class="form-control" id="bk-email" placeholder="you@email.com"></div>
+          <div class="form-section"><label>Email Address *</label><input type="email" class="form-control" id="bk-email" placeholder="you@email.com" oninput="validateEmailInput(this,'bk-email-err')"><div class="field-error-msg" id="bk-email-err">⚠ Please enter a valid email address.</div></div>
         </div>
         <div class="form-section"><label>Purpose (optional)</label>
           <select class="form-control" id="bk-purpose" style="max-width:480px">
@@ -1193,6 +1193,22 @@ function validatePhoneInput(input, errId) {
   }
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateEmailInput(input, errId) {
+  const errEl = document.getElementById(errId);
+  const val = input.value.trim();
+  if (val && !isValidEmail(val)) {
+    input.classList.add('input-error');
+    if (errEl) errEl.classList.add('show');
+  } else {
+    input.classList.remove('input-error');
+    if (errEl) errEl.classList.remove('show');
+  }
+}
+
 // ── ROUTING ──────────────────────────────────────────────────
 window.showPage = function showPage(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1370,6 +1386,16 @@ function goStep(n) {
       alert('⚠ Please enter a valid 10-digit mobile number.');
       return;
     }
+    const emailVal = document.getElementById('bk-email').value.trim();
+    if (!emailVal || !isValidEmail(emailVal)) {
+      const emailInput = document.getElementById('bk-email');
+      const errEl = document.getElementById('bk-email-err');
+      emailInput.classList.add('input-error');
+      emailInput.focus();
+      if (errEl) errEl.classList.add('show');
+      alert('⚠ Please enter a valid email address.');
+      return;
+    }
     fillConfirm();
   }
   [1,2,3].forEach(i => document.getElementById('book-step'+i).style.display=i===n?'block':'none');
@@ -1419,14 +1445,26 @@ async function confirmBooking() {
   const timeLabel=formatSelectedRange(s[0], s[s.length-1]+1);
   const name=document.getElementById('bk-name').value.trim();
   const phone=document.getElementById('bk-phone').value.trim();
+  const email=document.getElementById('bk-email').value.trim();
   const discountCode=(document.getElementById('bk-discount').value||'').trim().toUpperCase();
   const purposeBase=document.getElementById('bk-purpose').value||'Not specified';
   const purpose=discountCode===SILVER_CROWN_CODE ? `${purposeBase} | Silver Crown Discount (${SILVER_CROWN_DISCOUNT}% off)` : purposeBase;
 
+  if (!email || !isValidEmail(email)) {
+    const emailInput = document.getElementById('bk-email');
+    const errEl = document.getElementById('bk-email-err');
+    emailInput.classList.add('input-error');
+    emailInput.focus();
+    if (errEl) errEl.classList.add('show');
+    alert('⚠ Please enter a valid email address.');
+    btn.textContent = '✅ Confirm Booking'; btn.disabled = false;
+    return;
+  }
+
   // Save to Supabase
   const result = await sbFetch('bookings', 'POST', {
     name, phone,
-    email: document.getElementById('bk-email').value.trim(),
+    email,
     date: dv, slots: s,
     time_label: timeLabel,
     duration: dur, amount: total,
@@ -1441,6 +1479,7 @@ async function confirmBooking() {
 `🏢 *CO-LAB New Booking!*
 👤 Name: ${name}
 📞 Phone: ${phone}
+📧 Email: ${email}
 📅 Date: ${fmtDate(dv)}
 ⏰ Time: ${timeLabel}
 ⏱ Duration: ${dur} hour${dur>1?'s':''} (Billed: ${bill.billedHours} hour${bill.billedHours>1?'s':''})\n🎟 Discount: ${bill.discountAmount>0?`-₹${bill.discountAmount.toLocaleString('en-IN')} (${SILVER_CROWN_CODE})`:'₹0'}\n💰 Amount: ₹${total.toLocaleString('en-IN')} + GST\n📋 Purpose: ${purpose}`;
@@ -1763,6 +1802,7 @@ async function confirmReschedule() {
 `🔄 *CO-LAB Booking Rescheduled!*
 👤 Name: ${rescheduleTargetBooking.name}
 📞 Phone: ${rescheduleTargetBooking.phone}
+📧 Email: ${rescheduleTargetBooking.email}
 📅 New Date: ${fmtDate(dv)}
 ⏰ New Time: ${timeLabel}
 ⏱ Duration: ${durationHours} hour${durationHours !== 1 ? 's' : ''}
