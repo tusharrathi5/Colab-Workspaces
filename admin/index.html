@@ -248,6 +248,14 @@
               <span>Total: <strong id="inv-total" style="color:var(--blue)">₹0</strong></span>
             </div>
           </div>
+          <!-- Advance Payment -->
+          <div class="form-group span2" id="inv-advance-row">
+            <label>Advance Payment Received (if any)</label>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <input type="number" class="form-control" id="inv-advance" placeholder="₹ 0 — leave blank if no advance" min="0" style="max-width:280px" oninput="updateAdvancePreview()">
+              <span id="inv-advance-preview" style="font-size:14px;color:var(--gray)"></span>
+            </div>
+          </div>
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
           <button class="btn-primary" onclick="previewInvoice()">👁 Preview Invoice</button>
@@ -660,6 +668,23 @@ function updateInvGST() {
     document.getElementById('inv-sgst').textContent = '₹' + sgst.toLocaleString('en-IN', {minimumFractionDigits:2});
     document.getElementById('inv-total').textContent = '₹' + (amt + cgst + sgst).toLocaleString('en-IN', {minimumFractionDigits:2});
   }
+  updateAdvancePreview();
+}
+
+function updateAdvancePreview() {
+  const advance = parseFloat(document.getElementById('inv-advance').value) || 0;
+  const gstOn = document.getElementById('inv-gst-toggle').checked;
+  let amt = 0;
+  document.querySelectorAll('.inv-svc-amt').forEach(el => { amt += parseFloat(el.value) || 0; });
+  const total = gstOn ? amt * 1.18 : amt;
+  const preview = document.getElementById('inv-advance-preview');
+  if (advance > 0 && total > 0) {
+    const balance = total - advance;
+    preview.textContent = 'Balance Due: ₹' + balance.toLocaleString('en-IN', {minimumFractionDigits:2});
+    preview.style.color = balance > 0 ? 'var(--orange)' : '#166534';
+  } else {
+    preview.textContent = '';
+  }
 }
 
 function collectInvoiceData() {
@@ -687,6 +712,7 @@ function collectInvoiceData() {
     clientGstin: document.getElementById('inv-client-gstin').value.trim(),
     clientState: document.getElementById('inv-client-state').value.trim(),
     amt, cgst, sgst, total, gstOn,
+    advance: parseFloat(document.getElementById('inv-advance').value) || 0,
     tenantGstin: gstOn ? document.getElementById('inv-tenant-gstin').value.trim() : '',
     createdAt: new Date().toISOString()
   };
@@ -758,11 +784,19 @@ function buildInvoiceHTML(d, inline) {
       <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#555">CGST @ 9%</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea">${fmt(d.cgst)}</td></tr>
       <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#555">SGST @ 9%</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea">${fmt(d.sgst)}</td></tr>
       <tr style="background:#1a6dc4;color:white"><td style="padding:6px 8px;border:1px solid #1a6dc4;font-weight:700">TOTAL</td><td style="padding:6px 8px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:13px">${fmt(d.total)}</td></tr>
+      ${d.advance > 0 ? `
+      <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#166534">Less: Advance Received</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea;color:#166534">- ${fmt(d.advance)}</td></tr>
+      <tr style="background:#f47920;color:white"><td style="padding:6px 8px;border:1px solid #f47920;font-weight:700">BALANCE DUE</td><td style="padding:6px 8px;text-align:right;border:1px solid #f47920;font-weight:700;font-size:13px">${fmt(d.total - d.advance)}</td></tr>
+      ` : ''}
     </tbody>
   </table>` : `
   <table style="width:100%;border-collapse:collapse;margin-bottom:10px;max-width:340px;margin-left:auto">
     <tbody>
       <tr style="background:#1a6dc4;color:white"><td style="padding:6px 8px;border:1px solid #1a6dc4;font-weight:700">TOTAL (Excl. GST)</td><td style="padding:6px 8px;text-align:right;border:1px solid #1a6dc4;font-weight:700;font-size:13px">${fmt(d.total)}</td></tr>
+      ${d.advance > 0 ? `
+      <tr><td style="padding:5px 8px;border:1px solid #dde2ea;color:#166534">Less: Advance Received</td><td style="padding:5px 8px;text-align:right;border:1px solid #dde2ea;color:#166534">- ${fmt(d.advance)}</td></tr>
+      <tr style="background:#f47920;color:white"><td style="padding:6px 8px;border:1px solid #f47920;font-weight:700">BALANCE DUE</td><td style="padding:6px 8px;text-align:right;border:1px solid #f47920;font-weight:700;font-size:13px">${fmt(d.total - d.advance)}</td></tr>
+      ` : ''}
     </tbody>
   </table>`}
   <!-- Bank / Payment Details -->
@@ -771,7 +805,13 @@ function buildInvoiceHTML(d, inline) {
       <div style="flex:1;min-width:200px">
         <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:6px">Payment Information</div>
         <div style="font-size:11px;margin-bottom:4px"><strong>Invoice No:</strong> ${d.invoiceNo}</div>
+        ${d.advance > 0 ? `
+        <div style="font-size:11px;margin-bottom:4px"><strong>Invoice Total:</strong> <span style="color:#555">${fmt(d.total)}</span></div>
+        <div style="font-size:11px;margin-bottom:4px"><strong>Advance Received:</strong> <span style="color:#166534">- ${fmt(d.advance)}</span></div>
+        <div style="font-size:11px"><strong>Balance Due:</strong> <span style="color:#f47920;font-weight:700">${fmt(d.total - d.advance)}</span></div>
+        ` : `
         <div style="font-size:11px"><strong>Amount Due:</strong> <span style="color:#1a6dc4;font-weight:700">${fmt(d.total)}</span></div>
+        `}
       </div>
       <div style="flex:1;min-width:200px;text-align:right">
         <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:#1a1a1a;margin-bottom:6px">Bank Details</div>
@@ -866,10 +906,12 @@ function saveAndDownloadInvoice() {
 }
 
 function resetInvoiceForm() {
-  ['inv-number','inv-date','inv-client-name','inv-client-addr','inv-client-gstin','inv-client-state','inv-tenant-gstin'].forEach(id => {
+  ['inv-number','inv-date','inv-client-name','inv-client-addr','inv-client-gstin','inv-client-state','inv-tenant-gstin','inv-advance'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  const advPreview = document.getElementById('inv-advance-preview');
+  if (advPreview) advPreview.textContent = '';
   const container = document.getElementById('inv-service-rows');
   if (container) {
     container.innerHTML = `<div class="inv-service-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start">
