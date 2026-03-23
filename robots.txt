@@ -5,4 +5,4 @@ Allow: /
 Disallow: /admin/
 
 # Sitemap location
-Sitemap: https://tusharrathi5.github.io/Colab-Workspaces/sitemap.xml
+Sitemap: https://www.colabworkspaces.in/sitemap.xml
