@@ -172,7 +172,7 @@
         <div class="inv-form-grid">
           <div class="form-group">
             <label>Invoice Number</label>
-            <input type="text" class="form-control" id="inv-number" placeholder="CLW-001">
+            <input type="text" class="form-control" id="inv-number" placeholder="CLW-001" oninput="this.dataset.auto=''">
           </div>
           <div class="form-group">
             <label>Invoice Date</label>
@@ -230,7 +230,7 @@
             <label>GST</label>
             <div class="gst-toggle-row">
               <label class="toggle-switch">
-                <input type="checkbox" id="inv-gst-toggle" onchange="updateInvGST()">
+                <input type="checkbox" id="inv-gst-toggle" onchange="updateInvGST(); refreshInvNumber()">
                 <span class="toggle-slider"></span>
               </label>
               <span style="font-size:14px;color:var(--gray)" id="inv-gst-label">Include GST (18%)</span>
@@ -265,18 +265,27 @@
         <div id="inv-preview-html"></div>
       </div>
 
-      <!-- Invoice History -->
+      <!-- Invoice History — Regular -->
       <div class="section-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-          <div class="section-title" style="margin-bottom:0">Invoice History</div>
-          <span id="inv-count-badge" style="font-family:'Space Mono',monospace;font-size:13px;color:var(--gray)"></span>
-        </div>
+        <div class="section-title">🧾 Regular Invoices <span id="inv-reg-count-badge" style="font-size:13px;font-weight:400;color:var(--gray)"></span></div>
         <div style="overflow-x:auto;border-radius:12px;border:1px solid var(--border)">
-          <table class="inv-history-table">
-            <thead><tr><th>#</th><th>Invoice No.</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>GST</th><th>Actions</th></tr></thead>
-            <tbody id="inv-history-tbody"></tbody>
+          <table class="bookings-table">
+            <thead><tr><th>#</th><th>Invoice No.</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Actions</th></tr></thead>
+            <tbody id="inv-reg-history-tbody"></tbody>
           </table>
-          <div id="no-invoices" class="no-bookings" style="display:none"><p style="font-size:32px;margin-bottom:12px">🧾</p><p>No invoices generated yet</p></div>
+          <div id="no-reg-invoices" class="no-bookings" style="display:none"><p style="font-size:32px;margin-bottom:12px">🧾</p><p>No regular invoices yet</p></div>
+        </div>
+      </div>
+
+      <!-- Invoice History — Tax -->
+      <div class="section-card" style="margin-top:24px">
+        <div class="section-title">🧾 Tax Invoices (GST) <span id="inv-tax-count-badge" style="font-size:13px;font-weight:400;color:var(--gray)"></span></div>
+        <div style="overflow-x:auto;border-radius:12px;border:1px solid var(--border)">
+          <table class="bookings-table">
+            <thead><tr><th>#</th><th>Invoice No.</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>GST</th><th>Actions</th></tr></thead>
+            <tbody id="inv-tax-history-tbody"></tbody>
+          </table>
+          <div id="no-tax-invoices" class="no-bookings" style="display:none"><p style="font-size:32px;margin-bottom:12px">🧾</p><p>No tax invoices yet</p></div>
         </div>
       </div>
     </div>
@@ -486,7 +495,12 @@ function switchAdminTab(tab) {
     btn.style.boxShadow = isActive ? '0 2px 6px rgba(0,0,0,0.08)' : 'none';
     view.style.display = isActive ? 'block' : 'none';
   });
-  if (tab === 'invoices') { initInvoiceForm(); renderInvoiceHistory(); }
+  if (tab === 'invoices') {
+    if (localStorage.getItem('clw_reg_counter') === null) {
+      localStorage.setItem('clw_reg_counter', String(getRegInvoices().length));
+    }
+    initInvoiceForm(); renderInvoiceHistory();
+  }
   if (tab === 'expenses') { initExpenseForm(); renderExpenses(); renderExpenseStats(); }
 }
 
@@ -597,16 +611,40 @@ const SUPPLIER = {
 function getInvoices() { try { return JSON.parse(localStorage.getItem('clw_invoices') || '[]'); } catch { return []; } }
 function saveInvoices(arr) { localStorage.setItem('clw_invoices', JSON.stringify(arr)); }
 
+function getRegInvoices() { try { return JSON.parse(localStorage.getItem('clw_invoices') || '[]'); } catch { return []; } }
+function saveRegInvoices(arr) { localStorage.setItem('clw_invoices', JSON.stringify(arr)); }
+
+function getTaxInvoices() { try { return JSON.parse(localStorage.getItem('clw_tax_invoices') || '[]'); } catch { return []; } }
+function saveTaxInvoices(arr) { localStorage.setItem('clw_tax_invoices', JSON.stringify(arr)); }
+
 function initInvoiceForm() {
-  const invs = getInvoices();
   const numEl = document.getElementById('inv-number');
   if (!numEl.value || numEl.dataset.auto === '1') {
-    const n = invs.length + 1;
-    numEl.value = 'CLW-' + String(n).padStart(3, '0');
+    const gstOn = document.getElementById('inv-gst-toggle').checked;
+    if (gstOn) {
+      const n = (parseInt(localStorage.getItem('clw_tax_counter') || '0')) + 1;
+      numEl.value = 'CLW-TX-' + String(n).padStart(3, '0');
+    } else {
+      const n = (parseInt(localStorage.getItem('clw_reg_counter') || '0')) + 1;
+      numEl.value = 'CLW-' + String(n).padStart(3, '0');
+    }
     numEl.dataset.auto = '1';
   }
   const dateEl = document.getElementById('inv-date');
   if (!dateEl.value) dateEl.value = todayStr();
+}
+
+function refreshInvNumber() {
+  const numEl = document.getElementById('inv-number');
+  if (numEl.dataset.auto !== '1') return;
+  const gstOn = document.getElementById('inv-gst-toggle').checked;
+  if (gstOn) {
+    const n = (parseInt(localStorage.getItem('clw_tax_counter') || '0')) + 1;
+    numEl.value = 'CLW-TX-' + String(n).padStart(3, '0');
+  } else {
+    const n = (parseInt(localStorage.getItem('clw_reg_counter') || '0')) + 1;
+    numEl.value = 'CLW-' + String(n).padStart(3, '0');
+  }
 }
 
 function updateInvGST() {
@@ -805,9 +843,17 @@ function saveAndDownloadInvoice() {
   if (!d.invoiceNo) { alert('Please enter an Invoice Number.'); return; }
   if (!d.clientName) { alert('Please enter the Client/Tenant Name.'); return; }
   if (!d.services || !d.services.some(s => s.amt > 0)) { alert('Please enter at least one service amount.'); return; }
-  const invs = getInvoices();
-  invs.unshift(d);
-  saveInvoices(invs);
+  if (d.gstOn) {
+    const taxInvs = getTaxInvoices();
+    taxInvs.unshift(d);
+    saveTaxInvoices(taxInvs);
+    localStorage.setItem('clw_tax_counter', String((parseInt(localStorage.getItem('clw_tax_counter') || '0')) + 1));
+  } else {
+    const regInvs = getRegInvoices();
+    regInvs.unshift(d);
+    saveRegInvoices(regInvs);
+    localStorage.setItem('clw_reg_counter', String((parseInt(localStorage.getItem('clw_reg_counter') || '0')) + 1));
+  }
   _currentInvoiceData = d;
   const html = buildInvoiceHTML(d, true);
   document.getElementById('inv-preview-html').innerHTML = html;
@@ -859,45 +905,78 @@ function removeServiceRow(btn) {
 }
 
 function renderInvoiceHistory() {
-  const invs = getInvoices();
-  const badge = document.getElementById('inv-count-badge');
-  if (badge) badge.textContent = invs.length + ' invoice' + (invs.length !== 1 ? 's' : '');
-  const tbody = document.getElementById('inv-history-tbody');
-  const noEl = document.getElementById('no-invoices');
-  if (!invs.length) {
-    tbody.innerHTML = '';
-    noEl.style.display = 'block';
-    return;
+  // --- Regular ---
+  const regInvs = getRegInvoices();
+  const regBadge = document.getElementById('inv-reg-count-badge');
+  if (regBadge) regBadge.textContent = regInvs.length + ' invoice' + (regInvs.length !== 1 ? 's' : '');
+  const regTbody = document.getElementById('inv-reg-history-tbody');
+  const noRegEl = document.getElementById('no-reg-invoices');
+  if (!regInvs.length) {
+    regTbody.innerHTML = '';
+    noRegEl.style.display = 'block';
+  } else {
+    noRegEl.style.display = 'none';
+    const fmt = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2});
+    regTbody.innerHTML = regInvs.map((d, i) => `<tr>
+      <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${regInvs.length - i}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${d.invoiceNo}</td>
+      <td style="white-space:nowrap">${d.date}</td>
+      <td><strong>${d.clientName || '—'}</strong></td>
+      <td style="font-size:12px;color:var(--gray)">${d.category}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(d.total)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-secondary" onclick="redownloadRegInvoice(${i})" style="padding:5px 10px;font-size:12px;margin-right:4px">⬇</button>
+        <button class="btn-delete" onclick="deleteRegInvoice(${i})">✕</button>
+      </td>
+    </tr>`).join('');
   }
-  noEl.style.display = 'none';
-  const fmt = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2});
-  tbody.innerHTML = invs.map((d, i) => `<tr>
-    <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${invs.length - i}</td>
-    <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${d.invoiceNo}</td>
-    <td style="white-space:nowrap">${d.date}</td>
-    <td><strong>${d.clientName || '—'}</strong></td>
-    <td style="font-size:12px;color:var(--gray)">${d.category}</td>
-    <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(d.total)}</td>
-    <td>${d.gstOn ? '<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">GST</span>' : '<span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:5px;font-size:11px">No GST</span>'}</td>
-    <td style="white-space:nowrap">
-      <button class="btn-secondary" onclick="redownloadInvoice(${i})" style="padding:5px 10px;font-size:12px;margin-right:4px">⬇</button>
-      <button class="btn-delete" onclick="deleteInvoice(${i})">✕</button>
-    </td>
-  </tr>`).join('');
+
+  // --- Tax ---
+  const taxInvs = getTaxInvoices();
+  const taxBadge = document.getElementById('inv-tax-count-badge');
+  if (taxBadge) taxBadge.textContent = taxInvs.length + ' invoice' + (taxInvs.length !== 1 ? 's' : '');
+  const taxTbody = document.getElementById('inv-tax-history-tbody');
+  const noTaxEl = document.getElementById('no-tax-invoices');
+  if (!taxInvs.length) {
+    taxTbody.innerHTML = '';
+    noTaxEl.style.display = 'block';
+  } else {
+    noTaxEl.style.display = 'none';
+    const fmt = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2});
+    taxTbody.innerHTML = taxInvs.map((d, i) => `<tr>
+      <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${taxInvs.length - i}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${d.invoiceNo}</td>
+      <td style="white-space:nowrap">${d.date}</td>
+      <td><strong>${d.clientName || '—'}</strong></td>
+      <td style="font-size:12px;color:var(--gray)">${d.category}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(d.total)}</td>
+      <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">GST</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn-secondary" onclick="redownloadTaxInvoice(${i})" style="padding:5px 10px;font-size:12px;margin-right:4px">⬇</button>
+        <button class="btn-delete" onclick="deleteTaxInvoice(${i})">✕</button>
+      </td>
+    </tr>`).join('');
+  }
 }
 
-function redownloadInvoice(idx) {
-  const invs = getInvoices();
-  _currentInvoiceData = invs[idx];
-  downloadInvoicePDF(_currentInvoiceData);
+function redownloadRegInvoice(i) {
+  const d = getRegInvoices()[i]; if (!d) return;
+  const w = window.open('', '_blank'); w.document.write(buildInvoiceHTML(d, false)); w.document.close(); w.print();
 }
 
-function deleteInvoice(idx) {
-  if (!confirm('Delete this invoice?')) return;
-  const invs = getInvoices();
-  invs.splice(idx, 1);
-  saveInvoices(invs);
-  renderInvoiceHistory();
+function deleteRegInvoice(i) {
+  if (!confirm('Delete this regular invoice?')) return;
+  const invs = getRegInvoices(); invs.splice(i, 1); saveRegInvoices(invs); renderInvoiceHistory();
+}
+
+function redownloadTaxInvoice(i) {
+  const d = getTaxInvoices()[i]; if (!d) return;
+  const w = window.open('', '_blank'); w.document.write(buildInvoiceHTML(d, false)); w.document.close(); w.print();
+}
+
+function deleteTaxInvoice(i) {
+  if (!confirm('Delete this tax invoice?')) return;
+  const invs = getTaxInvoices(); invs.splice(i, 1); saveTaxInvoices(invs); renderInvoiceHistory();
 }
 
 // ── EXPENSES ─────────────────────────────────────────────────
