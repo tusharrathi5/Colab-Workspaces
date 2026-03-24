@@ -220,7 +220,8 @@
   .nav-cta { background:linear-gradient(135deg,var(--blue-mid) 0%,var(--blue) 100%) !important; color:white !important; padding:10px 22px !important; border-radius:9px !important; font-weight:600 !important; box-shadow:var(--shadow-blue) !important; transition:all 0.2s !important; }
   .nav-cta:hover { transform:translateY(-1px) !important; box-shadow:0 12px 32px rgba(21,88,176,0.32) !important; }
 
-  .hero { min-height:100vh; background:#ffffff; display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
+  .hero { min-height:100vh; background-color:#0a1432; background:url('workspace-lounge.jpg') center center/cover no-repeat; display:flex; flex-direction:column; position:relative; overflow:hidden; padding-top:0px; }
+  .hero::before { content:''; position:absolute; inset:0; background:rgba(10,20,50,0.62); z-index:1; pointer-events:none; }
   .hero-bg { display:none; }
   /* Accent lines removed */
   /* Premium orbs */
@@ -239,13 +240,13 @@
   @keyframes mesh-drift { 0%{transform:translate(0px,0px) scale(1)} 33%{transform:translate(12px,-10px) scale(1.03)} 66%{transform:translate(-8px,14px) scale(0.98)} 100%{transform:translate(6px,-6px) scale(1.02)} }
   .hero-content { position:relative; z-index:2; display:flex; flex:1; align-items:center; padding:32px 5% 68px; gap:70px; }
   .hero-left { flex:1; }
-  .hero-tag { display:inline-flex; align-items:center; gap:10px; background:rgba(21,88,176,0.1); border:1px solid rgba(21,88,176,0.3); color:#1558b0; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:3px; padding:8px 18px; border-radius:100px; margin-bottom:32px; text-transform:uppercase; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 0 28px rgba(21,88,176,0.12),inset 0 0 12px rgba(21,88,176,0.04); }
+  .hero-tag { display:inline-flex; align-items:center; gap:10px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3); color:rgba(255,255,255,0.9); font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:3px; padding:8px 18px; border-radius:100px; margin-bottom:32px; text-transform:uppercase; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 0 28px rgba(21,88,176,0.12),inset 0 0 12px rgba(21,88,176,0.04); }
   .hero-tag::before { content:''; width:6px; height:6px; background:var(--orange); border-radius:50%; animation:pulse 2s infinite; box-shadow:0 0 8px rgba(244,121,32,0.6); }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
-  .hero-h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(60px,8.5vw,112px); line-height:0.95; color:#0d1a2e; letter-spacing:3px; margin-bottom:8px; text-shadow:none; }
+  .hero-h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(60px,8.5vw,112px); line-height:0.95; color:#ffffff; letter-spacing:3px; margin-bottom:8px; text-shadow:none; }
   .hero-h1 .accent { color:var(--orange); }
   .hero-h1 .blue { color:#1558b0; }
-  .hero-sub { font-size:18px; color:rgba(13,26,46,0.65); line-height:1.9; max-width:470px; margin:28px 0 52px; font-weight:300; letter-spacing:0.3px; }
+  .hero-sub { font-size:18px; color:rgba(255,255,255,0.82); line-height:1.9; max-width:470px; margin:28px 0 52px; font-weight:300; letter-spacing:0.3px; }
   .hero-actions { display:flex; gap:14px; flex-wrap:wrap; }
   .btn-primary { background:linear-gradient(135deg,#1a6dc4 0%,#1558b0 60%,#0f4a9a 100%); color:white; text-decoration:none; padding:17px 38px; border-radius:12px; font-weight:700; font-size:16px; transition:all 0.25s; display:inline-flex; align-items:center; gap:8px; cursor:pointer; border:none; font-family:'DM Sans',sans-serif; box-shadow:0 8px 28px rgba(21,88,176,0.45); letter-spacing:0.3px; }
   .btn-primary:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(21,88,176,0.6); }
@@ -651,6 +652,7 @@ window.showPage = window.showPage || function(name){
     <li><a href="#services" onclick="showPage('home')">Services</a></li>
     <li><a href="#pricing" onclick="showPage('home')">Pricing</a></li>
     <li><a href="#amenities" onclick="showPage('home')">Amenities</a></li>
+    <li><a href="#gallery" onclick="showPage('home')">Gallery</a></li>
     <li><a href="#contact" onclick="showPage('home')">Contact</a></li>
     <li><a href="#" class="nav-cta" onclick="showPage('booking');return false">📅 Book Meeting Room</a></li>
   </ul>
@@ -726,13 +728,39 @@ window.showPage = window.showPage || function(name){
       <div><div class="section-tag">// What We Offer</div><h2 class="section-title reveal reveal-left">WORKSPACE<br>SOLUTIONS</h2><p class="section-desc reveal reveal-right">From solo freelancers to growing teams — a space that fits your work style perfectly.</p></div>
     </div>
     <div class="services-grid stagger">
-      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 7H5v-2h6v2zm8 0h-6v-2h6v2z"/></svg></div><h3>Dedicated Seats</h3><p>Your own permanent seat. Come and go anytime, 24×7. Perfect for daily professionals who need consistency.</p></div>
-      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zm0 10h8v8h-8zM3 13h8v8H3z"/></svg></div><h3>Private Cabins</h3><p>3-seater enclosed cabins for teams that need privacy. Available in Essential, Executive, Elite &amp; Signature tiers.</p></div>
-      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><h3>Hot Desk</h3><p>Pick any available seat per day. No commitment — just walk in and work. Ideal for occasional visitors.</p></div>
-      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-1 9H6v-2h12v2z"/></svg></div><h3>Flex / Day Pass</h3><p>Pre-purchase entry passes valid for 3, 6, or 12 months. Flexible scheduling with significant savings.</p></div>
-      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div><h3>Meeting Room</h3><p>Professional meeting room, book by the hour. ₹200/hr, available 24×7. Perfect for client meetings and interviews.</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 7H5v-2h6v2zm8 0h-6v-2h6v2z"/></svg></div><h3>Dedicated Seats</h3><p>Your own permanent seat. Come and go anytime, 24×7. Perfect for daily professionals who need consistency.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">From ₹3,000/mo →</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zm0 10h8v8h-8zM3 13h8v8H3z"/></svg></div><h3>Private Cabins</h3><p>3-seater enclosed cabins for teams that need privacy. Available in Essential, Executive, Elite &amp; Signature tiers.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">From ₹8,000/mo →</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><h3>Hot Desk</h3><p>Pick any available seat per day. No commitment — just walk in and work. Ideal for occasional visitors.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">₹500/day →</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-1 9H6v-2h12v2z"/></svg></div><h3>Flex / Day Pass</h3><p>Pre-purchase entry passes valid for 3, 6, or 12 months. Flexible scheduling with significant savings.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">From ₹3,000 for 10 entries →</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div><h3>Meeting Room</h3><p>Professional meeting room, book by the hour. ₹200/hr, available 24×7. Perfect for client meetings and interviews.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">₹200/hr →</p></div>
     </div>
   </section>
+
+  <!-- ══════════ GALLERY ══════════ -->
+<section id="gallery" style="background:#0d0f14; padding:80px 5%;">
+  <div style="margin-bottom:48px;">
+    <div class="section-tag" style="color:#6ab0f5;">// Our Space</div>
+    <h2 class="section-title" style="color:white;">TAKE A LOOK<br>INSIDE</h2>
+    <p class="section-desc" style="color:rgba(255,255,255,0.5);">Step inside CO-LAB Workspaces — designed for focus, comfort, and community.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+    <div style="grid-column:span 2;border-radius:16px;overflow:hidden;aspect-ratio:16/9;">
+      <img src="workspace-1.JPG" alt="CO-LAB Workspaces main workspace area" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="border-radius:16px;overflow:hidden;aspect-ratio:9/10;">
+      <img src="workspace-2.JPG" alt="CO-LAB Workspaces dedicated seating" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="border-radius:16px;overflow:hidden;aspect-ratio:9/10;">
+      <img src="workspace-3.JPG" alt="CO-LAB Workspaces private cabin" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="grid-column:span 2;border-radius:16px;overflow:hidden;aspect-ratio:16/9;">
+      <img src="workspace-4.JPG" alt="CO-LAB Workspaces collaborative area" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="grid-column:span 3;border-radius:16px;overflow:hidden;aspect-ratio:21/9;">
+      <img src="workspace-5.JPG" alt="CO-LAB Workspaces panoramic view" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+  </div>
+</section>
 
   <!-- Urgency bar above pricing -->
 <div style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;text-align:center;padding:12px 20px;font-size:14px;font-weight:600;letter-spacing:0.3px;">
@@ -757,32 +785,33 @@ window.showPage = window.showPage || function(name){
     <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#1558b0;line-height:1;">₹3,000<span style="font-size:14px;font-family:'DM Sans',sans-serif;color:#6b7280;">/mo</span></div>
     <div style="font-size:11px;color:#dc2626;font-weight:600;margin-top:2px;">Save ₹1,000 · Limited seats!</div>
   </div>
+  <a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a>
 </div>
-        <div class="price-card reveal reveal-scale"><div class="plan-name">3 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3500" data-suffix="/month"><sup>₹</sup>3,500<div class="per">/month</div></div></div>
-        <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">6 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3000" data-suffix="/month"><sup>₹</sup>3,000<div class="per">/month</div></div></div>
-        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">12 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="2000" data-suffix="/month"><sup>₹</sup>2,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">3 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3500" data-suffix="/month"><sup>₹</sup>3,500<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">6 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3000" data-suffix="/month"><sup>₹</sup>3,000<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">12 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="2000" data-suffix="/month"><sup>₹</sup>2,000<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
       </div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
     <div id="tab-cabins" class="tab-content">
       <div class="pricing-grid">
-        <div class="price-card reveal reveal-scale"><div class="plan-name">Essential Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="8000" data-suffix="/month"><sup>₹</sup>8,000<div class="per">/month</div></div></div>
-        <div class="price-card featured reveal reveal-scale"><div class="plan-name">Executive Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="10000" data-suffix="/month"><sup>₹</sup>10,000<div class="per">/month</div></div></div>
-        <div class="price-card reveal reveal-scale"><div class="plan-name">Elite Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="12000" data-suffix="/month"><sup>₹</sup>12,000<div class="per">/month</div></div></div>
-        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Premium</div><div class="plan-name">Signature Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="14000" data-suffix="/month"><sup>₹</sup>14,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">Essential Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="8000" data-suffix="/month"><sup>₹</sup>8,000<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card featured reveal reveal-scale"><div class="plan-name">Executive Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="10000" data-suffix="/month"><sup>₹</sup>10,000<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">Elite Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="12000" data-suffix="/month"><sup>₹</sup>12,000<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Premium</div><div class="plan-name">Signature Cabin</div><div class="plan-period">3-seater · Monthly</div><div class="price-amount" data-count-target="14000" data-suffix="/month"><sup>₹</sup>14,000<div class="per">/month</div></div><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
       </div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
     <div id="tab-flex" class="tab-content">
       <div class="pricing-grid" style="grid-template-columns:repeat(3,1fr)">
-        <div class="price-card reveal reveal-scale"><div class="plan-name">10 Entries</div><div class="plan-period">Valid 3 months</div><div class="price-amount" data-count-target="3000" data-prefix="₹" data-suffix=""><sup>₹</sup>3,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹300 per entry</p></div>
-        <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">24 Entries</div><div class="plan-period">Valid 6 months</div><div class="price-amount" data-count-target="6000" data-prefix="₹" data-suffix=""><sup>₹</sup>6,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹250 per entry</p></div>
-        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">60 Entries</div><div class="plan-period">Valid 12 months</div><div class="price-amount" data-count-target="12000" data-prefix="₹" data-suffix=""><sup>₹</sup>12,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹200 per entry</p></div>
+        <div class="price-card reveal reveal-scale"><div class="plan-name">10 Entries</div><div class="plan-period">Valid 3 months</div><div class="price-amount" data-count-target="3000" data-prefix="₹" data-suffix=""><sup>₹</sup>3,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹300 per entry</p><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">24 Entries</div><div class="plan-period">Valid 6 months</div><div class="price-amount" data-count-target="6000" data-prefix="₹" data-suffix=""><sup>₹</sup>6,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹250 per entry</p><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
+        <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">60 Entries</div><div class="plan-period">Valid 12 months</div><div class="price-amount" data-count-target="12000" data-prefix="₹" data-suffix=""><sup>₹</sup>12,000</div><p style="font-size:13px;color:var(--gray);margin-top:10px">₹200 per entry</p><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div>
       </div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
     <div id="tab-hotdesk" class="tab-content">
-      <div class="pricing-grid" style="grid-template-columns:1fr"><div class="price-card featured reveal reveal-scale" style="max-width:340px"><div class="plan-name">Hot Desk</div><div class="plan-period">Walk-in · Any available seat</div><div class="price-amount" data-count-target="500" data-suffix="/day"><sup>₹</sup>500<div class="per">/day</div></div><p style="font-size:13px;color:var(--gray);margin-top:12px">No booking required. Just show up and plug in.</p></div></div>
+      <div class="pricing-grid" style="grid-template-columns:1fr"><div class="price-card featured reveal reveal-scale" style="max-width:340px"><div class="plan-name">Hot Desk</div><div class="plan-period">Walk-in · Any available seat</div><div class="price-amount" data-count-target="500" data-suffix="/day"><sup>₹</sup>500<div class="per">/day</div></div><p style="font-size:13px;color:var(--gray);margin-top:12px">No booking required. Just show up and plug in.</p><a href="#contact" onclick="showPage('home')" style="display:inline-block;margin-top:18px;background:#1558b0;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#0c3d7a'" onmouseout="this.style.background='#1558b0'">Enquire →</a></div></div>
       <p class="gst-note">⚡ GST applicable as per government norms.</p>
     </div>
   </section>
@@ -799,6 +828,91 @@ window.showPage = window.showPage || function(name){
       <div class="amenity-item reveal reveal-scale"><div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Clean &amp; Hygienic Space</span></div>
     </div>
   </section>
+
+  <!-- ══════════ TESTIMONIALS ══════════ -->
+<section id="testimonials" style="background:linear-gradient(180deg,#f0f4fa 0%,#e8f0fb 100%); padding:80px 5%;">
+  <div style="margin-bottom:52px;">
+    <div class="section-tag">// What Members Say</div>
+    <h2 class="section-title reveal">REAL REVIEWS<br>FROM OUR MEMBERS</h2>
+    <p class="section-desc">Don't take our word for it — here's what our members say on Google.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;" class="stagger">
+    <!-- Review 1 -->
+    <div class="reveal reveal-scale" style="background:white;border-radius:20px;padding:32px 28px;border:1px solid rgba(221,226,234,0.8);box-shadow:0 4px 20px rgba(0,0,0,0.06);position:relative;">
+      <div style="display:flex;gap:4px;margin-bottom:16px;">
+        <span style="color:#f59e0b;font-size:18px;">★★★★★</span>
+      </div>
+      <p style="font-size:15px;color:#374151;line-height:1.75;margin-bottom:20px;font-style:italic;">"One of the best coworking spaces in Jaipur. The workspace is clean, well organized, and very comfortable."</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1558b0,#4a9fe8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;">N</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#0d0f14;">Nikhil Bhan</div>
+          <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" style="flex-shrink:0;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google Review
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Review 2 -->
+    <div class="reveal reveal-scale" style="background:white;border-radius:20px;padding:32px 28px;border:1px solid rgba(221,226,234,0.8);box-shadow:0 4px 20px rgba(0,0,0,0.06);position:relative;">
+      <div style="display:flex;gap:4px;margin-bottom:16px;">
+        <span style="color:#f59e0b;font-size:18px;">★★★★★</span>
+      </div>
+      <p style="font-size:15px;color:#374151;line-height:1.75;margin-bottom:20px;font-style:italic;">"Great coworking space with a productive and friendly environment. The internet is fast, the workspace is clean."</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#166534,#22c55e);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;">M</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#0d0f14;">Manish Sharma</div>
+          <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" style="flex-shrink:0;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google Review
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Review 3 -->
+    <div class="reveal reveal-scale" style="background:white;border-radius:20px;padding:32px 28px;border:1px solid rgba(221,226,234,0.8);box-shadow:0 4px 20px rgba(0,0,0,0.06);position:relative;">
+      <div style="display:flex;gap:4px;margin-bottom:16px;">
+        <span style="color:#f59e0b;font-size:18px;">★★★★★</span>
+      </div>
+      <p style="font-size:15px;color:#374151;line-height:1.75;margin-bottom:20px;font-style:italic;">"Good service, clean, better sitting arrangements. Environment is peaceful. Good for professionals."</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;">K</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#0d0f14;">Kamlesh Sancheti</div>
+          <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" style="flex-shrink:0;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google Review
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Review 4 -->
+    <div class="reveal reveal-scale" style="background:white;border-radius:20px;padding:32px 28px;border:1px solid rgba(221,226,234,0.8);box-shadow:0 4px 20px rgba(0,0,0,0.06);position:relative;">
+      <div style="display:flex;gap:4px;margin-bottom:16px;">
+        <span style="color:#f59e0b;font-size:18px;">★★★★★</span>
+      </div>
+      <p style="font-size:15px;color:#374151;line-height:1.75;margin-bottom:20px;font-style:italic;">"This place is perfect for people working in small groups &amp; also people working from home. Perfect for startups."</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#b45309,#f59e0b);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;">V</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#0d0f14;">Varun Chandran</div>
+          <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" style="flex-shrink:0;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google Review
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:36px;">
+    <a href="https://share.google/Xjq1kWjOxFDEaLQxi" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:white;border:2px solid #1558b0;color:#1558b0;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:600;font-size:14px;transition:all 0.2s;">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      See all reviews on Google Maps ↗
+    </a>
+  </div>
+</section>
 
   <section id="why">
     <div class="section-tag">// Why Choose Us</div><h2 class="section-title section-title-anim reveal">YOUR BEST<br>WORKSPACE CHOICE</h2>
@@ -821,18 +935,54 @@ window.showPage = window.showPage || function(name){
     </div>
   </section>
 
+  <!-- ══════════ OUR STORY ══════════ -->
+<section id="story" style="background:white; padding:100px 5%;">
+  <div style="max-width:860px;margin:0 auto;">
+    <div class="section-tag">// Our Story</div>
+    <h2 class="section-title reveal" style="margin-bottom:40px;">THE STORY<br>BEHIND CO-LAB</h2>
+    <div class="reveal" style="font-size:17px;color:#374151;line-height:2;font-weight:300;">
+      <p style="margin-bottom:24px;">Colab Workspaces didn't start as a business idea — it started with a problem.</p>
+      <p style="margin-bottom:24px;">Like many professionals and founders, we struggled to find a workspace that truly felt right. Cafés were too noisy, offices felt rigid, and working from home often blurred the line between focus and distraction. There was always something missing — a sense of balance, comfort, and community.</p>
+      <p style="margin-bottom:24px;">That's where the idea of Colab was born.</p>
+      <p style="margin-bottom:24px;">We wanted to create more than just desks and chairs. We wanted to build a space where people could think clearly, work freely, and grow together. A place where freelancers, startups, and teams could walk in and instantly feel motivated — not pressured.</p>
+      <p style="margin-bottom:24px;">Every corner of Colab Workspaces has been designed with intention — from the lighting that keeps you energized, to the layout that encourages both focus and collaboration. But more than the physical space, what truly matters to us is the people who walk through our doors.</p>
+      <p style="margin-bottom:24px;">We've seen ideas turn into businesses, side hustles become full-time careers, and strangers become collaborators.</p>
+      <p style="margin-bottom:24px;">And that's what Colab is really about.</p>
+      <p style="font-style:italic;color:#1558b0;font-weight:500;font-size:18px;">Not just a workspace — but a place where work feels a little more human.</p>
+    </div>
+  </div>
+</section>
+
   <section id="contact">
     <div class="section-tag">// Get In Touch</div><h2 class="section-title">READY TO JOIN CO-LAB?</h2>
     <div class="contact-grid">
       <div class="contact-info reveal reveal-left">
-        <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div><div><h4>Call Us</h4><p><a href="tel:+919351864351">+91 9351864351</a></p><p style="font-size:12px;color:var(--gray);margin-top:4px">Founder: Tushar Rathi</p></div></div>
+        <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div><div><h4>Call Us</h4><p><a href="tel:+919351864351">+91 9351864351</a></p><p style="font-size:12px;color:var(--gray);margin-top:4px">Talk to our team</p></div></div>
         <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div><div><h4>Email Us</h4><p>contact&#64;nexgenhires&#46;com</p></div></div>
         <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div><div><h4>Visit Us</h4><p><a href="https://share.google/Xjq1kWjOxFDEaLQxi" target="_blank" style="color:var(--blue);text-decoration:none">Shop No. 1, Silver Crown Residency<br>Gandhi Path West, Jaipur 🗺️</a></p></div></div>
         <div class="contact-card" style="background:linear-gradient(135deg,#e7faf0 0%,#d4f5e2 100%);border-color:#a8e6c1"><div class="contact-card-icon" style="background:#25d366"><svg viewBox="0 0 24 24" style="fill:white;width:22px;height:22px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div><div><h4 style="color:#166534">WhatsApp Us</h4><p><a href="https://wa.me/919351864351?text=Hi%2C%20I%20came%20across%20your%20website%20and%20I%27m%20interested%20in%20your%20services.%20Can%20you%20share%20more%20details%3F" target="_blank" style="color:#16a34a;text-decoration:none;font-weight:600">+91 9351864351 →</a></p><p style="font-size:12px;color:#4b7a5e;margin-top:4px">Quick replies on WhatsApp</p></div></div>
         <button class="btn-primary" onclick="showPage('booking')" style="justify-content:center">📅 Book Meeting Room Online</button>
+        <!-- Google Maps Embed -->
+        <div style="border-radius:16px;overflow:hidden;border:2px solid var(--border);box-shadow:var(--shadow-sm);">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3557.8219!2d75.7357!3d26.9124!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db5f4b5f6d921%3A0x0!2sCO-LAB+Workspaces!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            width="100%"
+            height="220"
+            style="border:0;display:block;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="CO-LAB Workspaces location on Google Maps">
+          </iframe>
+        </div>
       </div>
       <div class="contact-form reveal reveal-right">
         <h3>Send an Enquiry</h3>
+        <!-- UTM tracking fields (auto-filled from URL params) -->
+        <input type="hidden" id="eq-utm-source" name="utm_source">
+        <input type="hidden" id="eq-utm-medium" name="utm_medium">
+        <input type="hidden" id="eq-utm-campaign" name="utm_campaign">
+        <input type="hidden" id="eq-utm-keyword" name="utm_keyword">
         <div class="form-group"><label>Your Name</label><input type="text" class="form-control" id="eq-name" placeholder="e.g. Ravi Sharma"></div>
         <div class="form-group">
           <label>Phone Number</label>
@@ -907,16 +1057,61 @@ window.showPage = window.showPage || function(name){
           We are at <strong>Shop No. 1, Silver Crown Residency, Gandhi Path West, Jaipur, Rajasthan</strong> — a neighbourhood workspace perfectly placed for professionals in West Jaipur and Vaishali Nagar. <a href="https://share.google/Xjq1kWjOxFDEaLQxi" target="_blank" style="color:var(--blue)">View on Google Maps 🗺️</a>
         </div>
       </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Can I visit before joining?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Absolutely! We encourage you to visit before making any commitment. Just <a href="https://wa.me/919351864351?text=Hi%2C%20I%27d%20like%20to%20schedule%20a%20visit%20to%20CO-LAB%20Workspaces." target="_blank" style="color:var(--blue)">WhatsApp us</a> or call <a href="tel:+919351864351" style="color:var(--blue)">+91 9351864351</a> to schedule a free walkthrough. We're open 24×7.
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Is parking really free?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Yes — ample parking is available at Silver Crown Residency, Gandhi Path West at no extra charge for all CO-LAB members and visitors.
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Do you offer a free trial day?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Yes! We offer a <strong>free 1-day trial</strong> for new members. Come in, experience the space, and decide at your own pace — no commitment required. <a href="https://wa.me/919351864351?text=Hi%2C%20I%27d%20like%20to%20claim%20my%20free%20trial%20day%20at%20CO-LAB%20Workspaces." target="_blank" style="color:var(--blue)">Claim yours via WhatsApp →</a>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          What is the internet speed?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          CO-LAB Workspaces is equipped with high-speed broadband internet. The connection is reliable and fast enough for video calls, large uploads, and demanding remote work tasks without interruption.
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Can I use the address for GST registration?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Yes, we support virtual office / GST registration use of our address. Please contact us directly on <a href="https://wa.me/919351864351" target="_blank" style="color:var(--blue)">WhatsApp</a> or call <a href="tel:+919351864351" style="color:var(--blue)">+91 9351864351</a> to discuss the options and documentation required.
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
     <div class="footer-main">
-      <div class="footer-brand"><img src="logo.png" class="footer-logo-img" alt="CO-LAB Workspaces" onerror="this.style.display='none';document.getElementById('footer-logo-text').style.display='block'"><div id="footer-logo-text" style="display:none;font-family:'Bebas Neue',sans-serif;font-size:28px;color:white;letter-spacing:2px">CO-LAB <span style="color:#6ab0f5">WORKSPACES</span></div><p>A thoughtfully designed coworking space built for freelancers, remote professionals, entrepreneurs, and small teams in Jaipur.</p></div>
+      <div class="footer-brand"><img src="logo.png" class="footer-logo-img" alt="CO-LAB Workspaces" onerror="this.style.display='none';document.getElementById('footer-logo-text').style.display='block'"><div id="footer-logo-text" style="display:none;font-family:'Bebas Neue',sans-serif;font-size:28px;color:white;letter-spacing:2px">CO-LAB <span style="color:#6ab0f5">WORKSPACES</span></div><p>A thoughtfully designed coworking space built for freelancers, remote professionals, entrepreneurs, and small teams in Jaipur.</p><div style="margin-top:16px;display:flex;align-items:center;gap:12px;"><a href="https://www.instagram.com/colabworkspaces_2026/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);padding:8px 16px;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>@colabworkspaces_2026</a></div></div>
       <div class="footer-col"><h4>Services</h4><ul><li><a href="#services">Dedicated Seats</a></li><li><a href="#services">Private Cabins</a></li><li><a href="#services">Hot Desk</a></li><li><a href="#services">Flex / Day Pass</a></li><li><a onclick="showPage('booking')">Meeting Room</a></li></ul></div>
-      <div class="footer-col"><h4>Contact</h4><ul><li><a href="tel:+919351864351">+91 9351864351</a></li><li>contact&#64;nexgenhires&#46;com</li><li><a>Gandhi Path West, Jaipur</a></li><li><!--a href="/admin" style="color:rgba(255,255,255,0.15);font-size:11px">⚙ Admin</a></li></ul></div-->
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="tel:+919351864351">+91 9351864351</a></li><li>contact&#64;nexgenhires&#46;com</li><li><a>Gandhi Path West, Jaipur</a></li><li><a href="https://share.google/Xjq1kWjOxFDEaLQxi" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.6);">📍 See us on Google Maps ↗</a></li><li><!--a href="/admin" style="color:rgba(255,255,255,0.15);font-size:11px">⚙ Admin</a></li></ul></div-->
     </div>
-    <div class="footer-bottom"><span>© 2025 CO-LAB Workspaces. Founded by <span class="hl">Tushar Rathi</span>.</span><span>Open <span class="hl">24×7</span> · Shop No. 1, Silver Crown Residency, Gandhi Path West, Jaipur</span></div>
+    <div class="footer-bottom"><span>© 2026 CO-LAB Workspaces. Founded by <span class="hl">Tushar Rathi</span>.</span><span>Open <span class="hl">24×7</span> · Shop No. 1, Silver Crown Residency, Gandhi Path West, Jaipur</span></div>
   </footer>
 </div>
 
@@ -1558,7 +1753,7 @@ async function sendEnquiry() {
   btn.textContent='⏳ Sending...'; btn.disabled=true;
   const interest=document.getElementById('eq-interest').value;
   const msg=document.getElementById('eq-msg').value.trim();
-  await sbFetch('enquiries','POST',{name:n,phone:p,interest,message:msg});
+  await sbFetch('enquiries','POST',{name:n,phone:p,interest,message:msg,utm_source:(document.getElementById('eq-utm-source')||{}).value||'',utm_medium:(document.getElementById('eq-utm-medium')||{}).value||'',utm_campaign:(document.getElementById('eq-utm-campaign')||{}).value||'',utm_keyword:(document.getElementById('eq-utm-keyword')||{}).value||''});
   sendNotification(`📩 *CO-LAB New Enquiry!*\n👤 Name: ${n}\n📞 Phone: ${p}\n🏷 Interest: ${interest||'Not specified'}\n💬 Message: ${msg||'—'}`);
   btn.textContent='Send Enquiry →'; btn.disabled=false;
   document.getElementById('sent-msg').style.display='block';
@@ -2366,5 +2561,45 @@ loadBookings();
     .scta-btn { flex: 1; justify-content: center; padding: 10px 8px; font-size: 12.5px; }
   }
 </style>
+
+<!-- ══════════ TIMED POPUP ══════════ -->
+<div id="trial-popup-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:24px;padding:40px 36px;max-width:420px;width:100%;text-align:center;position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.2);animation:popup-in 0.4s cubic-bezier(0.22,1,0.36,1);">
+    <button onclick="document.getElementById('trial-popup-overlay').style.display='none';sessionStorage.setItem('clw_popup_shown','1');" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1;" aria-label="Close">✕</button>
+    <div style="font-size:40px;margin-bottom:12px;">👋</div>
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;color:#0d0f14;margin-bottom:8px;">Thinking about it?</h3>
+    <p style="font-size:15px;color:#5a5f6b;line-height:1.7;margin-bottom:24px;">Grab a <strong>free trial day</strong> at CO-LAB Workspaces — no commitment, no payment. Just come in and experience it.</p>
+    <a href="https://wa.me/919351864351?text=Hi%2C%20I%27d%20like%20to%20claim%20my%20free%20trial%20day%20at%20CO-LAB%20Workspaces." target="_blank" rel="noopener" onclick="document.getElementById('trial-popup-overlay').style.display='none';sessionStorage.setItem('clw_popup_shown','1');" style="display:inline-flex;align-items:center;gap:10px;background:#25d366;color:white;text-decoration:none;padding:14px 28px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 8px 24px rgba(37,211,102,0.35);transition:all 0.2s;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Claim Free Trial Day on WhatsApp
+    </a>
+    <p style="font-size:12px;color:#9ca3af;margin-top:16px;">No spam. No calls. Just a free day at CO-LAB.</p>
+  </div>
+</div>
+<style>
+@keyframes popup-in { from{opacity:0;transform:scale(0.88) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+</style>
+<script>
+// Auto-capture UTM params from URL into enquiry form
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  ['source','medium','campaign','keyword'].forEach(function(k) {
+    const el = document.getElementById('eq-utm-' + k);
+    if (el && params.get('utm_' + k)) el.value = params.get('utm_' + k);
+  });
+})();
+// 45-second timed popup — shows once per session
+(function() {
+  if (sessionStorage.getItem('clw_popup_shown')) return;
+  setTimeout(function() {
+    if (sessionStorage.getItem('clw_popup_shown')) return;
+    var overlay = document.getElementById('trial-popup-overlay');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      sessionStorage.setItem('clw_popup_shown', '1');
+    }
+  }, 45000);
+})();
+</script>
 
 </body> </html>
