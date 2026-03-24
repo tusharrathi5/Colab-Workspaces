@@ -156,6 +156,11 @@
     </div>
 
     <div id="admin-enquiries-view" style="display:none">
+      <div class="admin-filters">
+        <button onclick="exportEnquiriesCSV()" style="padding:10px 18px;background:var(--blue);color:white;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;white-space:nowrap">⬇ Export CSV</button>
+        <button onclick="refreshEnquiries()" style="padding:10px 16px;background:#f0fdf4;color:#166534;border:1px solid #86efac;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;white-space:nowrap">🔄 Refresh</button>
+        <button onclick="clearAllEnquiries()" style="padding:10px 16px;background:#fef2f2;color:#ef4444;border:1px solid #fca5a5;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;white-space:nowrap">🗑 Clear All</button>
+      </div>
       <div style="overflow-x:auto;border-radius:16px;border:1px solid var(--border)">
         <table class="bookings-table" id="enquiries-table">
           <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Interested In</th><th>Message</th><th>Received At</th><th>Del</th></tr></thead>
@@ -586,6 +591,36 @@ async function clearAllBookings() {
   if (!confirm('Delete ALL bookings? This cannot be undone.')) return;
   await sbFetch('bookings', 'DELETE', null, '?id=gt.0');
   await loadBookings();
+  renderAdminTable();
+}
+
+async function refreshEnquiries() {
+  const btn = document.querySelector('[onclick="refreshEnquiries()"]');
+  if (btn) { btn.textContent = '⏳ Loading...'; btn.disabled = true; }
+  try {
+    await loadEnquiries();
+    renderAdminTable();
+    renderAdminStats();
+  } finally {
+    if (btn) { btn.textContent = '🔄 Refresh'; btn.disabled = false; }
+  }
+}
+
+function exportEnquiriesCSV() {
+  if (!enquiries.length) { alert('No enquiries to export.'); return; }
+  const h = ['#','Name','Phone','Interested In','Message','Received At'];
+  const r = enquiries.map((e,i) => [i+1, e.name, e.phone, e.interest||'', e.message||'', fmtDT(e.created_at)]);
+  const csv = [h,...r].map(row => row.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'enquiries_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+async function clearAllEnquiries() {
+  if (!confirm('Delete ALL enquiries? This cannot be undone.')) return;
+  await sbFetch('enquiries', 'DELETE', null, '?id=gt.0');
+  await loadEnquiries();
   renderAdminTable();
 }
 
