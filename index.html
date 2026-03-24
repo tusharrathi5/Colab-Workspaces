@@ -675,8 +675,11 @@ window.showPage = window.showPage || function(name){
         <div class="hero-tag">Jaipur's Neighbourhood Workspace</div>
         <h1 class="hero-h1">A SPACE TO<br><span class="accent">COLLABORATE</span><br><span class="blue">&amp; CREATE</span></h1>
         <p class="hero-sub">Designed for freelancers, remote professionals, entrepreneurs, and small teams. Modern, productive, and close to home.</p>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff7ed;border:1px solid #f97316;border-radius:6px;padding:7px 14px;margin-bottom:20px;font-size:13px;color:#c2410c;font-weight:600;">
+          🎁 Free 1-Day Trial &nbsp;·&nbsp; First 10 Dedicated Seats @ ₹3,000/mo — <span style="color:#dc2626;">Limited Offer!</span>
+        </div>
         <div class="hero-actions">
-          <a href="#services" class="btn-primary">Explore Spaces ↓</a>
+          <a href="#contact" class="btn-primary">Enquire Now →</a>
           <button class="btn-secondary" onclick="showPage('booking')">📅 Book Meeting Room</button>
         </div>
       </div>
@@ -686,7 +689,7 @@ window.showPage = window.showPage || function(name){
           <div class="stat-card tilt-card"><div class="label">Hot Desk</div><div class="value">₹500<span>/day</span></div><div class="desc">Walk-in ready</div></div>
           <div class="stat-card tilt-card"><div class="label">Meeting Room</div><div class="value">₹200<span>/hr</span></div><div class="desc">Book online</div></div>
         </div>
-        <div class="stat-card tilt-card"><div class="label">Dedicated Seat from</div><div class="value">₹2000<span>/mo</span></div><div class="desc">Annual plan · Best value</div></div>
+        <div class="stat-card tilt-card" style="border:2px solid #f47120;"><div class="label">🔥 Dedicated Seat — Intro Offer</div><div class="value">₹3000<span>/mo</span></div><div class="desc" style="color:#dc2626;font-weight:600;">First 10 seats only · Limited!</div></div>
       </div>
     </div>
     <div class="hero-strip">
@@ -731,7 +734,11 @@ window.showPage = window.showPage || function(name){
     </div>
   </section>
 
-  <section id="pricing">
+  <!-- Urgency bar above pricing -->
+<div style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;text-align:center;padding:12px 20px;font-size:14px;font-weight:600;letter-spacing:0.3px;">
+  ⚡ Introductory Offer: Dedicated Seats at ₹3,000/mo — Only First 10 Members. <a href="#contact" style="color:#fde68a;text-decoration:underline;">Claim Your Seat →</a>
+</div>
+<section id="pricing">
     <div style="margin-bottom:56px"><div class="section-tag">// Transparent Pricing</div><h2 class="section-title">FLEXIBLE PLANS<br>FOR EVERYONE</h2></div>
     <div class="pricing-tabs reveal">
       <button class="tab-btn active" onclick="switchTab(this,'dedicated')">Dedicated Seats</button>
@@ -741,7 +748,16 @@ window.showPage = window.showPage || function(name){
     </div>
     <div id="tab-dedicated" class="tab-content active">
       <div class="pricing-grid">
-        <div class="price-card reveal reveal-scale"><div class="plan-name">Monthly</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="4000" data-suffix="/month"><sup>₹</sup>4,000<div class="per">/month</div></div></div>
+        <div class="price-card reveal reveal-scale" style="position:relative;">
+  <div class="plan-name">Monthly</div>
+  <div class="plan-period">Per seat / month</div>
+  <div class="price-amount" data-count-target="4000" data-suffix="/month"><sup>₹</sup>4,000<div class="per">/month</div></div>
+  <div style="margin-top:14px;background:linear-gradient(135deg,#fff4ec,#fff0e6);border:1px dashed #f47920;border-radius:8px;padding:10px 12px;">
+    <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#f47920;margin-bottom:4px;">🔥 Intro Offer — First 10 Seats</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#1558b0;line-height:1;">₹3,000<span style="font-size:14px;font-family:'DM Sans',sans-serif;color:#6b7280;">/mo</span></div>
+    <div style="font-size:11px;color:#dc2626;font-weight:600;margin-top:2px;">Save ₹1,000 · Limited seats!</div>
+  </div>
+</div>
         <div class="price-card reveal reveal-scale"><div class="plan-name">3 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3500" data-suffix="/month"><sup>₹</sup>3,500<div class="per">/month</div></div></div>
         <div class="price-card featured reveal reveal-scale"><div class="price-badge">Popular</div><div class="plan-name">6 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="3000" data-suffix="/month"><sup>₹</sup>3,000<div class="per">/month</div></div></div>
         <div class="price-card reveal reveal-scale"><div class="price-badge" style="background:var(--blue)">Best Value</div><div class="plan-name">12 Months</div><div class="plan-period">Per seat / month</div><div class="price-amount" data-count-target="2000" data-suffix="/month"><sup>₹</sup>2,000<div class="per">/month</div></div></div>
@@ -797,7 +813,7 @@ window.showPage = window.showPage || function(name){
         <div class="big-text">WORK<br>SMARTER.<br>WORK<br>BETTER.</div>
         <p>A thoughtfully designed coworking space built for the modern professional in Jaipur.</p>
         <div class="contact-box">
-          <div class="contact-row"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>contact[at]nexgenhires.com</div>
+          <div class="contact-row"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg><a href="mailto:contact@nexgenhires.com" style="color:inherit;text-decoration:none;">contact@nexgenhires.com</a></div>
           <div class="contact-row"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>+91 9351864351</div>
           <div class="contact-row"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><a href="https://share.google/Xjq1kWjOxFDEaLQxi" target="_blank">Shop No. 1, Silver Crown Residency, Gandhi Path West 🗺️</a></div>
         </div>
@@ -1548,7 +1564,9 @@ async function sendEnquiry() {
   document.getElementById('sent-msg').style.display='block';
   ['eq-name','eq-phone','eq-msg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('eq-interest').value='';
-  setTimeout(()=>document.getElementById('sent-msg').style.display='none',5000);
+  // GA4 conversion event
+  if(typeof gtag !== 'undefined') { gtag('event', 'form_submit', { event_category: 'Lead', event_label: 'Enquiry Form' }); }
+  setTimeout(()=>{ document.getElementById('sent-msg').style.display='none'; }, 5000);
 }
 
 // ── BOOKING MODE (New / Reschedule) ──────────────────────────
@@ -2236,4 +2254,117 @@ loadBookings();
   tick();
 })();
 </script>
+
+<!-- Sticky CTA Bar — CO-LAB branded, subtle -->
+<div id="sticky-cta">
+  <div class="scta-inner">
+    <span class="scta-tagline">CO-LAB Workspaces · Gandhi Path West, Jaipur</span>
+    <div class="scta-actions">
+      <a href="tel:+919351864351" class="scta-btn scta-call">
+        <svg viewBox="0 0 24 24" class="scta-icon"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C9.61 21 3 14.39 3 6a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>
+        Call Now
+      </a>
+      <a href="https://wa.me/919351864351?text=Hi%2C%20I%20saw%20your%20website%20and%20I%27m%20interested%20in%20a%20workspace%20at%20CO-LAB.%20Can%20you%20share%20details%3F" target="_blank" class="scta-btn scta-wa">
+        <svg viewBox="0 0 24 24" class="scta-icon"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+      <a href="#contact" class="scta-btn scta-enquire">
+        <svg viewBox="0 0 24 24" class="scta-icon"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Enquire Now
+      </a>
+    </div>
+  </div>
+</div>
+<style>
+  #sticky-cta {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(21,88,176,0.1);
+    box-shadow: 0 -4px 28px rgba(13,26,46,0.08);
+    padding: 10px 24px;
+  }
+  .scta-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .scta-tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(13,26,46,0.35);
+    white-space: nowrap;
+  }
+  .scta-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .scta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .scta-icon {
+    width: 15px; height: 15px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+  .scta-call {
+    background: transparent;
+    color: #1558b0;
+    border: 1px solid rgba(21,88,176,0.25);
+  }
+  .scta-call:hover {
+    background: rgba(21,88,176,0.06);
+    border-color: rgba(21,88,176,0.45);
+  }
+  .scta-wa {
+    background: transparent;
+    color: #16a34a;
+    border: 1px solid rgba(22,163,74,0.25);
+  }
+  .scta-wa:hover {
+    background: rgba(22,163,74,0.06);
+    border-color: rgba(22,163,74,0.45);
+  }
+  .scta-enquire {
+    background: #1558b0;
+    color: white;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 12px rgba(21,88,176,0.28);
+  }
+  .scta-enquire:hover {
+    background: #1248a0;
+    box-shadow: 0 4px 18px rgba(21,88,176,0.38);
+    transform: translateY(-1px);
+  }
+  body { padding-bottom: 62px; }
+
+  /* Mobile: stack vertically, full width buttons */
+  @media (max-width: 600px) {
+    #sticky-cta { padding: 10px 14px; }
+    .scta-tagline { display: none; }
+    .scta-actions { width: 100%; gap: 6px; }
+    .scta-btn { flex: 1; justify-content: center; padding: 10px 8px; font-size: 12.5px; }
+  }
+</style>
+
 </body> </html>
