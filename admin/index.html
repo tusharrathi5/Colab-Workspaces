@@ -510,9 +510,13 @@ function switchAdminTab(tab) {
   });
   if (tab === 'invoices') {
     if (localStorage.getItem('clw_reg_counter') === null) {
-      localStorage.setItem('clw_reg_counter', String(getRegInvoices().length));
+      localStorage.setItem('clw_reg_counter', '0');
     }
-    initInvoiceForm(); renderInvoiceHistory();
+    if (localStorage.getItem('clw_tax_counter') === null) {
+      localStorage.setItem('clw_tax_counter', '0');
+    }
+    initInvoiceForm();
+    loadInvoices().then(() => renderInvoiceHistory()).catch(() => { alert('⚠ Could not load invoice records. Please check your connection.'); });
   }
   if (tab === 'expenses') { initExpenseForm(); renderExpenses(); renderExpenseStats(); }
 }
@@ -658,14 +662,12 @@ const SUPPLIER = {
   address: 'F-711, Block 3, Lalarpura Road, Amrapali Nagar, Jaipur – 302021, Rajasthan'
 };
 
-function getInvoices() { try { return JSON.parse(localStorage.getItem('clw_invoices') || '[]'); } catch { return []; } }
-function saveInvoices(arr) { localStorage.setItem('clw_invoices', JSON.stringify(arr)); }
+let _invoices = []; // cache: all invoice records from Supabase
 
-function getRegInvoices() { try { return JSON.parse(localStorage.getItem('clw_invoices') || '[]'); } catch { return []; } }
-function saveRegInvoices(arr) { localStorage.setItem('clw_invoices', JSON.stringify(arr)); }
-
-function getTaxInvoices() { try { return JSON.parse(localStorage.getItem('clw_tax_invoices') || '[]'); } catch { return []; } }
-function saveTaxInvoices(arr) { localStorage.setItem('clw_tax_invoices', JSON.stringify(arr)); }
+async function loadInvoices() {
+  const data = await sbFetch('invoices', 'GET', null, '?select=*&order=created_at.desc');
+  if (data) _invoices = data;
+}
 
 function initInvoiceForm() {
   const numEl = document.getElementById('inv-number');
@@ -920,29 +922,39 @@ function downloadInvoicePDF(d) {
   newWin.document.close();
 }
 
-function saveAndDownloadInvoice() {
+async function saveAndDownloadInvoice() {
   const d = collectInvoiceData();
   if (!d.invoiceNo) { alert('Please enter an Invoice Number.'); return; }
   if (!d.clientName) { alert('Please enter the Client/Tenant Name.'); return; }
   if (!d.services || !d.services.some(s => s.amt > 0)) { alert('Please enter at least one service amount.'); return; }
+
+  // Save slim record to Supabase
+  const record = {
+    invoice_no: d.invoiceNo,
+    date: d.date,
+    client_name: d.clientName,
+    category: d.category,
+    gst_on: d.gstOn,
+    total: d.total
+  };
+  const saved = await sbFetch('invoices', 'POST', record);
+  if (!saved) { alert('⚠ Could not save invoice record. Please check your connection.'); return; }
+
+  // Update local counter for auto-numbering only
   if (d.gstOn) {
-    const taxInvs = getTaxInvoices();
-    taxInvs.unshift(d);
-    saveTaxInvoices(taxInvs);
     localStorage.setItem('clw_tax_counter', String((parseInt(localStorage.getItem('clw_tax_counter') || '0')) + 1));
   } else {
-    const regInvs = getRegInvoices();
-    regInvs.unshift(d);
-    saveRegInvoices(regInvs);
     localStorage.setItem('clw_reg_counter', String((parseInt(localStorage.getItem('clw_reg_counter') || '0')) + 1));
   }
+
   _currentInvoiceData = d;
   const html = buildInvoiceHTML(d, true);
   document.getElementById('inv-preview-html').innerHTML = html;
   const card = document.getElementById('inv-preview-card');
   card.style.display = 'block';
-  card.scrollIntoView({ behavior:'smooth', block:'start' });
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
   downloadInvoicePDF(_currentInvoiceData);
+  await loadInvoices();
   renderInvoiceHistory();
   resetInvoiceForm();
 }
@@ -989,8 +1001,11 @@ function removeServiceRow(btn) {
 }
 
 function renderInvoiceHistory() {
+  const regInvs = _invoices.filter(r => !r.gst_on);
+  const taxInvs = _invoices.filter(r => r.gst_on);
+  const fmt = n => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
   // --- Regular ---
-  const regInvs = getRegInvoices();
   const regBadge = document.getElementById('inv-reg-count-badge');
   if (regBadge) regBadge.textContent = regInvs.length + ' invoice' + (regInvs.length !== 1 ? 's' : '');
   const regTbody = document.getElementById('inv-reg-history-tbody');
@@ -1000,23 +1015,20 @@ function renderInvoiceHistory() {
     noRegEl.style.display = 'block';
   } else {
     noRegEl.style.display = 'none';
-    const fmt = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2});
-    regTbody.innerHTML = regInvs.map((d, i) => `<tr>
+    regTbody.innerHTML = regInvs.map((r, i) => `<tr>
       <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${regInvs.length - i}</td>
-      <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${d.invoiceNo}</td>
-      <td style="white-space:nowrap">${d.date}</td>
-      <td><strong>${d.clientName || '—'}</strong></td>
-      <td style="font-size:12px;color:var(--gray)">${d.category}</td>
-      <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(d.total)}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${r.invoice_no}</td>
+      <td style="white-space:nowrap">${r.date}</td>
+      <td><strong>${r.client_name || '—'}</strong></td>
+      <td style="font-size:12px;color:var(--gray)">${r.category}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(r.total)}</td>
       <td style="white-space:nowrap">
-        <button class="btn-secondary" onclick="redownloadRegInvoice(${i})" style="padding:5px 10px;font-size:12px;margin-right:4px">⬇</button>
-        <button class="btn-delete" onclick="deleteRegInvoice(${i})">✕</button>
+        <button class="btn-delete" onclick="deleteInvoiceRecord(${r.id})">✕</button>
       </td>
     </tr>`).join('');
   }
 
   // --- Tax ---
-  const taxInvs = getTaxInvoices();
   const taxBadge = document.getElementById('inv-tax-count-badge');
   if (taxBadge) taxBadge.textContent = taxInvs.length + ' invoice' + (taxInvs.length !== 1 ? 's' : '');
   const taxTbody = document.getElementById('inv-tax-history-tbody');
@@ -1026,41 +1038,27 @@ function renderInvoiceHistory() {
     noTaxEl.style.display = 'block';
   } else {
     noTaxEl.style.display = 'none';
-    const fmt = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2});
-    taxTbody.innerHTML = taxInvs.map((d, i) => `<tr>
+    taxTbody.innerHTML = taxInvs.map((r, i) => `<tr>
       <td style="color:var(--gray);font-family:'Space Mono',monospace;font-size:12px">${taxInvs.length - i}</td>
-      <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${d.invoiceNo}</td>
-      <td style="white-space:nowrap">${d.date}</td>
-      <td><strong>${d.clientName || '—'}</strong></td>
-      <td style="font-size:12px;color:var(--gray)">${d.category}</td>
-      <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(d.total)}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:700;color:var(--blue)">${r.invoice_no}</td>
+      <td style="white-space:nowrap">${r.date}</td>
+      <td><strong>${r.client_name || '—'}</strong></td>
+      <td style="font-size:12px;color:var(--gray)">${r.category}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:600">${fmt(r.total)}</td>
       <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">GST</span></td>
       <td style="white-space:nowrap">
-        <button class="btn-secondary" onclick="redownloadTaxInvoice(${i})" style="padding:5px 10px;font-size:12px;margin-right:4px">⬇</button>
-        <button class="btn-delete" onclick="deleteTaxInvoice(${i})">✕</button>
+        <button class="btn-delete" onclick="deleteInvoiceRecord(${r.id})">✕</button>
       </td>
     </tr>`).join('');
   }
 }
 
-function redownloadRegInvoice(i) {
-  const d = getRegInvoices()[i]; if (!d) return;
-  const w = window.open('', '_blank'); w.document.write(buildInvoiceHTML(d, false)); w.document.close(); w.print();
-}
-
-function deleteRegInvoice(i) {
-  if (!confirm('Delete this regular invoice?')) return;
-  const invs = getRegInvoices(); invs.splice(i, 1); saveRegInvoices(invs); renderInvoiceHistory();
-}
-
-function redownloadTaxInvoice(i) {
-  const d = getTaxInvoices()[i]; if (!d) return;
-  const w = window.open('', '_blank'); w.document.write(buildInvoiceHTML(d, false)); w.document.close(); w.print();
-}
-
-function deleteTaxInvoice(i) {
-  if (!confirm('Delete this tax invoice?')) return;
-  const invs = getTaxInvoices(); invs.splice(i, 1); saveTaxInvoices(invs); renderInvoiceHistory();
+async function deleteInvoiceRecord(id) {
+  if (!confirm('Delete this invoice record?')) return;
+  const result = await sbFetch('invoices', 'DELETE', null, `?id=eq.${id}`);
+  if (result === null) { alert('⚠ Could not delete invoice record. Please check your connection.'); return; }
+  await loadInvoices();
+  renderInvoiceHistory();
 }
 
 // ── EXPENSES ─────────────────────────────────────────────────
