@@ -663,6 +663,38 @@ window.showPage = window.showPage || function(name){
   </ul>
 </nav>
 
+<style>
+  .availability-banner {
+    background:#fff4e8;
+    border-bottom:1px solid #f2b27a;
+    color:#7c2d12;
+    padding:12px 5%;
+    text-align:center;
+    font-size:13px;
+    line-height:1.5;
+  }
+  .availability-banner strong { margin-right:6px; }
+  .availability-banner a { color:#1558b0; font-weight:700; text-decoration:none; margin-left:8px; }
+  .fully-booked-status {
+    margin-top:14px;
+    padding:9px 12px;
+    border-radius:8px;
+    background:#fff4e8;
+    color:#9a3412;
+    font-size:12px;
+    font-weight:700;
+  }
+  @media(max-width:700px) {
+    .availability-banner span { display:block; }
+    .availability-banner a { display:inline-block; margin:4px 0 0; }
+  }
+</style>
+<div class="availability-banner" role="status">
+  <strong>Workspace memberships are currently fully booked.</strong>
+  <span>We are not accepting walk-ins, trials, or new workspace bookings right now.</span>
+  <a href="#contact" onclick="showPage('home')">Join the waitlist →</a>
+</div>
+
 <!-- ══════════ HOME ══════════ -->
 <div id="page-home" class="page active page-main">
   <section class="hero">
@@ -681,19 +713,19 @@ window.showPage = window.showPage || function(name){
       <div class="hero-left fade-in">
         <div class="hero-tag">Gandhi Path West · Vaishali Nagar · Jaipur</div>
         <h1 class="hero-h1">WORK CLOSE<br><span class="accent">TO HOME.</span><br><span class="blue">PAY LESS.</span></h1>
-        <p class="hero-sub">While most coworking spaces in Jaipur charge ₹5,000 or more per month, Co-Lab offers a competitive rate of just <strong style="color:#f47920;">₹3,000</strong> — including 24/7 access, free parking, and complimentary tea and coffee.</p>
+        <p class="hero-sub">Co-Lab is currently at full capacity. New workspace memberships, day passes, hot desks, private cabins, and trial days are temporarily unavailable.</p>
         <div style="display:inline-flex;align-items:center;gap:8px;background:#fff7ed;border:1px solid #f97316;border-radius:6px;padding:7px 14px;margin-bottom:20px;font-size:13px;color:#c2410c;font-weight:600;">
-          🎁 Free 1-Day Trial available. no commitment required
+          ● Fully booked · Join the waitlist for future availability
         </div>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">Enquire Now →</a>
+          <a href="#contact" class="btn-primary">Join the Waitlist →</a>
           <button class="btn-secondary" onclick="showPage('booking')">📅 Book Meeting Room</button>
         </div>
       </div>
       <div class="hero-right fade-in">
         <div class="stat-card tilt-card"><div class="label">Open Hours</div><div class="value">24<span>/7</span></div><div class="desc">Always accessible, always secure</div></div>
         <div class="stat-row">
-          <div class="stat-card tilt-card"><div class="label">Hot Desk</div><div class="value">₹500<span>/day</span></div><div class="desc">Walk-in, no booking</div></div>
+          <div class="stat-card tilt-card"><div class="label">Hot Desk</div><div class="value" style="font-size:28px">FULL</div><div class="desc">Walk-ins paused</div></div>
           <div class="stat-card tilt-card"><div class="label">Meeting Room</div><div class="value">₹200<span>/hr</span></div><div class="desc">Book online</div></div>
         </div>
         <div class="stat-card tilt-card" style="border:2px solid #f47920;">
@@ -702,7 +734,7 @@ window.showPage = window.showPage || function(name){
     <div class="value">₹3000<span>/mo</span></div>
     <div style="font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.45);text-decoration:line-through;">₹5,000 market avg</div>
   </div>
-  <div class="desc" style="color:#f47920;font-weight:600;margin-top:4px;">🔥 First 10 seats · 24/7 access included</div>
+  <div class="desc" style="color:#f47920;font-weight:600;margin-top:4px;">Currently fully booked · Waitlist open</div>
 </div>
       </div>
     </div>
@@ -737,12 +769,12 @@ window.showPage = window.showPage || function(name){
 
   <section id="services">
     <div class="services-header">
-      <div><div class="section-tag">// What We Offer</div><h2 class="section-title reveal reveal-left">FIND YOUR<br>PERFECT FIT</h2><p class="section-desc reveal reveal-right">Whether you work alone or with a team, there's something here for you. No lock-ins, no hidden costs.</p></div>
+      <div><div class="section-tag">// What We Offer</div><h2 class="section-title reveal reveal-left">FIND YOUR<br>PERFECT FIT</h2><p class="section-desc reveal reveal-right">Explore our workspace options. All workspace plans are currently fully booked; join the waitlist to hear when a place opens.</p></div>
     </div>
     <div class="services-grid stagger">
       <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 7H5v-2h6v2zm8 0h-6v-2h6v2z"/></svg></div><h3>Dedicated Seat</h3><p>Your seat. Your charger. Your mug spot. Show up whenever you want. it's yours 24/7. Perfect if you work every day and need a consistent, distraction-free space.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">From ₹3,000/mo →</p></div>
       <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zm0 10h8v8h-8zM3 13h8v8H3z"/></svg></div><h3>Private Cabin</h3><p>Running a small team or startup? Get your own enclosed cabin. no noisy neighbours, no distractions. Lock the door, take calls in peace, and work the way you want. 3-seater cabins from ₹8,000 a month.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">From ₹8,000/mo →</p></div>
-      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><h3>Hot Desk</h3><p>Not ready to commit? Just walk in. Pay ₹500, pick any open seat and get to work. Great if you need a professional space a few times a week but aren't ready for a monthly plan.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">₹500/day. no booking needed →</p></div>
+      <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div><h3>Hot Desk</h3><p>Our hot desks are currently at full capacity. Walk-ins are temporarily paused; join the waitlist to hear when availability returns.</p><p style="font-size:13px;font-weight:700;color:#c2410c;margin-top:14px;">Currently unavailable</p></div>
       <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-1 9H6v-2h12v2z"/></svg></div><h3>Flex Day Pass</h3><p>Work 2–3 days a week? Buy a pass bundle and save. 10 entries for ₹3,000. That's ₹300 per day. Valid for 3 months, use whenever you want. No pressure, full flexibility.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">10 entries for ₹3,000 →</p></div>
       <div class="service-card reveal reveal-scale"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div><h3>Meeting Room</h3><p>Professional meeting room, book by the hour. ₹200/hr, available 24×7. Perfect for client meetings and interviews.</p><p style="font-size:13px;font-weight:700;color:#1558b0;margin-top:14px;">₹200/hr →</p></div>
     </div>
@@ -824,7 +856,7 @@ window.showPage = window.showPage || function(name){
 
   <!-- Urgency bar above pricing -->
 <div style="background:#0d1a2e;border-top:1px solid rgba(21,88,176,0.2);border-bottom:1px solid rgba(21,88,176,0.2);color:white;text-align:center;padding:14px 20px;font-size:13.5px;letter-spacing:0.2px;">
-  <span style="color:rgba(255,255,255,0.55);">Introductory pricing — </span><strong style="color:#f47920;">Dedicated Seat at ₹3,000/mo</strong><span style="color:rgba(255,255,255,0.55);"> while others charge ₹5,000+. First 10 members only.</span> <a href="#contact" onclick="showPage('home')" style="color:#6ab0f5;text-decoration:none;font-weight:600;margin-left:8px;">Enquire now →</a>
+  <strong style="color:#f47920;">Workspace plans are fully booked.</strong><span style="color:rgba(255,255,255,0.65);"> Join the waitlist and we will contact you when a place becomes available.</span> <a href="#contact" onclick="showPage('home')" style="color:#6ab0f5;text-decoration:none;font-weight:600;margin-left:8px;">Join waitlist →</a>
 </div>
 <section id="pricing">
     <div style="margin-bottom:56px"><div class="section-tag">// Simple, Honest Pricing</div><h2 class="section-title">PLANS THAT<br>MAKE SENSE</h2><p class="section-desc" style="margin-top:12px;">No hidden costs. No confusing tiers. Pick what works.</p></div>
@@ -1012,7 +1044,8 @@ window.showPage = window.showPage || function(name){
 </section>
 
   <section id="contact">
-    <div class="section-tag">// Get In Touch</div><h2 class="section-title">LET'S GET YOU STARTED</h2>
+    <div class="section-tag">// Future Availability</div><h2 class="section-title">JOIN THE WAITLIST</h2>
+    <p class="section-desc" style="margin:12px 0 36px;">We are currently fully booked. Leave your details and we will contact you only when a suitable workspace becomes available. Meeting-room bookings remain open.</p>
     <div class="contact-grid">
       <div class="contact-info reveal reveal-left">
         <div class="contact-card"><div class="contact-card-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div><div><h4>Call Us</h4><p><a href="tel:+919351864351">+91 9351864351</a></p><p style="font-size:12px;color:var(--gray);margin-top:4px">Talk to our team</p></div></div>
@@ -1035,7 +1068,8 @@ window.showPage = window.showPage || function(name){
         </div>
       </div>
       <div class="contact-form reveal reveal-right">
-        <h3>Send an Enquiry</h3>
+        <h3>Join the Workspace Waitlist</h3>
+        <p style="font-size:13px;color:var(--gray);line-height:1.6;margin:-12px 0 22px;">Submitting this form does not reserve a seat. We will contact you when availability opens.</p>
         <!-- UTM tracking fields (auto-filled from URL params) -->
         <input type="hidden" id="eq-utm-source" name="utm_source">
         <input type="hidden" id="eq-utm-medium" name="utm_medium">
@@ -1047,10 +1081,10 @@ window.showPage = window.showPage || function(name){
           <input type="tel" class="form-control" id="eq-phone" placeholder="+91 XXXXX XXXXX" oninput="validatePhoneInput(this,'eq-phone-err')" maxlength="15">
           <div class="field-error-msg" id="eq-phone-err">⚠ Please enter a valid 10-digit mobile number.</div>
         </div>
-        <div class="form-group"><label>Interested In</label><select class="form-control" id="eq-interest"><option value="">Select a service</option><option>Dedicated Seat</option><option>Private Cabin</option><option>Hot Desk</option><option>Flex / Day Pass</option><option>Meeting Room</option></select></div>
-        <div class="form-group"><label>Message (Optional)</label><textarea class="form-control" rows="3" id="eq-msg" placeholder="Tell us more about your needs..."></textarea></div>
-        <button class="btn-book" onclick="sendEnquiry()">Send Enquiry →</button>
-        <div class="sent-msg" id="sent-msg">✅ Thanks! We'll get back to you within 24 hours.</div>
+        <div class="form-group"><label>Interested In</label><select class="form-control" id="eq-interest"><option value="">Select a workspace</option><option>Dedicated Seat</option><option>Private Cabin</option><option>Hot Desk</option><option>Flex / Day Pass</option></select></div>
+        <div class="form-group"><label>Message (Optional)</label><textarea class="form-control" rows="3" id="eq-msg" placeholder="Tell us what kind of workspace you need..."></textarea></div>
+        <button class="btn-book" onclick="sendEnquiry()">Join the Waitlist →</button>
+        <div class="sent-msg" id="sent-msg">✅ You’re on the waitlist. We’ll contact you when a suitable space becomes available.</div>
       </div>
     </div>
   </section>
@@ -1121,7 +1155,7 @@ window.showPage = window.showPage || function(name){
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-a">
-          Absolutely! We encourage you to visit before making any commitment. Just <a href="https://wa.me/919351864351?text=Hi%2C%20I%27d%20like%20to%20schedule%20a%20visit%20to%20CO-LAB%20Workspaces." target="_blank" style="color:var(--blue)">WhatsApp us</a> or call <a href="tel:+919351864351" style="color:var(--blue)">+91 9351864351</a> to schedule a free walkthrough. We're open 24×7.
+          Workspace visits and trial days are temporarily paused because the space is fully occupied. Please join the waitlist and we will contact you when visits can resume.
         </div>
       </div>
       <div class="faq-item reveal">
@@ -1139,7 +1173,7 @@ window.showPage = window.showPage || function(name){
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-a">
-          Yes! We offer a <strong>free 1-day trial</strong> for new members. Come in, experience the space, and decide at your own pace. no commitment required. <a href="https://wa.me/919351864351?text=Hi%2C%20I%27d%20like%20to%20claim%20my%20free%20trial%20day%20at%20CO-LAB%20Workspaces." target="_blank" style="color:var(--blue)">Claim yours via WhatsApp →</a>
+          Free trial days are temporarily paused while the workspace is fully booked. Join the waitlist and we will notify you when trials and memberships become available again.
         </div>
       </div>
       <div class="faq-item reveal">
@@ -1815,22 +1849,22 @@ async function sendEnquiry() {
     return;
   }
   const btn=document.querySelector('#contact .btn-book');
-  btn.textContent='⏳ Sending...'; btn.disabled=true;
+  btn.textContent='⏳ Joining...'; btn.disabled=true;
   const interest=document.getElementById('eq-interest').value;
   const msg=document.getElementById('eq-msg').value.trim();
   const result = await sbFetch('enquiries','POST',{name:n,phone:p,interest,message:msg,utm_source:(document.getElementById('eq-utm-source')||{}).value||'',utm_medium:(document.getElementById('eq-utm-medium')||{}).value||'',utm_campaign:(document.getElementById('eq-utm-campaign')||{}).value||'',utm_keyword:(document.getElementById('eq-utm-keyword')||{}).value||''});
   if (!result) {
-    alert('❌ Could not submit your enquiry. Please check your connection and try again.');
-    btn.textContent='Send Enquiry →'; btn.disabled=false;
+    alert('❌ Could not join the waitlist. Please check your connection and try again.');
+    btn.textContent='Join the Waitlist →'; btn.disabled=false;
     return;
   }
-  sendNotification(`📩 *CO-LAB New Enquiry!*\n👤 Name: ${n}\n📞 Phone: ${p}\n🏷 Interest: ${interest||'Not specified'}\n💬 Message: ${msg||'—'}`);
-  btn.textContent='Send Enquiry →'; btn.disabled=false;
+  sendNotification(`📋 *CO-LAB Waitlist Signup*\n👤 Name: ${n}\n📞 Phone: ${p}\n🏷 Workspace: ${interest||'Not specified'}\n💬 Message: ${msg||'—'}`);
+  btn.textContent='Join the Waitlist →'; btn.disabled=false;
   document.getElementById('sent-msg').style.display='block';
   ['eq-name','eq-phone','eq-msg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('eq-interest').value='';
   // GA4 conversion event
-  if(typeof gtag !== 'undefined') { gtag('event', 'form_submit', { event_category: 'Lead', event_label: 'Enquiry Form' }); }
+  if(typeof gtag !== 'undefined') { gtag('event', 'form_submit', { event_category: 'Lead', event_label: 'Workspace Waitlist' }); }
   setTimeout(()=>{ document.getElementById('sent-msg').style.display='none'; }, 5000);
 }
 
@@ -2535,7 +2569,7 @@ loadBookings();
       </a>
       <a href="#contact" class="scta-btn scta-enquire">
         <svg viewBox="0 0 24 24" class="scta-icon"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        Enquire Now
+        Join Waitlist
       </a>
     </div>
   </div>
@@ -2637,19 +2671,86 @@ loadBookings();
   <div style="background:white;border-radius:24px;padding:40px 36px;max-width:420px;width:100%;text-align:center;position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.2);animation:popup-in 0.4s cubic-bezier(0.22,1,0.36,1);">
     <button onclick="document.getElementById('trial-popup-overlay').style.display='none';sessionStorage.setItem('clw_popup_shown','1');" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1;" aria-label="Close">✕</button>
     <div style="font-size:40px;margin-bottom:12px;">👋</div>
-    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;color:#0d0f14;margin-bottom:8px;">Thinking about it?</h3>
-    <p style="font-size:15px;color:#5a5f6b;line-height:1.7;margin-bottom:24px;">Grab a <strong>free trial day</strong> at Co-Lab Workspaces. no commitment, no payment. Just come in and experience it.</p>
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;color:#0d0f14;margin-bottom:8px;">Currently fully booked</h3>
+    <p style="font-size:15px;color:#5a5f6b;line-height:1.7;margin-bottom:24px;">Workspace memberships and free trials are temporarily paused. Join the waitlist and we will notify you when availability opens.</p>
     <a href="https://wa.me/919351864351?text=Hi%2C%20I%27d%20like%20to%20claim%20my%20free%20trial%20day%20at%20CO-LAB%20Workspaces." target="_blank" rel="noopener" onclick="document.getElementById('trial-popup-overlay').style.display='none';sessionStorage.setItem('clw_popup_shown','1');" style="display:inline-flex;align-items:center;gap:10px;background:#25d366;color:white;text-decoration:none;padding:14px 28px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 8px 24px rgba(37,211,102,0.35);transition:all 0.2s;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Claim Free Trial Day on WhatsApp
+      Join the Waitlist on WhatsApp
     </a>
-    <p style="font-size:12px;color:#9ca3af;margin-top:16px;">No spam. No calls. Just a free day at Co-Lab.</p>
+    <p style="font-size:12px;color:#9ca3af;margin-top:16px;">No repeated follow-ups. We will contact you when space is available.</p>
   </div>
 </div>
 <style>
 @keyframes popup-in { from{opacity:0;transform:scale(0.88) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
 </style>
 <script>
+// Workspace availability mode: memberships are full; meeting-room booking stays open.
+(function applyFullyBookedMode() {
+  const waitlistWhatsApp = 'https://wa.me/919351864351?text=Hi%2C%20I%20understand%20Co-Lab%20is%20currently%20fully%20booked.%20Please%20add%20me%20to%20the%20workspace%20waitlist.';
+
+  document.querySelectorAll('#pricing .price-card').forEach(function(card) {
+    const existing = card.querySelector('.fully-booked-status');
+    if (!existing) {
+      const status = document.createElement('div');
+      status.className = 'fully-booked-status';
+      status.textContent = 'Currently unavailable · Waitlist open';
+      card.appendChild(status);
+    }
+  });
+  document.querySelectorAll('#pricing a[href="#contact"]').forEach(function(link) {
+    link.textContent = 'Join Waitlist →';
+    link.removeAttribute('onmouseover');
+    link.removeAttribute('onmouseout');
+  });
+  document.querySelectorAll('#pricing .price-card div').forEach(function(item) {
+    if (item.textContent.trim().startsWith('🔥 Intro Offer')) item.textContent = '● Fully booked';
+    if (item.textContent.trim().startsWith('Save ₹1,000')) item.textContent = 'Join the waitlist for future availability';
+  });
+  document.querySelectorAll('#services .service-card').forEach(function(card) {
+    const title = card.querySelector('h3');
+    if (!title || title.textContent.trim() === 'Meeting Room' || card.querySelector('.fully-booked-status')) return;
+    const status = document.createElement('div');
+    status.className = 'fully-booked-status';
+    status.textContent = 'Currently unavailable · Waitlist open';
+    card.appendChild(status);
+  });
+
+  const contactWhatsApp = document.querySelector('#contact a[href^="https://wa.me/919351864351"]');
+  if (contactWhatsApp) {
+    contactWhatsApp.href = waitlistWhatsApp;
+    contactWhatsApp.textContent = 'Join waitlist via WhatsApp →';
+    const card = contactWhatsApp.closest('.contact-card');
+    if (card) {
+      const title = card.querySelector('h4');
+      const note = card.querySelectorAll('p');
+      if (title) title.textContent = 'Waitlist on WhatsApp';
+      if (note.length > 1) note[1].textContent = 'Availability notifications only';
+    }
+  }
+
+  const stickyWhatsApp = document.querySelector('.scta-wa');
+  if (stickyWhatsApp) {
+    stickyWhatsApp.href = waitlistWhatsApp;
+    stickyWhatsApp.childNodes[stickyWhatsApp.childNodes.length - 1].textContent = ' Waitlist';
+  }
+  const stickyEnquire = document.querySelector('.scta-enquire');
+  if (stickyEnquire) stickyEnquire.childNodes[stickyEnquire.childNodes.length - 1].textContent = ' Join Waitlist';
+
+  const popup = document.getElementById('trial-popup-overlay');
+  if (popup) {
+    const heading = popup.querySelector('h3');
+    const paragraphs = popup.querySelectorAll('p');
+    const action = popup.querySelector('a');
+    if (heading) heading.textContent = 'Currently fully booked';
+    if (paragraphs[0]) paragraphs[0].innerHTML = 'Workspace memberships and free trials are temporarily paused. Join the waitlist and we will notify you when availability opens.';
+    if (action) {
+      action.href = waitlistWhatsApp;
+      action.childNodes[action.childNodes.length - 1].textContent = ' Join the Waitlist on WhatsApp';
+    }
+    if (paragraphs[1]) paragraphs[1].textContent = 'No repeated follow-ups. We will contact you when space is available.';
+  }
+})();
+
 // Auto-capture UTM params from URL into enquiry form
 (function() {
   const params = new URLSearchParams(window.location.search);
